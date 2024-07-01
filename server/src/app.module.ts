@@ -1,15 +1,6 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-<<<<<<< Updated upstream
-import { UserModule } from './user/user.module';
-import { RecipeModule } from './recipe/recipe.module';
-import { RatingModule } from './rating/rating.module';
-import { ProductsModule } from './products/products.module';
-
-@Module({
-  imports: [UserModule, RecipeModule, RatingModule, ProductsModule],
-=======
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
@@ -33,7 +24,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       }),
       inject: [ConfigService]
   })],
->>>>>>> Stashed changes
   controllers: [AppController],
   providers: [AppService],
 })
