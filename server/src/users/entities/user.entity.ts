@@ -1,7 +1,7 @@
 import {Entity, PrimaryGeneratedColumn, Column, BeforeInsert, JoinTable, ManyToMany, OneToMany, Unique, OneToOne} from 'typeorm';
 import { IsEmail, Length, IsNotEmpty } from 'class-validator';
 import * as argon2 from 'argon2';
-import { RecipeEntity } from 'src/recipe/entities/recipe.entity';
+import { RecipeEntity } from 'src/recipes/entities/recipe.entity';
 
 @Entity('user')
 @Unique(['username', 'email'])

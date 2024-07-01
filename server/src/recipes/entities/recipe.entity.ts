@@ -1,6 +1,6 @@
 import {Entity, PrimaryGeneratedColumn, Column, BeforeInsert, JoinTable, ManyToMany, OneToOne, JoinColumn} from 'typeorm';
 import * as argon2 from 'argon2';
-import { UserEntity } from 'src/user/entities/user.entity';
+import { UserEntity } from 'src/users/entities/user.entity';
 
 @Entity('recipe')
 export class RecipeEntity {

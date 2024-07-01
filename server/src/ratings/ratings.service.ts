@@ -3,13 +3,13 @@ import { CreateRatingDto } from './dto/create-rating.dto';
 import { UpdateRatingDto } from './dto/update-rating.dto';
 
 @Injectable()
-export class RatingService {
+export class RatingsService {
   create(createRatingDto: CreateRatingDto) {
     return 'This action adds a new rating';
   }
 
   findAll() {
-    return `This action returns all rating`;
+    return `This action returns all ratings`;
   }
 
   findOne(id: number) {
