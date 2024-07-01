@@ -1,4 +1,3 @@
-import { ProductTypeEntity } from 'src/product_type/product_type.entity';
 import {Entity, PrimaryGeneratedColumn, Column, BeforeInsert, JoinColumn, ManyToMany, OneToOne} from 'typeorm';
 
 @Entity('product')
@@ -13,9 +12,7 @@ export class ProductEntity {
   @Column({default: ''})
   image: Blob;
 
-  @OneToOne(() => ProductTypeEntity, (product_type) => product_type.product_id)
-  @JoinColumn()
-  product_type_id: number;
+  product_type: Enumerator;
 
 //   @ManyToMany(type => ArticleEntity)
 //   @JoinTable()

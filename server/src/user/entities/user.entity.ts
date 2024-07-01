@@ -1,13 +1,14 @@
-import {Entity, PrimaryGeneratedColumn, Column, BeforeInsert, JoinTable, ManyToMany, OneToMany, Unique} from 'typeorm';
+import {Entity, PrimaryGeneratedColumn, Column, BeforeInsert, JoinTable, ManyToMany, OneToMany, Unique, OneToOne} from 'typeorm';
 import { IsEmail, Length, IsNotEmpty } from 'class-validator';
 import * as argon2 from 'argon2';
-import { RecipeEntity } from 'src/recipe/recipe.entity';
+import { RecipeEntity } from 'src/recipe/entities/recipe.entity';
 
 @Entity('user')
-@Unique(['username'])
+@Unique(['username', 'email'])
 export class UserEntity {
 
   @PrimaryGeneratedColumn()
+  @OneToOne(() => RecipeEntity, (recipe) => recipe.author_id)
   user_id: number;
 
   @Column()
