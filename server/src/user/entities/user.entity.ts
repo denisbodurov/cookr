@@ -25,7 +25,7 @@ export class UserEntity {
   bio: string;
 
   @Column({default: ''})
-  image: Blob;
+  image: string;
 
   @Column()
   @Length(6, 30, { message: 'The password must be at least 6 but not longer than 30 characters' })

@@ -18,7 +18,7 @@ export class RecipeEntity {
   steps: string;
 
   @Column({default: ''})
-  image: Blob;
+  image: string;
 
   @Column()
   password: string;

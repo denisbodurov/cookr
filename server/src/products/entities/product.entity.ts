@@ -10,7 +10,7 @@ export class ProductEntity {
   product_name: string;
 
   @Column({default: ''})
-  image: Blob;
+  image: string;
 
   product_type: Enumerator;
 
