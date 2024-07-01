@@ -3,10 +3,9 @@ import { Entity } from "typeorm"
 
 @Entity()
 export class CreateRecipeDto {
-    id: number
-    name: string
-    description: string
-    filename: string
+    user_id: number
+    recipe_description: string
+    recipe_name: string
     views: number
     isPublished: boolean
 }
