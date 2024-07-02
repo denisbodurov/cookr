@@ -1,1 +1,5 @@
-export class CreateRecipeDto {}
+export class CreateRecipeDto {
+    authorId: number;
+    steps: string;
+    image: string;
+}

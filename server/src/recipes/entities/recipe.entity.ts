@@ -1,5 +1,4 @@
-import {Entity, PrimaryGeneratedColumn, Column, BeforeInsert, JoinTable, ManyToMany, OneToOne, JoinColumn} from 'typeorm';
-import * as argon2 from 'argon2';
+import {Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn} from 'typeorm';
 import { UserEntity } from 'src/users/entities/user.entity';
 
 @Entity('recipe')
@@ -22,16 +21,4 @@ export class RecipeEntity {
 
   @Column()
   password: string;
-
-  @BeforeInsert()
-  async hashPassword() {
-    this.password = await argon2.hash(this.password);
-  }
-
-//   @ManyToMany(type => ArticleEntity)
-//   @JoinTable()
-//   favorites: ArticleEntity[];
-
-//   @OneToMany(type => ArticleEntity, article => article.author)
-//   articles: ArticleEntity[];
 }
