@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS product (
     product_id SERIAL PRIMARY KEY,
     product_name TEXT DEFAULT '',
     image TEXT DEFAULT '',
-    product_type VARCHAR(255) -- Assuming Enumerator is implemented as VARCHAR in this case
+    product_type product_type
 );
 
 CREATE TABLE IF NOT EXISTS liked_recipes (
