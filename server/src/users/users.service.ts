@@ -1,9 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { UserEntity } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { LoginDto } from './dto/authenticate-user.dto';
+import * as argon2 from 'argon2';
 
 @Injectable()
 export class UsersService {
@@ -12,38 +13,45 @@ export class UsersService {
     private readonly usersRepository: Repository<UserEntity>,
   ) {}
 
-  async create(createUserDto: CreateUserDto) {
-    const newUser = this.usersRepository.create(createUserDto);
-    await this.usersRepository.save(createUserDto);
-    return newUser;
-  }
-
   findAll() {
     return this.usersRepository.find();
   }
 
-  async findOne(username: string): Promise<UserEntity | undefined> {
-    const user = await this.usersRepository.findOne({
-      where: { username: username },
-    });
-    if(user) {
-      return user;
-    }
-    return null;
-  }
-
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
-  }
-
-  async remove(id: number) {
+  async findById(id: number): Promise<UserEntity | undefined> {
     const user = await this.usersRepository.findOne({
       where: { user_id: id },
     });
-    if(!user) {
-      return null;
+    if (user) {
+      return user;
     }
-    await this.usersRepository.remove(user);
-    return user;
+    throw new BadRequestException('user-not-found');
   }
+
+  async signUp (createUserDto: CreateUserDto) {
+    const user = await this.usersRepository.findOne({
+      where: { email: createUserDto.email, username: createUserDto.username },
+    });
+
+    if (user) {
+      throw new BadRequestException('user-already-exists');
+    }
+
+    const newUser = this.usersRepository.create(createUserDto);
+    await this.usersRepository.save(newUser);
+    return newUser;
+  }
+
+  async signIn (loginDto: LoginDto) {
+    const user = await this.usersRepository.findOne({
+      where: { email: loginDto.email },
+    });
+    if (user) {
+      const isPasswordValid = await argon2.verify(user.password, loginDto.password);
+      if (isPasswordValid) {
+        return user;
+      }
+    }
+    throw new BadRequestException('invalid-credentials');
+  }
+
 }
