@@ -33,8 +33,7 @@ import { LikedRecipesModule } from './liked_recipes/liked_recipes.module';
     RecipesModule,
     UsersModule,
     RatingsModule,
-    LikedRecipesModule,
-    MadeRecipesModule],
+    LikedRecipesModule],
   controllers: [AppController],
   providers: [AppService],
 })
