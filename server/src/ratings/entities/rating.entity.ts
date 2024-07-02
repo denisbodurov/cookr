@@ -1,6 +1,4 @@
-import {Entity, PrimaryGeneratedColumn, Column, BeforeInsert, JoinTable, ManyToMany, OneToMany, Unique, OneToOne, JoinColumn} from 'typeorm';
-import { IsEmail, Length, IsNotEmpty } from 'class-validator';
-import * as argon2 from 'argon2';
+import {Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn} from 'typeorm';
 import { RecipeEntity } from 'src/recipes/entities/recipe.entity';
 import { UserEntity } from 'src/users/entities/user.entity';
 

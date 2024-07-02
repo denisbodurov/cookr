@@ -7,6 +7,7 @@ import { AuthModule } from './auth/auth.module';
 import { RecipesModule } from './recipes/recipes.module';
 import { UsersModule } from './users/users.module';
 import { RatingsModule } from './ratings/ratings.module';
+import { LikedRecipesModule } from './liked_recipes/liked_recipes.module';
 
 @Module({
   imports: [
@@ -31,7 +32,9 @@ import { RatingsModule } from './ratings/ratings.module';
     AuthModule,
     RecipesModule,
     UsersModule,
-    RatingsModule],
+    RatingsModule,
+    LikedRecipesModule,
+    MadeRecipesModule],
   controllers: [AppController],
   providers: [AppService],
 })
