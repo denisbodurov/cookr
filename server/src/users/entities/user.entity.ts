@@ -1,4 +1,4 @@
-import {Entity, PrimaryGeneratedColumn, Column, BeforeInsert, JoinTable, ManyToMany, OneToMany, Unique, OneToOne} from 'typeorm';
+import {Entity, PrimaryGeneratedColumn, Column, BeforeInsert, JoinTable, OneToMany, Unique, OneToOne} from 'typeorm';
 import { IsEmail, Length, IsNotEmpty } from 'class-validator';
 import * as argon2 from 'argon2';
 import { RecipeEntity } from 'src/recipes/entities/recipe.entity';
@@ -13,9 +13,6 @@ export class UserEntity {
 
   @Column()
   username: string;
-
-  @Column()
-  name: string;
 
   @Column()
   @IsEmail()
@@ -41,5 +38,4 @@ export class UserEntity {
   @JoinTable()
   recipes: RecipeEntity[];
 
-  
 }
