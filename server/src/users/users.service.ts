@@ -28,12 +28,16 @@ export class UsersService {
   }
 
   async signUp (createUserDto: CreateUserDto) {
-    const user = await this.usersRepository.findOne({
-      where: { email: createUserDto.email, username: createUserDto.username },
+    const existingUser = await this.usersRepository.findOne({
+      where: [{ email: createUserDto.email }, { username: createUserDto.username }],
     });
 
-    if (user) {
-      throw new BadRequestException('user-already-exists');
+    if (existingUser) {
+      if (existingUser.email === createUserDto.email) {
+        throw new BadRequestException('email-taken');
+      } else {
+        throw new BadRequestException('username-taken');
+      }
     }
 
     const newUser = this.usersRepository.create(createUserDto);
