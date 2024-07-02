@@ -19,7 +19,7 @@ import { LikedRecipesModule } from './liked_recipes/liked_recipes.module';
       useFactory: (configService: ConfigService) => ({
         type: "postgres",
         host: '127.0.0.1',
-        port: 5432,
+        port: 6432,
         username: 'postgres',
         password: '1234',
         database: 'cookr',
