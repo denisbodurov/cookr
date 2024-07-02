@@ -14,5 +14,14 @@ services:
       POSTGRES_PASSWORD: 1234
       POSTGRES_DB: cookr
 
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: m.staykov06@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "8080:80"
+
 volumes:
   db_data:
