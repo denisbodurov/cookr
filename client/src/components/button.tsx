@@ -2,11 +2,9 @@
 import React from "react";
 import { Button } from "@mui/material";
 
-interface ButtonCustomProps {
-  onClick: () => void; // Define onClick prop as a function that takes no arguments
-}
 
-const ButtonCustom: React.FC<ButtonCustomProps> = ({ onClick }) => {
+
+const ButtonCustom = () => {
   const buttonStyle = {
     display: "flex",
     justifyContent: "center",
@@ -19,7 +17,7 @@ const ButtonCustom: React.FC<ButtonCustomProps> = ({ onClick }) => {
   };
 
   return (
-    <Button style={buttonStyle} variant="contained" onClick={onClick}>
+    <Button style={buttonStyle} variant="contained" >
       ADD NEW RECIPE
     </Button>
   );

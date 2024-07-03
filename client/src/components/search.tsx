@@ -21,10 +21,13 @@ function Search() {
   const searchField = {
     height: "90%",
     color: "#E56B6F",
+    width: '80%',
     borderRadius: 10,
     outline: "none",
     border: 0,
     backgroundColor: "#F9F7F3",
+    fontWeight: "bolder",
+    fontSize: 15,
   };
 
   return (
