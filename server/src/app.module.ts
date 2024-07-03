@@ -10,6 +10,7 @@ import { RatingsModule } from './ratings/ratings.module';
 import { LikedRecipesModule } from './liked_recipes/liked_recipes.module';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { typeOrmAsyncConfig } from "./config/typeorm.config"
+import { throttlerAsyncConfig } from './config/throttler.config';
 
 @Module({
   imports: [
@@ -17,16 +18,7 @@ import { typeOrmAsyncConfig } from "./config/typeorm.config"
       isGlobal: true,
     }),
     TypeOrmModule.forRootAsync(typeOrmAsyncConfig),
-    ThrottlerModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => [
-        {
-          ttl: configService.get('THROTTLER_TTL'),
-          limit: configService.get('THROTTLER_LIMIT'),
-        },
-      ],
-      inject: [ConfigService],
-    }),
+    ThrottlerModule.forRootAsync(throttlerAsyncConfig),
     AuthModule,
     RecipesModule,
     UsersModule,
