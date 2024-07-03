@@ -17,7 +17,7 @@ export class UsersService {
     return this.usersRepository.find();
   }
 
-  async findById(id: number): Promise<UserEntity | undefined> {
+  async findById(id: number): Promise<UserEntity> {
     const user = await this.usersRepository.findOne({
       where: { user_id: id },
     });
@@ -27,9 +27,12 @@ export class UsersService {
     throw new BadRequestException('user-not-found');
   }
 
-  async signUp (createUserDto: CreateUserDto) {
+  async signUp(createUserDto: CreateUserDto) {
     const existingUser = await this.usersRepository.findOne({
-      where: [{ email: createUserDto.email }, { username: createUserDto.username }],
+      where: [
+        { email: createUserDto.email },
+        { username: createUserDto.username },
+      ],
     });
 
     if (existingUser) {
@@ -45,17 +48,19 @@ export class UsersService {
     return newUser;
   }
 
-  async signIn (loginDto: LoginDto) {
+  async signIn(loginDto: LoginDto) {
     const user = await this.usersRepository.findOne({
       where: { email: loginDto.email },
     });
     if (user) {
-      const isPasswordValid = await argon2.verify(user.password, loginDto.password);
+      const isPasswordValid = await argon2.verify(
+        user.password,
+        loginDto.password,
+      );
       if (isPasswordValid) {
         return user;
       }
     }
     throw new BadRequestException('invalid-credentials');
   }
-
 }

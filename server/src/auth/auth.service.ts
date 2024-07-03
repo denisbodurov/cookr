@@ -13,17 +13,19 @@ export class AuthService {
 
   async login(loginDto: LoginDto): Promise<{ access_token: string }> {
     const user = await this.usersService.signIn(loginDto);
-    
+
     const payload = { sub: user.user_id, username: user.username };
     return {
       access_token: this.jwtService.sign(payload),
     };
   }
 
-  async register(createUserDto: CreateUserDto): Promise<{ access_token: string }> {
-    const newUser = await this.usersService.signUp(createUserDto);
+  async register(
+    createUserDto: CreateUserDto,
+  ): Promise<{ access_token: string }> {
+    const user = await this.usersService.signUp(createUserDto);
 
-    const payload = { sub: newUser.user_id, username: newUser.username };
+    const payload = { sub: user.user_id, username: user.username };
     return {
       access_token: this.jwtService.sign(payload),
     };
