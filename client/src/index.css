@@ -1,4 +1,7 @@
-body{
+body {
   margin: 0;
   padding: 0;
+}
+::placeholder {
+  color: #E56B6F;
 }
