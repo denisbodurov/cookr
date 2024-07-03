@@ -1,11 +1,17 @@
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { cors: true});
 
+  // Validation setup
+  app.useGlobalPipes(new ValidationPipe());
+
+  // Swagger setup
   const config = new DocumentBuilder()
+    .addBearerAuth()
     .setTitle('Cookr API')
     .setDescription('Cookr API description')
     .setVersion('1.0')
