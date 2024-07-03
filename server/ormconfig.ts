@@ -1,7 +1,6 @@
 import { DataSource } from "typeorm";
 
 export const connectionSource = new DataSource({
-  migrationsTableName: "migrations",
   type: "postgres",
   host: "localhost",
   port: 6432,
@@ -11,6 +10,6 @@ export const connectionSource = new DataSource({
   logging: true,
   synchronize: false,
   name: "default",
-  entities: ["src/entities/*.entity.ts"],
+  entities: ["src/*/entities/*.entity.ts"],
   migrations: ["src/migrations/*.ts"],
 });
