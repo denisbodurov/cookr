@@ -10,6 +10,6 @@ export const connectionSource = new DataSource({
   logging: true,
   synchronize: false,
   name: "default",
-  entities: ["src/*/entities/*.entity.ts"],
+  entities: ["src/**/*.entity.ts"],
   migrations: ["src/migrations/*.ts"],
 });
