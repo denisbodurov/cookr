@@ -3,7 +3,7 @@ import { IsEmail, Length, IsNotEmpty } from 'class-validator';
 import * as argon2 from 'argon2';
 import { RecipeEntity } from 'src/recipes/entities/recipe.entity';
 
-@Entity('user')
+@Entity('users')
 @Unique(['username', 'email'])
 export class UserEntity {
 

@@ -13,9 +13,8 @@ export class RecipesService {
   ) {}
 
   async create(createRecipeDto: CreateRecipeDto): Promise<RecipeEntity> {
-    const { authorId, steps, image } = createRecipeDto;
+    const { steps, image } = createRecipeDto;
     const newRecipe = this.recipeRepository.create({
-      author_id: authorId,
       steps,
       image,
     });
