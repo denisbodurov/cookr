@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
 import { UserEntity } from 'src/users/entities/user.entity';
 import { RatingEntity } from 'src/ratings/entities/rating.entity';
 import { LikedRecipesEntity } from 'src/liked_recipes/entities/liked_recipe.entity';
@@ -18,7 +18,11 @@ export class RecipeEntity {
   recipe_id: number;
 
   @ManyToOne(() => UserEntity, (user) => user.recipes)
+  @JoinColumn({ name: 'author_id' })
   author: UserEntity;
+
+  @Column()
+  author_id: number;
 
   @Column()
   name: string;

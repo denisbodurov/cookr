@@ -8,7 +8,4 @@ export class CreateRecipeDto {
   @IsOptional()
   @IsString()
   image: string;
-
-  @IsNotEmpty()
-  author_id: number;
 }

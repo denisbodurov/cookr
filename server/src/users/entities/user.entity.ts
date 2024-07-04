@@ -3,6 +3,7 @@ import * as argon2 from 'argon2';
 import { RecipeEntity } from 'src/recipes/entities/recipe.entity';
 import { RatingEntity } from 'src/ratings/entities/rating.entity';
 import { LikedRecipesEntity } from 'src/liked_recipes/entities/liked_recipe.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity('users')
 @Unique(['username', 'email'])
@@ -29,6 +30,7 @@ export class UserEntity {
   image: string;
 
   @Column()
+  @Exclude()
   password: string;
 
   @BeforeInsert()

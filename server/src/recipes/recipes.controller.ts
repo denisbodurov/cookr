@@ -14,40 +14,23 @@ import { RecipeEntity } from './entities/recipe.entity';
 import { CreateRecipeDto } from './dto/create-recipe.dto';
 import { UpdateRecipeDto } from './dto/update-recipe.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { ApiBearerAuth } from '@nestjs/swagger';
+import { User } from 'src/users/user.decorator';
+import { TokenPayload } from 'src/auth/models/token.model';
 
 @Controller('recipes')
 export class RecipesController {
   constructor(
     private readonly recipeService: RecipesService) {}
 
-  // @Get()
-  // async findAll(): Promise<RecipeEntity[]> {
-  //   return this.recipeService.findAll();
-  // }
-
-  // @Get(':id')
-  // async findOne(@Param('id', ParseIntPipe) id: number): Promise<RecipeEntity> {
-  //   return this.recipeService.findOne(id);
-  // }
-
   @Post('create')
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   async createRecipe(
     @Body() createRecipeDto: CreateRecipeDto,
+    @User() user: TokenPayload,
   ): Promise<RecipeEntity> {
-    return this.recipeService.createRecipe(createRecipeDto);
+    return this.recipeService.createRecipe(createRecipeDto, user);
   }
 
-  // @Patch(':id')
-  // async update(
-  //   @Param('id', ParseIntPipe) id: number,
-  //   @Body() updateRecipeDto: UpdateRecipeDto,
-  // ): Promise<RecipeEntity> {
-  //   return this.recipeService.update(id, updateRecipeDto);
-  // }
-
-  // @Delete(':id')
-  // async delete(@Param('id', ParseIntPipe) id: number): Promise<void> {
-  //   return this.recipeService.delete(id);
-  // }
 }
