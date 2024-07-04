@@ -70,7 +70,7 @@ export class Test1720005330673 implements MigrationInterface {
             DROP TABLE IF EXISTS product;
             DROP TABLE IF EXISTS recipe;
             DROP TABLE IF EXISTS users;
-
+            
             DROP TYPE IF EXISTS recipe_type;
             DROP TYPE IF EXISTS product_type;
         `);
