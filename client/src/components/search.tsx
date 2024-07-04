@@ -1,5 +1,9 @@
 import { BorderColor } from "@mui/icons-material";
 import SearchIcon from "@mui/icons-material/Search";
+import Menu from '@mui/joy/Menu';
+import MenuButton from '@mui/joy/MenuButton';
+import MenuItem from '@mui/joy/MenuItem';
+import Dropdown from '@mui/joy/Dropdown';
 
 function Search() {
   const searchBar = {
@@ -21,7 +25,7 @@ function Search() {
   const searchField = {
     height: "90%",
     color: "#E56B6F",
-    width: '80%',
+    width: "80%",
     borderRadius: 10,
     outline: "none",
     border: 0,
@@ -34,7 +38,14 @@ function Search() {
     <>
       <div style={searchBar}>
         <input type="text" placeholder="Search..." style={searchField} />
-        
+        <Dropdown>
+          <MenuButton>Dashboard...</MenuButton>
+          <Menu>
+            <MenuItem>Profile</MenuItem>
+            <MenuItem>My account</MenuItem>
+            <MenuItem>Logout</MenuItem>
+          </Menu>
+        </Dropdown>
         <a>
           <SearchIcon></SearchIcon>
         </a>

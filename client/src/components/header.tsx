@@ -20,7 +20,7 @@ const Header = () => {
     height: 80,
     backgroundColor: "#F9F7F3",
     display: "flex",
-    justifyContent: "space-around",
+    justifyContent: "space-between",
     alignItems: "center",
   };
 
@@ -77,7 +77,7 @@ const Header = () => {
       >
         <Search />
 
-        <Link to="/addNew" style={{ margin: 10, textDecoration: 'none'}}>
+        <Link to="/add-new" style={{ margin: 10, textDecoration: 'none'}}>
           <ButtonCustom />
         </Link>
       </div>

@@ -1,26 +1,7 @@
-import Header from "../components/header.tsx";
 import CategoryCard from "../components/categoryCard.tsx";
 import Breaker from "../components/breaker.tsx";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
-
-const responsive = {
-  desktop: {
-    breakpoint: { max: 3000, min: 1024 },
-    items: 3,
-    slidesToSlide: 1,
-  },
-  tablet: {
-    breakpoint: { max: 1024, min: 464 },
-    items: 2,
-    slidesToSlide: 1,
-  },
-  mobile: {
-    breakpoint: { max: 464, min: 0 },
-    items: 1,
-    slidesToSlide: 1,
-  },
-};
 
 const Home: React.FC = () => {
   const appScreen = {
@@ -35,7 +16,24 @@ const Home: React.FC = () => {
     justifyContent: "center",
     alignItems: "center",
   };
-
+  const responsive = {
+    desktop: {
+      breakpoint: { max: 3000, min: 1024 },
+      items: 3,
+      slidesToSlide: 1,
+    },
+    tablet: {
+      breakpoint: { max: 1024, min: 464 },
+      items: 2,
+      slidesToSlide: 1,
+    },
+    mobile: {
+      breakpoint: { max: 464, min: 0 },
+      items: 1,
+      slidesToSlide: 1,
+    },
+  };
+  
   return (
     <div style={appScreen}>
       <div style={{ margin: "20px 0" }}>
@@ -84,7 +82,7 @@ const Home: React.FC = () => {
           categoryName="SNACKS"
           circle={true}
         />
-        
+
         <CategoryCard
           imageSource="../public/snack.jpg"
           categoryName="SNACKS"

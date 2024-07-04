@@ -14,8 +14,8 @@ export default function CategoryCard({ imageSource, categoryName, circle }: Cate
     <Card
       sx={{
         margin: '20px',
-        minHeight: circle ? '150px' : '380px', // Adjust the height for rectangular card
-        width: circle ? '150px' : '320px', // Adjust the width for rectangular card
+        minHeight: circle ? '80px' : '380px', // Adjust the height for rectangular card
+        width: circle ? '80px' : '320px', // Adjust the width for rectangular card
         position: 'relative',
         overflow: 'hidden',
         borderRadius: circle ? '50%' : '10px', // Apply circle border radius if circle prop is true
