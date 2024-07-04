@@ -22,6 +22,7 @@ export class Test1720005330673 implements MigrationInterface {
         
         CREATE TABLE IF NOT EXISTS recipe (
             recipe_id SERIAL PRIMARY KEY,
+            name VARCHAR(255),
             author_id INT,
             image TEXT DEFAULT '',
             recipe_type recipe_type,
@@ -70,9 +71,11 @@ export class Test1720005330673 implements MigrationInterface {
             DROP TABLE IF EXISTS product;
             DROP TABLE IF EXISTS recipe;
             DROP TABLE IF EXISTS users;
+            DROP TABLE IF EXISTS steps;
             
             DROP TYPE IF EXISTS recipe_type;
             DROP TYPE IF EXISTS product_type;
+            DROP TYPE IF EXISTS product_category;
         `);
     }
 
