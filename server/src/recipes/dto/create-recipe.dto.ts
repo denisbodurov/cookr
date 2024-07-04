@@ -7,10 +7,6 @@ export class CreateRecipeDto {
 
   @IsOptional()
   @IsString()
-  steps: string;
-
-  @IsOptional()
-  @IsString()
   image: string;
 
   @IsNotEmpty()

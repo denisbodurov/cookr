@@ -24,9 +24,6 @@ export class RecipeEntity {
   name: string;
 
   @Column({ type: 'text', default: '' })
-  steps: string;
-
-  @Column({ type: 'text', default: '' })
   image: string;
 
   @Column({

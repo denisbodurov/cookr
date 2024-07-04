@@ -12,55 +12,53 @@ export class RecipesService {
     private readonly recipeRepository: Repository<RecipeEntity>,
   ) {}
 
-  async create(createRecipeDto: CreateRecipeDto): Promise<RecipeEntity> {
-    const { steps, image } = createRecipeDto;
-    const newRecipe = this.recipeRepository.create({
-      steps,
-      image,
-    });
-    return await this.recipeRepository.save(newRecipe);
+  async createRecipe(createRecipeDto: CreateRecipeDto): Promise<RecipeEntity> {
+    const newRecipe = this.recipeRepository.create(createRecipeDto);
+    await this.recipeRepository.save(newRecipe);
+
+    return newRecipe;
   }
 
-  async findAll(): Promise<RecipeEntity[]> {
-    return await this.recipeRepository.find();
-  }
+  // async findAll(): Promise<RecipeEntity[]> {
+  //   return await this.recipeRepository.find();
+  // }
 
-  async findOne(id: number): Promise<RecipeEntity> {
-    const recipe = await this.recipeRepository.findOne({
-      where: {recipe_id: id}
-    });
+  // async findOne(id: number): Promise<RecipeEntity> {
+  //   const recipe = await this.recipeRepository.findOne({
+  //     where: {recipe_id: id}
+  //   });
 
-    if (!recipe) {
-      throw new NotFoundException(`Recipe with ID ${id} not found`);
-    }
+  //   if (!recipe) {
+  //     throw new NotFoundException(`Recipe with ID ${id} not found`);
+  //   }
 
-    return recipe;
-  }
+  //   return recipe;
+  // }
 
-  async update(id: number, updateRecipeDto: UpdateRecipeDto): Promise<RecipeEntity> {
-    const { steps, image } = updateRecipeDto;
+  // async update(id: number, updateRecipeDto: UpdateRecipeDto): Promise<RecipeEntity> {
+  //   const { steps, image } = updateRecipeDto;
 
-    const recipeToUpdate = await this.recipeRepository.findOne({
-      where: {recipe_id: id}
-    });
+  //   const recipeToUpdate = await this.recipeRepository.findOne({
+  //     where: {recipe_id: id}
+  //   });
 
-    if (!recipeToUpdate) {
-      throw new NotFoundException(`Recipe with ID ${id} not found`);
-    }
-    recipeToUpdate.steps = steps;
-    recipeToUpdate.image = image;
-    return await this.recipeRepository.save(recipeToUpdate);
-  }
+  //   if (!recipeToUpdate) {
+  //     throw new NotFoundException(`Recipe with ID ${id} not found`);
+  //   }
+  //   recipeToUpdate.steps = steps;
+  //   recipeToUpdate.image = image;
+  //   return await this.recipeRepository.save(recipeToUpdate);
+  // }
 
-  async delete(id: number): Promise<void> {
-    const recipeToDelete = await this.recipeRepository.findOne({
-      where: {recipe_id: id}
-    });
+  // async delete(id: number): Promise<void> {
+  //   const recipeToDelete = await this.recipeRepository.findOne({
+  //     where: {recipe_id: id}
+  //   });
 
-    if (!recipeToDelete) {
-      throw new NotFoundException(`Recipe with ID ${id} not found`);
-    }
+  //   if (!recipeToDelete) {
+  //     throw new NotFoundException(`Recipe with ID ${id} not found`);
+  //   }
 
-    await this.recipeRepository.delete(id);
-  }
+  //   await this.recipeRepository.delete(id);
+  // }
 }
