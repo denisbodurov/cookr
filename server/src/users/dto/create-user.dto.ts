@@ -19,4 +19,12 @@ export class CreateUserDto {
   @IsString({ message: 'invalid-username-format' })
   @IsNotEmpty({ message: 'invalid-username-format' })
   username: string;
+
+  @IsString({ message: 'invalid-first_name-format' })
+  @IsNotEmpty({ message: 'invalid-first_name-format' })
+  first_name: string;
+
+  @IsString({ message: 'invalid-last_name-format' })
+  @IsNotEmpty({ message: 'invalid-last_name-format' })
+  last_name: string;
 }
