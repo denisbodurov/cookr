@@ -11,7 +11,8 @@ export class Test1720005330673 implements MigrationInterface {
         CREATE TABLE IF NOT EXISTS users (
             user_id SERIAL PRIMARY KEY,
             username VARCHAR(255) NOT NULL,
-            name VARCHAR(255) NOT NULL,
+            first_name VARCHAR(255) NOT NULL,
+            last_name VARCHAR(255) NOT NULL,
             email VARCHAR(255) NOT NULL,
             bio TEXT DEFAULT '',
             image TEXT DEFAULT '',
@@ -22,7 +23,6 @@ export class Test1720005330673 implements MigrationInterface {
         CREATE TABLE IF NOT EXISTS recipe (
             recipe_id SERIAL PRIMARY KEY,
             author_id INT,
-            steps TEXT DEFAULT '',
             image TEXT DEFAULT '',
             recipe_type recipe_type,
             FOREIGN KEY (author_id) REFERENCES users(user_id)
