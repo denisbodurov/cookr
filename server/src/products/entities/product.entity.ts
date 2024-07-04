@@ -1,23 +1,40 @@
-import {Entity, PrimaryGeneratedColumn, Column, BeforeInsert, JoinColumn, ManyToMany, OneToOne} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+
+export enum ProductType {
+  FRUITS = 'fruits',
+  VEGETABLES = 'vegetables',
+  MEAT = 'meat',
+  DAIRY = 'dairy',
+  GRAINS = 'grains',
+  SEAFOOD = 'seafood',
+}
+
+export enum ProductCategory {
+  PROTEIN = 'protein',
+  CARBS = 'carbs',
+  FATS = 'fats',
+}
 
 @Entity('product')
 export class ProductEntity {
-
   @PrimaryGeneratedColumn()
   product_id: number;
 
-  @Column({default: ''})
+  @Column({ type: 'text', default: '' })
   product_name: string;
 
-  @Column({default: ''})
+  @Column({ type: 'text', default: '' })
   image: string;
 
-  product_type: Enumerator;
+  @Column({
+    type: 'enum',
+    enum: ProductType,
+  })
+  product_type: ProductType;
 
-//   @ManyToMany(type => ArticleEntity)
-//   @JoinTable()
-//   favorites: ArticleEntity[];
-
-//   @OneToMany(type => ArticleEntity, article => article.author)
-//   articles: ArticleEntity[];
+  @Column({
+    type: 'enum',
+    enum: ProductCategory,
+  })
+  product_category: ProductCategory;
 }

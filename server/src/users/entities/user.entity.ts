@@ -1,26 +1,20 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  BeforeInsert,
-  JoinTable,
-  OneToMany,
-  Unique,
-  OneToOne,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, Unique, OneToMany, BeforeInsert } from 'typeorm';
 import * as argon2 from 'argon2';
 import { RecipeEntity } from 'src/recipes/entities/recipe.entity';
-import { Exclude } from 'class-transformer';
+import { RatingEntity } from 'src/ratings/entities/rating.entity';
+import { LikedRecipesEntity } from 'src/liked_recipes/entities/liked_recipe.entity';
 
-@Entity('user')
+@Entity('users')
 @Unique(['username', 'email'])
 export class UserEntity {
   @PrimaryGeneratedColumn()
-  @OneToOne(() => RecipeEntity, (recipe) => recipe.author_id)
   user_id: number;
 
   @Column()
   username: string;
+
+  @Column()
+  name: string;
 
   @Column()
   email: string;
@@ -32,7 +26,6 @@ export class UserEntity {
   image: string;
 
   @Column()
-  @Exclude()
   password: string;
 
   @BeforeInsert()
@@ -40,7 +33,12 @@ export class UserEntity {
     this.password = await argon2.hash(this.password);
   }
 
-  @OneToMany((type) => RecipeEntity, (recipe) => recipe.author_id)
-  @JoinTable()
+  @OneToMany(() => RecipeEntity, (recipe) => recipe.author)
   recipes: RecipeEntity[];
+
+  @OneToMany(() => RatingEntity, (rating) => rating.rater)
+  ratings: RatingEntity[];
+
+  @OneToMany(() => LikedRecipesEntity, (likedRecipe) => likedRecipe.user)
+  likedRecipes: LikedRecipesEntity[];
 }

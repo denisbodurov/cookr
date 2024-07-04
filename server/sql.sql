@@ -18,6 +18,10 @@ CREATE TABLE IF NOT EXISTS recipe (
     FOREIGN KEY (author_id) REFERENCES users(user_id)
 );
 
+CREATE TABLE IF NOT EXISTS steps(
+    
+)
+
 CREATE TABLE IF NOT EXISTS rating (
     rating_id SERIAL PRIMARY KEY,
     rater_id INT,

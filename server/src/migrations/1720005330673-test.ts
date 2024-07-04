@@ -6,6 +6,7 @@ export class Test1720005330673 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
         CREATE TYPE recipe_type AS ENUM('breakfast', 'lunch', 'dinner', 'dessert', 'snack');
+        CREATE TYPE product_category AS ENUM('protein', 'carbs', 'fats');
         
         CREATE TABLE IF NOT EXISTS users (
             user_id SERIAL PRIMARY KEY,
@@ -40,13 +41,23 @@ export class Test1720005330673 implements MigrationInterface {
             product_id SERIAL PRIMARY KEY,
             product_name TEXT DEFAULT '',
             image TEXT DEFAULT '',
-            product_type product_type
+            product_type product_type,
+            product_category product_category
         );
         
         CREATE TABLE IF NOT EXISTS liked_recipes (
             like_id SERIAL PRIMARY KEY,
             recipe_id INT,
             FOREIGN KEY (recipe_id) REFERENCES recipe(recipe_id)
+        );
+        
+        CREATE TABLE IF NOT EXISTS steps (
+            step_id SERIAL PRIMARY KEY,
+            recipe_id INT NOT NULL,
+            step_number INT NOT NULL,
+            description TEXT NOT NULL,
+            FOREIGN KEY (recipe_id) REFERENCES recipe(recipe_id),
+            UNIQUE (recipe_id, step_number)
         );
         
         `);
