@@ -9,14 +9,12 @@ export class AuthController {
     constructor(private authService: AuthService) {}
 
     @UseInterceptors(ClassSerializerInterceptor)
-    @UseGuards(ThrottlerGuard)
     @Post('/login')
     async login(@Body() user: LoginDto) {
       return this.authService.login(user);
     }
 
     @UseInterceptors(ClassSerializerInterceptor)
-    @UseGuards(ThrottlerGuard)
     @Post('/register')
     async register(@Body() user: CreateUserDto) {
       return this.authService.register(user);
