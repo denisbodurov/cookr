@@ -23,7 +23,7 @@ export class RecipesController {
   constructor(
     private readonly recipeService: RecipesService) {}
 
-  @Post('create')
+  @Post()
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   async createRecipe(
@@ -31,6 +31,29 @@ export class RecipesController {
     @User() user: TokenPayload,
   ): Promise<RecipeEntity> {
     return this.recipeService.createRecipe(createRecipeDto, user);
+  }
+
+  @Get(':id')
+  async getRecipeById(@Param('id') id: number){
+    return this.recipeService.getRecipeById(id)
+  }
+
+  @Patch(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  async updateRecipe(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateRecipeDto: UpdateRecipeDto,
+    @User() user: TokenPayload,
+  ){
+    return this.recipeService.updateRecipe(id, updateRecipeDto, user)
+  }
+
+  @Delete(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  async deleteRecipe(@Param('id', ParseIntPipe) id: number, @User() user: TokenPayload){
+    return this.recipeService.deleteRecipe(id, user)
   }
 
 }

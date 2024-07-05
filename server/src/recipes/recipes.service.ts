@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { RecipeEntity } from './entities/recipe.entity';
@@ -13,7 +17,26 @@ export class RecipesService {
     private readonly recipeRepository: Repository<RecipeEntity>,
   ) {}
 
-  async createRecipe(createRecipeDto: CreateRecipeDto, user: TokenPayload): Promise<RecipeEntity> {
+  async getRecipiesByUserId(userId: number): Promise<RecipeEntity[]> {
+    return await this.recipeRepository.find({
+      where: { author_id: userId },
+    });
+  }
+
+  async getRecipeById(id: number): Promise<RecipeEntity> {
+    const recipe = await this.recipeRepository.findOne({
+      where: { recipe_id: id },
+    });
+    if (!recipe) {
+      throw new NotFoundException('recipe-not-found');
+    }
+    return recipe;
+  }
+
+  async createRecipe(
+    createRecipeDto: CreateRecipeDto,
+    user: TokenPayload,
+  ): Promise<RecipeEntity> {
     const recipe = this.recipeRepository.create({
       author_id: user.sub,
       ...createRecipeDto,
@@ -22,4 +45,32 @@ export class RecipesService {
     return await this.recipeRepository.save(recipe);
   }
 
+  async updateRecipe(
+    id: number,
+    updateRecipeDto: UpdateRecipeDto,
+    user: TokenPayload,
+  ): Promise<RecipeEntity> {
+    const recipe = await this.getRecipeById(id);
+    if (recipe) {
+      if (recipe.author_id !== user.sub) {
+        throw new UnauthorizedException();
+      }
+      await this.recipeRepository.update(id, updateRecipeDto);
+      return await this.getRecipeById(id);
+    } else {
+      throw new NotFoundException('recipe-not-found');
+    }
+  }
+
+  async deleteRecipe(id: number, user: TokenPayload): Promise<void> {
+    const recipe = await this.getRecipeById(id);
+    if (recipe) {
+      if (recipe.author_id !== user.sub) {
+        throw new UnauthorizedException();
+      }
+      await this.recipeRepository.delete(id);
+    } else {
+      throw new NotFoundException('recipe-not-found');
+    }
+  }
 }

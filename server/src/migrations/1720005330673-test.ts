@@ -69,9 +69,10 @@ export class Test1720005330673 implements MigrationInterface {
             DROP TABLE IF EXISTS liked_recipes;
             DROP TABLE IF EXISTS rating;
             DROP TABLE IF EXISTS product;
+            DROP TABLE IF EXISTS steps;
             DROP TABLE IF EXISTS recipe;
             DROP TABLE IF EXISTS users;
-            DROP TABLE IF EXISTS steps;
+
             
             DROP TYPE IF EXISTS recipe_type;
             DROP TYPE IF EXISTS product_type;
