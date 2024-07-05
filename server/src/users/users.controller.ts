@@ -1,7 +1,9 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { RecipesService } from 'src/recipes/recipes.service';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('users')
 @Controller('users')
 export class UsersController {
   constructor(

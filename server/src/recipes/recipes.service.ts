@@ -24,7 +24,7 @@ export class RecipesService {
   }
 
   async getAllRecipes(): Promise<RecipeEntity[]> {
-    return await this.recipeRepository.find({relations: ['author', 'ratings']});
+    return await this.recipeRepository.find({relations: ['author', /*'ratings'*/]});
   }
 
   async getRecipeById(id: number): Promise<RecipeEntity> {

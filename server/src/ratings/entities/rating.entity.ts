@@ -21,11 +21,11 @@ export class RatingEntity {
   rater_id: number;
 
   @ManyToOne(() => RecipeEntity, (recipe) => recipe.ratings)
-  @JoinColumn({ name: 'recipe_id' })
+  @JoinColumn({ name: 'rated_id' })
   recipe: RecipeEntity;
 
   @Column()
-  recipe_id: number;
+  rated_id: number;
   
 
   @CreateDateColumn()

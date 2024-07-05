@@ -4,7 +4,9 @@
   import { UpdateStepDto } from './dto/update-step.dto';
   import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
   import { RecipesService } from 'src/recipes/recipes.service';
+import { ApiTags } from '@nestjs/swagger';
 
+  @ApiTags('steps')
   @Controller('recipes/:recipeId/steps')
   export class StepsController {
     constructor(

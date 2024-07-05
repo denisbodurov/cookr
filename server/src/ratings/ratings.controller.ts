@@ -2,7 +2,10 @@ import { Controller, Get, Post, Delete, Put, Param, Body, UseGuards, Request } f
 import { RatingsService } from './ratings.service';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { RecipesService } from 'src/recipes/recipes.service';
+import { ApiTags } from '@nestjs/swagger';
+import { CreateRatingDto } from './dto/create-rating.dto';
 
+@ApiTags('ratings')
 @Controller('recipes/:recipeId/ratings')
 export class RatingsController {
   constructor(
@@ -14,12 +17,11 @@ export class RatingsController {
   @Post()
   async create(
     @Param('recipeId') recipeId: number,
-    @Body('description') description: string,
-    @Body('rating') rating: number,
+    @Body() createRatingDto: CreateRatingDto,
     @Request() req
   ) {
     const recipe = await this.recipesService.getRecipeById(recipeId);
-    return this.ratingsService.create(description, rating, req.user, recipe);
+    return this.ratingsService.create(createRatingDto.description, createRatingDto.rating, req.user, recipe);
   }
 
   @Get()
