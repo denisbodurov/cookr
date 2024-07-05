@@ -17,10 +17,14 @@ export class RecipesService {
     private readonly recipeRepository: Repository<RecipeEntity>,
   ) {}
 
-  async getRecipesByUserId(userId: number): Promise<RecipeEntity[]> {
+  async getRecipesByUserId(id: number): Promise<RecipeEntity[]> {
     return await this.recipeRepository.find({
-      where: { author_id: userId },
+      where: { author_id: id },
     });
+  }
+
+  async getAllRecipes(): Promise<RecipeEntity[]> {
+    return await this.recipeRepository.find({relations: ['author', 'ratings']});
   }
 
   async getRecipeById(id: number): Promise<RecipeEntity> {

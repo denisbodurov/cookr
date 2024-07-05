@@ -1,25 +1,9 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  ManyToOne,
-  OneToMany,
-  JoinColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { UserEntity } from 'src/users/entities/user.entity';
 import { RatingEntity } from 'src/ratings/entities/rating.entity';
 import { LikedRecipesEntity } from 'src/liked_recipes/entities/liked_recipe.entity';
 import { StepEntity } from 'src/steps/entities/step.entity';
-
-export enum RecipeType {
-  BREAKFAST = 'breakfast',
-  LUNCH = 'lunch',
-  DINNER = 'dinner',
-  DESSERT = 'dessert',
-  SNACK = 'snack',
-}
+import { RecipeType } from '../enums/recipe.enum';
 
 @Entity('recipe')
 export class RecipeEntity {

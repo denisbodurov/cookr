@@ -1,4 +1,5 @@
 import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { RecipeType } from '../enums/recipe.enum';
 
 export class CreateRecipeDto {
   @IsNotEmpty({ message: 'name-cannot-be-blank'})
@@ -8,4 +9,7 @@ export class CreateRecipeDto {
   @IsOptional()
   @IsString()
   image: string;
+
+  @IsNotEmpty({ message: 'recipe_type-cannot-be-blank'})
+  recipe_type: RecipeType;
 }

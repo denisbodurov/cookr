@@ -8,6 +8,8 @@ import {
   Body,
   ParseIntPipe,
   UseGuards,
+  UseInterceptors,
+  ClassSerializerInterceptor,
 } from '@nestjs/common';
 import { RecipesService } from './recipes.service';
 import { RecipeEntity } from './entities/recipe.entity';
@@ -36,6 +38,12 @@ export class RecipesController {
   @Get(':id')
   async getRecipeById(@Param('id', ParseIntPipe) id: number): Promise<RecipeEntity> {
     return this.recipesService.getRecipeById(id);
+  }
+
+  @Get()
+  @UseInterceptors(ClassSerializerInterceptor)
+  async getAllRecipes(){
+    return this.recipesService.getAllRecipes()
   }
 
   @Patch(':id')
