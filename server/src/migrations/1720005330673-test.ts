@@ -7,7 +7,7 @@ export class Test1720005330673 implements MigrationInterface {
         await queryRunner.query(`
         CREATE TYPE recipe_type AS ENUM('breakfast', 'lunch', 'dinner', 'dessert', 'snack');
         CREATE TYPE product_category AS ENUM('protein', 'carbs', 'fats');
-        
+
         CREATE TABLE IF NOT EXISTS users (
             user_id SERIAL PRIMARY KEY,
             username VARCHAR(255) NOT NULL,
@@ -19,40 +19,45 @@ export class Test1720005330673 implements MigrationInterface {
             password VARCHAR(255) NOT NULL,
             UNIQUE (username, email)
         );
-        
+
         CREATE TABLE IF NOT EXISTS recipe (
             recipe_id SERIAL PRIMARY KEY,
             name VARCHAR(255),
             author_id INT,
             image TEXT DEFAULT '',
             recipe_type recipe_type,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (author_id) REFERENCES users(user_id)
         );
-        
+
         CREATE TABLE IF NOT EXISTS rating (
             rating_id SERIAL PRIMARY KEY,
             rater_id INT,
             rated_id INT,
+            rating INT,
+            description TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (rater_id) REFERENCES users(user_id),
             FOREIGN KEY (rated_id) REFERENCES recipe(recipe_id)
         );
-        
+
         CREATE TYPE product_type AS ENUM('fruits', 'vegetables', 'meat', 'dairy', 'grains', 'seafood');
+
         CREATE TABLE IF NOT EXISTS product (
             product_id SERIAL PRIMARY KEY,
             product_name TEXT DEFAULT '',
-            --product_calories INT,
             image TEXT DEFAULT '',
             product_type product_type,
             product_category product_category
         );
-        
+
         CREATE TABLE IF NOT EXISTS liked_recipes (
             like_id SERIAL PRIMARY KEY,
             recipe_id INT,
             FOREIGN KEY (recipe_id) REFERENCES recipe(recipe_id)
         );
-        
+
         CREATE TABLE IF NOT EXISTS steps (
             step_id SERIAL PRIMARY KEY,
             recipe_id INT NOT NULL,
@@ -61,6 +66,7 @@ export class Test1720005330673 implements MigrationInterface {
             FOREIGN KEY (recipe_id) REFERENCES recipe(recipe_id),
             UNIQUE (recipe_id, step_number)
         );
+
         
         `);
     }

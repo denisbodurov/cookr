@@ -1,4 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  OneToMany,
+  JoinColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { UserEntity } from 'src/users/entities/user.entity';
 import { RatingEntity } from 'src/ratings/entities/rating.entity';
 import { LikedRecipesEntity } from 'src/liked_recipes/entities/liked_recipe.entity';
@@ -35,6 +44,12 @@ export class RecipeEntity {
     enum: RecipeType,
   })
   recipe_type: RecipeType;
+
+  @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  created_at: Date;
+
+  @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
+  updated_at: Date;
 
   @OneToMany(() => RatingEntity, (rating) => rating.recipe)
   ratings: RatingEntity[];

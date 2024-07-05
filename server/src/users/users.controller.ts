@@ -20,6 +20,6 @@ export class UsersController {
 
   @Get(':id/recipes')
   getUserRecipes(@Param('id') id: number) {
-    return this.recipeService.getRecipiesByUserId(id);
+    return this.recipeService.getRecipesByUserId(id);
   }
 }

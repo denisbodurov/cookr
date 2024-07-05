@@ -14,14 +14,14 @@ import { RecipeEntity } from './entities/recipe.entity';
 import { CreateRecipeDto } from './dto/create-recipe.dto';
 import { UpdateRecipeDto } from './dto/update-recipe.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { User } from 'src/users/user.decorator';
 import { TokenPayload } from 'src/auth/models/token.model';
 
+@ApiTags('recipes')
 @Controller('recipes')
 export class RecipesController {
-  constructor(
-    private readonly recipeService: RecipesService) {}
+  constructor(private readonly recipesService: RecipesService) {}
 
   @Post()
   @UseGuards(JwtAuthGuard)
@@ -30,12 +30,12 @@ export class RecipesController {
     @Body() createRecipeDto: CreateRecipeDto,
     @User() user: TokenPayload,
   ): Promise<RecipeEntity> {
-    return this.recipeService.createRecipe(createRecipeDto, user);
+    return this.recipesService.createRecipe(createRecipeDto, user);
   }
 
   @Get(':id')
-  async getRecipeById(@Param('id') id: number){
-    return this.recipeService.getRecipeById(id)
+  async getRecipeById(@Param('id', ParseIntPipe) id: number): Promise<RecipeEntity> {
+    return this.recipesService.getRecipeById(id);
   }
 
   @Patch(':id')
@@ -45,15 +45,17 @@ export class RecipesController {
     @Param('id', ParseIntPipe) id: number,
     @Body() updateRecipeDto: UpdateRecipeDto,
     @User() user: TokenPayload,
-  ){
-    return this.recipeService.updateRecipe(id, updateRecipeDto, user)
+  ): Promise<RecipeEntity> {
+    return this.recipesService.updateRecipe(id, updateRecipeDto, user);
   }
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  async deleteRecipe(@Param('id', ParseIntPipe) id: number, @User() user: TokenPayload){
-    return this.recipeService.deleteRecipe(id, user)
+  async deleteRecipe(
+    @Param('id', ParseIntPipe) id: number,
+    @User() user: TokenPayload,
+  ): Promise<void> {
+    return this.recipesService.deleteRecipe(id, user);
   }
-
 }

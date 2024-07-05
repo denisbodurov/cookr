@@ -1,34 +1,55 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Put, Param, Body, UseGuards, Request } from '@nestjs/common';
 import { RatingsService } from './ratings.service';
-import { CreateRatingDto } from './dto/create-rating.dto';
-import { UpdateRatingDto } from './dto/update-rating.dto';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { RecipesService } from 'src/recipes/recipes.service';
 
-@Controller('ratings')
+@Controller('recipes/:recipeId/ratings')
 export class RatingsController {
-  constructor(private readonly ratingsService: RatingsService) {}
+  constructor(
+    private readonly ratingsService: RatingsService,
+    private readonly recipesService: RecipesService,
+  ) {}
 
+  @UseGuards(JwtAuthGuard)
   @Post()
-  create(@Body() createRatingDto: CreateRatingDto) {
-    return this.ratingsService.create(createRatingDto);
+  async create(
+    @Param('recipeId') recipeId: number,
+    @Body('description') description: string,
+    @Body('rating') rating: number,
+    @Request() req
+  ) {
+    const recipe = await this.recipesService.getRecipeById(recipeId);
+    return this.ratingsService.create(description, rating, req.user, recipe);
   }
 
   @Get()
-  findAll() {
-    return this.ratingsService.findAll();
+  async findAll(@Param('recipeId') recipeId: number) {
+    const recipe = await this.recipesService.getRecipeById(recipeId);
+    return this.ratingsService.findAllByRecipe(recipe);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.ratingsService.findOne(+id);
+  @UseGuards(JwtAuthGuard)
+  @Delete(':ratingId')
+  async remove(@Param('recipeId') recipeId: number, @Param('ratingId') ratingId: number, @Request() req) {
+    await this.ratingsService.remove(ratingId, req.user);
+    return { message: 'Rating deleted successfully' };
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateRatingDto: UpdateRatingDto) {
-    return this.ratingsService.update(+id, updateRatingDto);
+  @UseGuards(JwtAuthGuard)
+  @Put(':ratingId')
+  async update(
+    @Param('recipeId') recipeId: number,
+    @Param('ratingId') ratingId: number,
+    @Body('description') description: string,
+    @Body('rating') rating: number,
+    @Request() req
+  ) {
+    return this.ratingsService.update(ratingId, description, rating, req.user);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.ratingsService.remove(+id);
+  @Get('/average')
+  async getAverageRating(@Param('recipeId') recipeId: number) {
+    const recipe = await this.recipesService.getRecipeById(recipeId);
+    return { averageRating: await this.ratingsService.getAverageRating(recipe) };
   }
 }

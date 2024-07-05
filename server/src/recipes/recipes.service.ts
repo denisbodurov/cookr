@@ -17,7 +17,7 @@ export class RecipesService {
     private readonly recipeRepository: Repository<RecipeEntity>,
   ) {}
 
-  async getRecipiesByUserId(userId: number): Promise<RecipeEntity[]> {
+  async getRecipesByUserId(userId: number): Promise<RecipeEntity[]> {
     return await this.recipeRepository.find({
       where: { author_id: userId },
     });
@@ -40,6 +40,8 @@ export class RecipesService {
     const recipe = this.recipeRepository.create({
       author_id: user.sub,
       ...createRecipeDto,
+      created_at: new Date(),
+      updated_at: new Date(),
     });
 
     return await this.recipeRepository.save(recipe);
@@ -51,26 +53,29 @@ export class RecipesService {
     user: TokenPayload,
   ): Promise<RecipeEntity> {
     const recipe = await this.getRecipeById(id);
-    if (recipe) {
-      if (recipe.author_id !== user.sub) {
-        throw new UnauthorizedException();
-      }
-      await this.recipeRepository.update(id, updateRecipeDto);
-      return await this.getRecipeById(id);
-    } else {
+    if (!recipe) {
       throw new NotFoundException('recipe-not-found');
     }
+    if (recipe.author_id !== user.sub) {
+      throw new UnauthorizedException();
+    }
+
+    await this.recipeRepository.update(id, {
+      ...updateRecipeDto,
+      updated_at: new Date(),
+    });
+    
+    return await this.getRecipeById(id);
   }
 
   async deleteRecipe(id: number, user: TokenPayload): Promise<void> {
     const recipe = await this.getRecipeById(id);
-    if (recipe) {
-      if (recipe.author_id !== user.sub) {
-        throw new UnauthorizedException();
-      }
-      await this.recipeRepository.delete(id);
-    } else {
+    if (!recipe) {
       throw new NotFoundException('recipe-not-found');
     }
+    if (recipe.author_id !== user.sub) {
+      throw new UnauthorizedException();
+    }
+    await this.recipeRepository.delete(id);
   }
 }

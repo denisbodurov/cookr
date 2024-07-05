@@ -21,34 +21,33 @@ export class StepsService {
       throw new UnauthorizedException("Not author of the recipe. Can't edit the recipe steps!");
     }
 
-    const existingStep = await this.stepsRepository.findOne({ where: { step_number: createStepDto.step_number, recipe } });
-    if (existingStep) {
-      throw new BadRequestException(`Step number ${createStepDto.step_number} already exists in the recipe.`);
-    }
+    const stepCount = await this.stepsRepository.count({ where: { recipe } });
+    const stepNumber = stepCount + 1;
 
     const step = this.stepsRepository.create({
       ...createStepDto,
-      recipe
+      step_number: stepNumber,
+      recipe,
     });
 
     return await this.stepsRepository.save(step);
   }
 
   async findAll(recipeId: number): Promise<StepEntity[]> {
-    const recipe = await this.recipeRepository.findOne({where: {recipe_id: recipeId}});
+    const recipe = await this.recipeRepository.findOne({ where: { recipe_id: recipeId } });
     if (!recipe) {
       throw new NotFoundException(`Recipe with ID ${recipeId} not found`);
     }
 
     return this.stepsRepository.find({
       where: { recipe },
-      order: { step_number: 'ASC' }
+      order: { step_number: 'ASC' },
     });
   }
 
   async findOneByStepNumber(step_number: number, recipe: RecipeEntity): Promise<StepEntity> {
     const step = await this.stepsRepository.findOne({
-      where: { step_number, recipe }
+      where: { step_number, recipe },
     });
 
     if (!step) {
@@ -81,6 +80,13 @@ export class StepsService {
     if (result.affected === 0) {
       throw new NotFoundException(`Step number ${step_number} not found`);
     }
+
+    // Adjust the step numbers of remaining steps
+    const remainingSteps = await this.stepsRepository.find({ where: { recipe }, order: { step_number: 'ASC' } });
+    for (let i = 0; i < remainingSteps.length; i++) {
+      remainingSteps[i].step_number = i + 1;
+      await this.stepsRepository.save(remainingSteps[i]);
+    }
   }
 
   async removeAllSteps(recipe: RecipeEntity, user: TokenPayload): Promise<void> {
@@ -103,6 +109,13 @@ export class StepsService {
       updatedSteps.push(await this.findOneByStepNumber(updateStepDto.step_number, recipe));
     }
 
-    return updatedSteps;
+    // Adjust the step numbers to ensure they are sequential
+    const orderedSteps = await this.stepsRepository.find({ where: { recipe }, order: { step_number: 'ASC' } });
+    for (let i = 0; i < orderedSteps.length; i++) {
+      orderedSteps[i].step_number = i + 1;
+      await this.stepsRepository.save(orderedSteps[i]);
+    }
+
+    return orderedSteps;
   }
 }
