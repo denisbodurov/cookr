@@ -50,7 +50,7 @@ export class RatingsService {
     const { avg } = await this.ratingsRepository
       .createQueryBuilder('rating')
       .select('AVG(rating)', 'avg')
-      .where('rating.recipeId = :recipeId', { recipeId: recipe.recipe_id })
+      .where('rating.rated_id = :recipeId', { recipeId: recipe.recipe_id })
       .getRawOne();
       
     return parseFloat(avg);

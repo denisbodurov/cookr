@@ -55,8 +55,8 @@ export class RatingsController {
   }
 
   @Get('/average')
-  async getAverageRating(@Param('recipeId') recipeId: number) {
-    const recipe = await this.recipesService.getRecipeById(recipeId);
+  async getAverageRating(@Param('recipeId') recipe_id: number) {
+    const recipe = await this.recipesService.getRecipeById(recipe_id);
     return { averageRating: await this.ratingsService.getAverageRating(recipe) };
   }
 }
