@@ -26,6 +26,9 @@ export class ProductEntity {
   @Column({ type: 'text', default: '' })
   image: string;
 
+  // @Column({ type: 'int', default: 0})
+  // product_calorie: number;
+
   @Column({
     type: 'enum',
     enum: ProductType,

@@ -1,45 +1,109 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { StepEntity } from './entities/step.entity';
 import { CreateStepDto } from './dto/create-step.dto';
 import { UpdateStepDto } from './dto/update-step.dto';
+import { TokenPayload } from 'src/auth/models/token.model';
+import { RecipeEntity } from 'src/recipes/entities/recipe.entity';
 
 @Injectable()
 export class StepsService {
   constructor(
     @InjectRepository(StepEntity)
     private stepsRepository: Repository<StepEntity>,
+    @InjectRepository(RecipeEntity)
+    private recipeRepository: Repository<RecipeEntity>,
   ) {}
 
-  async create(createStepDto: CreateStepDto): Promise<StepEntity> {
-    const step = this.stepsRepository.create(createStepDto);
-    return this.stepsRepository.save(step);
-  }
-
-  async findAll(): Promise<StepEntity[]> {
-    return this.stepsRepository.find();
-  }
-
-  async findOne(id: number): Promise<StepEntity> {
-    const step = await this.stepsRepository.findOne({
-      where: { step_id: id },
-    });
-    if (!step) {
-      throw new NotFoundException(`Step with ID ${id} not found`);
+  async create(createStepDto: CreateStepDto, user: TokenPayload, recipe: RecipeEntity): Promise<StepEntity> {
+    if (user.sub !== recipe.author_id) {
+      throw new UnauthorizedException("Not author of the recipe. Can't edit the recipe steps!");
     }
+
+    // Ensure the step number is unique within the recipe
+    const existingStep = await this.stepsRepository.findOne({ where: { step_number: createStepDto.step_number, recipe } });
+    if (existingStep) {
+      throw new BadRequestException(`Step number ${createStepDto.step_number} already exists in the recipe.`);
+    }
+
+    const step = this.stepsRepository.create({
+      ...createStepDto,
+      recipe
+    });
+
+    return await this.stepsRepository.save(step);
+  }
+
+  async findAll(recipeId: number): Promise<StepEntity[]> {
+    const recipe = await this.recipeRepository.findOne({where: {recipe_id: recipeId}});
+    if (!recipe) {
+      throw new NotFoundException(`Recipe with ID ${recipeId} not found`);
+    }
+
+    return this.stepsRepository.find({
+      where: { recipe },
+      order: { step_number: 'ASC' }
+    });
+  }
+
+  async findOneByStepNumber(step_number: number, recipe: RecipeEntity): Promise<StepEntity> {
+    const step = await this.stepsRepository.findOne({
+      where: { step_number, recipe }
+    });
+
+    if (!step) {
+      throw new NotFoundException(`Step number ${step_number} not found in the given recipe`);
+    }
+
     return step;
   }
 
-  async update(id: number, updateStepDto: UpdateStepDto): Promise<StepEntity> {
-    await this.stepsRepository.update(id, updateStepDto);
-    return this.findOne(id);
+  async update(step_number: number, updateStepDto: UpdateStepDto, user: TokenPayload, recipe: RecipeEntity): Promise<StepEntity> {
+    if (user.sub !== recipe.author_id) {
+      throw new UnauthorizedException("Not author of the recipe. Can't edit the recipe steps!");
+    }
+
+    const step = await this.findOneByStepNumber(step_number, recipe);
+
+    await this.stepsRepository.update(step.step_id, updateStepDto);
+
+    return this.findOneByStepNumber(step_number, recipe);
   }
 
-  async remove(id: number): Promise<void> {
-    const result = await this.stepsRepository.delete(id);
-    if (result.affected === 0) {
-      throw new NotFoundException(`Step with ID ${id} not found`);
+  async removeByStepNumber(step_number: number, user: TokenPayload, recipe: RecipeEntity): Promise<void> {
+    if (user.sub !== recipe.author_id) {
+      throw new UnauthorizedException("Not author of the recipe. Can't edit the recipe steps!");
     }
+
+    const step = await this.findOneByStepNumber(step_number, recipe);
+
+    const result = await this.stepsRepository.delete(step.step_id);
+    if (result.affected === 0) {
+      throw new NotFoundException(`Step number ${step_number} not found`);
+    }
+  }
+
+  async removeAllSteps(recipe: RecipeEntity, user: TokenPayload): Promise<void> {
+    if (user.sub !== recipe.author_id) {
+      throw new UnauthorizedException("Not author of the recipe. Can't edit the recipe steps!");
+    }
+
+    await this.stepsRepository.delete({ recipe });
+  }
+
+  async updateAllSteps(updateStepsDto: UpdateStepDto[], user: TokenPayload, recipe: RecipeEntity): Promise<StepEntity[]> {
+    if (user.sub !== recipe.author_id) {
+      throw new UnauthorizedException("Not author of the recipe. Can't edit the recipe steps!");
+    }
+
+    const updatedSteps: StepEntity[] = [];
+    for (const updateStepDto of updateStepsDto) {
+      const step = await this.findOneByStepNumber(updateStepDto.step_number, recipe);
+      await this.stepsRepository.update(step.step_id, updateStepDto);
+      updatedSteps.push(await this.findOneByStepNumber(updateStepDto.step_number, recipe));
+    }
+
+    return updatedSteps;
   }
 }

@@ -41,6 +41,7 @@ export class Test1720005330673 implements MigrationInterface {
         CREATE TABLE IF NOT EXISTS product (
             product_id SERIAL PRIMARY KEY,
             product_name TEXT DEFAULT '',
+            --product_calories INT,
             image TEXT DEFAULT '',
             product_type product_type,
             product_category product_category
@@ -72,7 +73,6 @@ export class Test1720005330673 implements MigrationInterface {
             DROP TABLE IF EXISTS steps;
             DROP TABLE IF EXISTS recipe;
             DROP TABLE IF EXISTS users;
-
             
             DROP TYPE IF EXISTS recipe_type;
             DROP TYPE IF EXISTS product_type;
