@@ -1,10 +1,13 @@
-  import { Controller, Get, Post, Put, Delete, Param, Body, UseGuards, Request } from '@nestjs/common';
-  import { StepsService } from './steps.service';
-  import { CreateStepDto } from './dto/create-step.dto';
-  import { UpdateStepDto } from './dto/update-step.dto';
-  import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-  import { RecipesService } from 'src/recipes/recipes.service';
-import { ApiTags } from '@nestjs/swagger';
+import { Controller, Get, Post, Put, Delete, Param, Body, UseGuards } from '@nestjs/common';
+import { StepsService } from './steps.service';
+import { CreateStepDto } from './dto/create-step.dto';
+import { UpdateAllStepDto } from './dto/update-all-steps.dto';
+import { UpdateStepDto } from './dto/update-step.dto';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { RecipesService } from 'src/recipes/recipes.service';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { TokenPayload } from 'src/auth/models/token.model';
+import { User } from 'src/users/user.decorator';
 
   @ApiTags('steps')
   @Controller('recipes/:recipeId/steps')
@@ -15,14 +18,15 @@ import { ApiTags } from '@nestjs/swagger';
     ) {}
     
     @UseGuards(JwtAuthGuard)
+    @ApiBearerAuth()
     @Post()
     async create(
       @Param('recipeId') recipeId: number,
       @Body() createStepDto: CreateStepDto,
-      @Request() req
+      @User() user: TokenPayload,
     ) {
       const recipe = await this.recipeService.getRecipeById(recipeId);
-      return this.stepsService.create(createStepDto, req.user, recipe);
+      return this.stepsService.create(createStepDto, user, recipe);
     }
 
     @Get()
@@ -40,43 +44,47 @@ import { ApiTags } from '@nestjs/swagger';
     }
 
     @UseGuards(JwtAuthGuard)
+    @ApiBearerAuth()
     @Put(':stepNumber')
     async update(
       @Param('recipeId') recipeId: number,
       @Param('stepNumber') stepNumber: number,
       @Body() updateStepDto: UpdateStepDto,
-      @Request() req
+      @User() user: TokenPayload,
     ) {
       const recipe = await this.recipeService.getRecipeById(recipeId);
-      return this.stepsService.update(stepNumber, updateStepDto, req.user, recipe);
+      return this.stepsService.update(stepNumber, updateStepDto, user, recipe);
     }
 
     @UseGuards(JwtAuthGuard)
+    @ApiBearerAuth()
     @Delete(':stepNumber')
     async remove(
       @Param('recipeId') recipeId: number,
       @Param('stepNumber') stepNumber: number,
-      @Request() req
+      @User() user: TokenPayload,
     ) {
       const recipe = await this.recipeService.getRecipeById(recipeId);
-      return this.stepsService.removeByStepNumber(stepNumber, req.user, recipe);
+      return this.stepsService.removeByStepNumber(stepNumber, user, recipe);
     }
 
     @UseGuards(JwtAuthGuard)
+    @ApiBearerAuth()
     @Delete()
-    async removeAll(@Param('recipeId') recipeId: number, @Request() req) {
+    async removeAll(@Param('recipeId') recipeId: number, @User() user: TokenPayload,) {
       const recipe = await this.recipeService.getRecipeById(recipeId);
-      return this.stepsService.removeAllSteps(recipe, req.user);
+      return this.stepsService.removeAllSteps(recipe, user);
     }
 
     @UseGuards(JwtAuthGuard)
+    @ApiBearerAuth()
     @Put()
     async updateAll(
       @Param('recipeId') recipeId: number,
-      @Body() updateStepsDto: UpdateStepDto[],
-      @Request() req
+      @Body() updateStepsDto: UpdateAllStepDto[],
+      @User() user: TokenPayload,
     ) {
       const recipe = await this.recipeService.getRecipeById(recipeId);
-      return this.stepsService.updateAllSteps(updateStepsDto, req.user, recipe);
+      return this.stepsService.updateAllSteps(updateStepsDto, user, recipe);
     }
   }

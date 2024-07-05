@@ -3,9 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { StepEntity } from './entities/step.entity';
 import { CreateStepDto } from './dto/create-step.dto';
-import { UpdateStepDto } from './dto/update-step.dto';
+import { UpdateAllStepDto } from './dto/update-all-steps.dto';
 import { TokenPayload } from 'src/auth/models/token.model';
 import { RecipeEntity } from 'src/recipes/entities/recipe.entity';
+import { UpdateStepDto } from './dto/update-step.dto';
 
 @Injectable()
 export class StepsService {
@@ -21,7 +22,7 @@ export class StepsService {
       throw new UnauthorizedException("Not author of the recipe. Can't edit the recipe steps!");
     }
 
-    const stepCount = await this.stepsRepository.count({ where: { recipe } });
+    const stepCount = await this.stepsRepository.count({ where: { recipe: recipe } });
     const stepNumber = stepCount + 1;
 
     const step = this.stepsRepository.create({
@@ -97,7 +98,7 @@ export class StepsService {
     await this.stepsRepository.delete({ recipe });
   }
 
-  async updateAllSteps(updateStepsDto: UpdateStepDto[], user: TokenPayload, recipe: RecipeEntity): Promise<StepEntity[]> {
+  async updateAllSteps(updateStepsDto: UpdateAllStepDto[], user: TokenPayload, recipe: RecipeEntity): Promise<StepEntity[]> {
     if (user.sub !== recipe.author_id) {
       throw new UnauthorizedException("Not author of the recipe. Can't edit the recipe steps!");
     }
@@ -109,7 +110,6 @@ export class StepsService {
       updatedSteps.push(await this.findOneByStepNumber(updateStepDto.step_number, recipe));
     }
 
-    // Adjust the step numbers to ensure they are sequential
     const orderedSteps = await this.stepsRepository.find({ where: { recipe }, order: { step_number: 'ASC' } });
     for (let i = 0; i < orderedSteps.length; i++) {
       orderedSteps[i].step_number = i + 1;

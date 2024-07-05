@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { RecipeEntity } from 'src/recipes/entities/recipe.entity';
 
 @Entity('steps')
@@ -7,6 +7,7 @@ export class StepEntity {
   step_id: number;
 
   @ManyToOne(() => RecipeEntity, (recipe) => recipe.stepsDetails)
+  @JoinColumn({name: 'recipe_id'})
   recipe: RecipeEntity;
 
   @Column()
