@@ -3,11 +3,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { StepsService } from './steps.service';
 import { StepsController } from './steps.controller';
 import { StepEntity } from './entities/step.entity';
+import { RecipeEntity } from 'src/recipes/entities/recipe.entity';
+import { RecipesController } from 'src/recipes/recipes.controller';
+import { RecipesService } from 'src/recipes/recipes.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([StepEntity])],
-  controllers: [StepsController],
-  providers: [StepsService],
-  exports: [StepsService],
+  imports: [TypeOrmModule.forFeature([StepEntity, RecipeEntity])],
+  controllers: [StepsController, RecipesController],
+  providers: [StepsService, RecipesService],
+  exports: [StepsService, RecipesService],
 })
 export class StepsModule {}

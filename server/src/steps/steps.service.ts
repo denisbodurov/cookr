@@ -21,7 +21,6 @@ export class StepsService {
       throw new UnauthorizedException("Not author of the recipe. Can't edit the recipe steps!");
     }
 
-    // Ensure the step number is unique within the recipe
     const existingStep = await this.stepsRepository.findOne({ where: { step_number: createStepDto.step_number, recipe } });
     if (existingStep) {
       throw new BadRequestException(`Step number ${createStepDto.step_number} already exists in the recipe.`);
