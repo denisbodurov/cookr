@@ -1,7 +1,14 @@
-import React, { useCallback, useState } from 'react';
-import { useDropzone } from 'react-dropzone';
-import { Box, Typography, Paper, IconButton, Dialog, DialogContent } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
+import React, { useCallback, useState } from "react";
+import { useDropzone } from "react-dropzone";
+import {
+  Box,
+  Typography,
+  Paper,
+  IconButton,
+  Dialog,
+  DialogContent,
+} from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const ImageUploader: React.FC = () => {
   const [image, setImage] = useState<string | null>(null);
@@ -16,7 +23,7 @@ const ImageUploader: React.FC = () => {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     multiple: false,
-    noClick: !!image, // Disables the click-to-upload behavior if an image is already uploaded
+    noClick: !!image, 
   });
 
   const handleDelete = () => {
@@ -34,68 +41,57 @@ const ImageUploader: React.FC = () => {
 
   return (
     <Box>
-      <Paper 
-        elevation={3} 
-        sx={{
-          position: 'relative',
-          p: 2,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          height: '200px',
-          border: '2px dashed #1976d2',
-          backgroundColor: isDragActive ? '#e3f2fd' : '#fafafa',
-          transition: 'background-color 0.3s',
-          cursor: 'pointer',
-          overflow: 'hidden'
-        }}
+      <Paper
+        elevation={3}
+        className={`relative p-2 m-2 flex flex-col items-center justify-center h-48 border-2 border-dashed border-secondary ${
+          isDragActive ? "bg-secondary bg-opacity-40" : "bg-backgroundLight"
+        } transition-colors duration-300 cursor-pointer overflow-hidden`}
         {...getRootProps()}
       >
         <input {...getInputProps()} />
-        {
-          image ? (
-            <>
-              <img
-                src={image}
-                alt="preview"
-                style={{
-                  maxWidth: '100%',
-                  maxHeight: '100%',
-                  objectFit: 'contain',
-                  cursor: 'pointer'
-                }}
-                onClick={handleOpenImage}
-              />
-              <IconButton
-                sx={{
-                  position: 'absolute',
-                  top: 0,
-                  right: 0,
-                  bgcolor: 'rgba(255, 255, 255, 0.8)',
-                  '&:hover': {
-                    bgcolor: 'rgba(255, 255, 255, 1)',
-                  }
-                }}
-                onClick={handleDelete}
-              >
-                <DeleteIcon />
-              </IconButton>
-            </>
-          ) : (
-            <Typography variant="h6">
-              {isDragActive ? 'Drop the file here...' : 'Drag \'n\' drop a file here, or click to select a file'}
-            </Typography>
-          )
-        }
+        {image ? (
+          <>
+            <img
+              src={image}
+              alt="preview"
+              style={{
+                maxWidth: "100%",
+                maxHeight: "100%",
+                objectFit: "contain",
+                cursor: "pointer",
+              }}
+              onClick={handleOpenImage}
+            />
+            <IconButton
+              sx={{
+                position: "absolute",
+                top: 0,
+                right: 0,
+                bgcolor: "rgba(255, 255, 255, 0.8)",
+                "&:hover": {
+                  bgcolor: "rgba(255, 255, 255, 1)",
+                },
+              }}
+              onClick={handleDelete}
+            >
+              <DeleteIcon />
+            </IconButton>
+          </>
+        ) : (
+          <Typography variant="h6" className="text-center">
+            {isDragActive
+              ? "Drop the file here..."
+              : "Drop a file here, or click to select a file"}
+          </Typography>
+        )}
       </Paper>
       <Dialog open={openImage} onClose={handleCloseImage}>
         <DialogContent>
-          <img src={image!} alt="large view" style={{ width: '100%' }} />
+          <img src={image!} alt="large view" style={{ width: "100%" }} />
         </DialogContent>
       </Dialog>
     </Box>
   );
-}
+};
 
 export default ImageUploader;

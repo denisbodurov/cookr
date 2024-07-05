@@ -4,18 +4,6 @@ import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 
 const Home: React.FC = () => {
-  const appScreen = {
-    display: "flex",
-    justifyContent: "center",
-    backgroundColor: "#F9F7F3",
-    width: "100%",
-    flexDirection: "column",
-  };
-  const products = {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-  };
   const responsive = {
     desktop: {
       breakpoint: { max: 3000, min: 1024 },
@@ -35,8 +23,8 @@ const Home: React.FC = () => {
   };
   
   return (
-    <div style={appScreen}>
-      <div style={{ margin: "20px 0" }}>
+    <div className="flex justify-center bg-backgroundLight w-full flex-col">
+      <div className="py-5">
         <Carousel
           additionalTransfrom={1}
           arrows
@@ -71,7 +59,7 @@ const Home: React.FC = () => {
         </Carousel>
       </div>
       <Breaker />
-      <div style={products}>
+      <div className="flex justify-center items-center">
         <CategoryCard
           imageSource="../public/snack.jpg"
           categoryName="SNACKS"

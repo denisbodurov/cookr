@@ -15,15 +15,6 @@ import { Logout, PersonAdd, Settings } from "@mui/icons-material";
 import { Link } from "react-router-dom";
 
 const Header = () => {
-  const headerContainer = {
-    width: "100%",
-    height: 80,
-    backgroundColor: "#F9F7F3",
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-  };
-
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const openProfile = Boolean(anchorEl);
 
@@ -36,31 +27,15 @@ const Header = () => {
   };
 
   return (
-    <div style={headerContainer}>
-      <Link to="/" style={{ margin: 10, textDecoration: 'none' }}>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            flexDirection: "row",
-          }}
-        >
-          <img src="../public/zz.svg" alt="" />
+    <div className="w-full px-5 h-20 bg-backgroundLight flex justify-between items-center">
+      <Link to="/" style={{ margin: 10, textDecoration: "none" }}>
+        <div className="flex justify-center items-center flex-col">
           <Typography
             variant="h6"
             noWrap
             component="a"
             href="#app-bar-with-responsive-menu"
-            sx={{
-              margin: 2,
-              display: { xs: "none", md: "flex" },
-              fontFamily: "monospace",
-              fontWeight: "bolder",
-              fontSize: 25,
-              color: "#E56B6F",
-              textDecoration: "none",
-            }}
+            className="flex font-extrabold font-base text-highLight decoration-0"
           >
             COOKR
           </Typography>
@@ -68,23 +43,17 @@ const Header = () => {
       </Link>
 
       <div
-        style={{
-          display: "flex",
-          justifyContent: "space-evenly",
-          alignItems: "center",
-          flexDirection: "row",
-        }}
+        className="flex justify-evenly items-center flex-row"
       >
         <Search />
-
-        <Link to="/add-new" style={{ margin: 10, textDecoration: 'none'}}>
+        <Link to="/add-new" className="m-2 decoration-0">
           <ButtonCustom />
         </Link>
       </div>
       <IconButton
         onClick={handleClick}
         size="small"
-        sx={{ ml: 2 }}
+       
         aria-controls={openProfile ? "account-menu" : undefined}
         aria-haspopup="true"
         aria-expanded={openProfile ? "true" : undefined}
