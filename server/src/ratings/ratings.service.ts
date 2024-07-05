@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { RatingEntity } from './entities/rating.entity';
 import { UserEntity } from 'src/users/entities/user.entity';
 import { RecipeEntity } from 'src/recipes/entities/recipe.entity';
+import { TokenPayload } from 'src/auth/models/token.model';
 
 @Injectable()
 export class RatingsService {
@@ -12,18 +13,18 @@ export class RatingsService {
     private readonly ratingsRepository: Repository<RatingEntity>,
   ) {}
 
-  async create(description: string, rating: number, user: UserEntity, recipe: RecipeEntity): Promise<RatingEntity> {
-    const existingRating = await this.ratingsRepository.findOne({ where: { rater: user, recipe } });
+  async create(description: string, rating: number, user: TokenPayload, recipe: RecipeEntity): Promise<RatingEntity> {
+    const existingRating = await this.ratingsRepository.findOne({ where: { rater_id: user.sub, recipe } });
     if (existingRating) {
       throw new ConflictException('You have already rated this recipe');
     }
 
-    const newRating = this.ratingsRepository.create({ description, rating, rater: user, recipe });
+    const newRating = this.ratingsRepository.create({ description, rating, rater_id: user.sub, recipe });
     return await this.ratingsRepository.save(newRating);
   }
 
-  async remove(ratingId: number, user: UserEntity): Promise<void> {
-    const rating = await this.ratingsRepository.findOne({ where: { rating_id: ratingId, rater: user } });
+  async remove(ratingId: number, user: TokenPayload): Promise<void> {
+    const rating = await this.ratingsRepository.findOne({ where: { rating_id: ratingId, rater_id: user.sub } });
     if (!rating) {
       throw new NotFoundException('Rating not found');
     }
@@ -34,8 +35,8 @@ export class RatingsService {
     return await this.ratingsRepository.find({ where: { recipe }, relations: ['rater'] });
   }
 
-  async update(ratingId: number, description: string, rating: number, user: UserEntity): Promise<RatingEntity> {
-    const existingRating = await this.ratingsRepository.findOne({ where: { rating_id: ratingId, rater: user } });
+  async update(ratingId: number, description: string, rating: number, user: TokenPayload): Promise<RatingEntity> {
+    const existingRating = await this.ratingsRepository.findOne({ where: { rating_id: ratingId, rater_id: user.sub } });
     if (!existingRating) {
       throw new NotFoundException('Rating not found');
     }

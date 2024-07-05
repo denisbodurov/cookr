@@ -1,9 +1,11 @@
-import { Controller, Get, Post, Delete, Put, Param, Body, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Put, Param, Body, UseGuards} from '@nestjs/common';
 import { RatingsService } from './ratings.service';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { RecipesService } from 'src/recipes/recipes.service';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CreateRatingDto } from './dto/create-rating.dto';
+import { User } from 'src/users/user.decorator';
+import { TokenPayload } from 'src/auth/models/token.model';
 
 @ApiTags('ratings')
 @Controller('recipes/:recipeId/ratings')
@@ -14,14 +16,15 @@ export class RatingsController {
   ) {}
 
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Post()
   async create(
     @Param('recipeId') recipeId: number,
     @Body() createRatingDto: CreateRatingDto,
-    @Request() req
+    @User() user: TokenPayload,
   ) {
     const recipe = await this.recipesService.getRecipeById(recipeId);
-    return this.ratingsService.create(createRatingDto.description, createRatingDto.rating, req.user, recipe);
+    return this.ratingsService.create(createRatingDto.description, createRatingDto.rating, user, recipe);
   }
 
   @Get()
@@ -31,22 +34,24 @@ export class RatingsController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Delete(':ratingId')
-  async remove(@Param('recipeId') recipeId: number, @Param('ratingId') ratingId: number, @Request() req) {
-    await this.ratingsService.remove(ratingId, req.user);
+  async remove(@Param('recipeId') recipeId: number, @Param('ratingId') ratingId: number, @User() user: TokenPayload,) {
+    await this.ratingsService.remove(ratingId, user);
     return { message: 'Rating deleted successfully' };
   }
 
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Put(':ratingId')
   async update(
     @Param('recipeId') recipeId: number,
     @Param('ratingId') ratingId: number,
     @Body('description') description: string,
     @Body('rating') rating: number,
-    @Request() req
+    @User() user: TokenPayload,
   ) {
-    return this.ratingsService.update(ratingId, description, rating, req.user);
+    return this.ratingsService.update(ratingId, description, rating, user);
   }
 
   @Get('/average')
