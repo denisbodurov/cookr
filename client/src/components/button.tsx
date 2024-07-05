@@ -5,19 +5,10 @@ import { Button } from "@mui/material";
 
 
 const ButtonCustom = () => {
-  const buttonStyle = {
-    display: "flex",
-    justifyContent: "center",
-    backgroundColor: "#E56B6F",
-    width: 150,
-    height: 50,
-    fontSize: 12,
-    fontWeight: "bold",
-    borderRadius: 10,
-  };
+  
 
   return (
-    <Button style={buttonStyle} variant="contained" >
+    <Button className="flex justify-center bg-highLight w-36 h-12 text-xs font-bold rounded-xl" variant="contained" >
       ADD NEW RECIPE
     </Button>
   );

@@ -5,6 +5,7 @@ import AddNew from "./pages/addNew.tsx";
 import Login from "./pages/login.tsx";
 import Register from "./pages/register.tsx";
 import Header from "./components/header.tsx";
+import Footer from "./components/footer.tsx";
 
 const App: React.FC = () => {
   return (
@@ -15,9 +16,11 @@ const App: React.FC = () => {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/login" element={<Register />} />
+          <Route path="/register" element={<Register />} />
           <Route path="/add-new" element={<AddNew />} />
         </Routes>
+
+        <Footer />
       </div>
     </Router>
   );
