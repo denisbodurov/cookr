@@ -1,36 +1,41 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Param, Delete, UseGuards, Req } from '@nestjs/common';
 import { LikedRecipesService } from './liked_recipes.service';
-import { CreateLikedRecipeDto } from './dto/create-liked_recipe.dto';
-import { UpdateLikedRecipeDto } from './dto/update-liked_recipe.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { User } from 'src/users/user.decorator';
+import { TokenPayload } from 'src/auth/models/token.model';
 
 @ApiTags('liked-recipes')
 @Controller('liked-recipes')
 export class LikedRecipesController {
   constructor(private readonly likedRecipesService: LikedRecipesService) {}
 
-  @Post()
-  create(@Body() createLikedRecipeDto: CreateLikedRecipeDto) {
-    return this.likedRecipesService.create(createLikedRecipeDto);
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @Post(':recipeId')
+  async create(@Param('recipeId') recipeId: string, @User() user: TokenPayload,) {
+    return this.likedRecipesService.create(+recipeId, user.sub);
   }
 
   @Get()
-  findAll() {
+  async findAll() {
     return this.likedRecipesService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: string) {
     return this.likedRecipesService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateLikedRecipeDto: UpdateLikedRecipeDto) {
-    return this.likedRecipesService.update(+id, updateLikedRecipeDto);
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @Delete(':recipeId')
+  async remove(@Param('recipeId') recipeId: string, @User() user: TokenPayload,) {
+    return this.likedRecipesService.remove(+recipeId, user.sub);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.likedRecipesService.remove(+id);
+  @Get(':recipeId/likes')
+  async countLikes(@Param('recipeId') recipeId: string) {
+    return this.likedRecipesService.countLikes(+recipeId);
   }
 }

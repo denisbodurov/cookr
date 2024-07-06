@@ -55,6 +55,8 @@ export class Test1720005330673 implements MigrationInterface {
         CREATE TABLE IF NOT EXISTS liked_recipes (
             like_id SERIAL PRIMARY KEY,
             recipe_id INT,
+            user_id INT,
+            FOREIGN KEY (user_id) REFERENCES users(user_id),
             FOREIGN KEY (recipe_id) REFERENCES recipe(recipe_id)
         );
 

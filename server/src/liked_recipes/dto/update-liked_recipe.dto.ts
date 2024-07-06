@@ -1,4 +1,11 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateLikedRecipeDto } from './create-liked_recipe.dto';
+import { IsInt, IsOptional } from 'class-validator';
 
-export class UpdateLikedRecipeDto extends PartialType(CreateLikedRecipeDto) {}
+export class UpdateLikedRecipeDto {
+  @IsInt()
+  @IsOptional()
+  recipe_id?: number;
+
+  @IsInt()
+  @IsOptional()
+  user_id?: number;
+}
