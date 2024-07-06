@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, UseGuards, Patch } from '@nestjs/common';
 import { StepsService } from './steps.service';
 import { CreateStepDto } from './dto/create-step.dto';
 import { UpdateAllStepDto } from './dto/update-all-steps.dto';
@@ -45,7 +45,7 @@ import { User } from 'src/users/user.decorator';
 
     @UseGuards(JwtAuthGuard)
     @ApiBearerAuth()
-    @Put(':stepNumber')
+    @Patch(':stepNumber')
     async update(
       @Param('recipeId') recipeId: number,
       @Param('stepNumber') stepNumber: number,
@@ -78,7 +78,7 @@ import { User } from 'src/users/user.decorator';
 
     @UseGuards(JwtAuthGuard)
     @ApiBearerAuth()
-    @Put()
+    @Patch()
     async updateAll(
       @Param('recipeId') recipeId: number,
       @Body() updateStepsDto: UpdateAllStepDto[],

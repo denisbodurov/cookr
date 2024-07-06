@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { LikedRecipesEntity } from './entities/liked_recipe.entity';
@@ -20,6 +20,10 @@ export class LikedRecipesService {
     const recipe = await this.recipeRepository.findOne({ where: { recipe_id: recipeId } });
     if (!recipe) {
       throw new NotFoundException(`Recipe with ID ${recipeId} not found`);
+    }
+
+    if (recipe.author_id === userId) {
+      throw new BadRequestException('You cannot like your own recipe');
     }
 
     const user = await this.userRepository.findOne({ where: { user_id: userId } });
@@ -52,6 +56,7 @@ export class LikedRecipesService {
     if (!likedRecipe) {
       throw new NotFoundException(`Liked Recipe for Recipe ID ${recipeId} and User ID ${userId} not found`);
     }
+
     await this.likedRecipesRepository.delete(likedRecipe.like_id);
   }
 
