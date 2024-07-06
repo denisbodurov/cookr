@@ -42,22 +42,13 @@ export class RecipesController {
   @Get(':id')
   @UseInterceptors(ClassSerializerInterceptor)
   async getRecipeById(@Param('id', ParseIntPipe) id: number) {
-    const recipe = await this.recipesService.getRecipeById(id);
-    const likes = await this.likedRecipesService.getLikesByRecipeId(id);
-    return { ...recipe, likes: likes.length };
+    return await this.recipesService.getRecipeById(id);
   }
 
   @Get()
   @UseInterceptors(ClassSerializerInterceptor)
-  async getAllRecipes() {
-    const recipes = await this.recipesService.getAllRecipes();
-    return await Promise.all(recipes.map(async (recipe) => {
-      const likes = await this.likedRecipesService.getLikesByRecipeId(recipe.recipe_id);
-      return {
-        ...recipe,
-        likes: likes.length,
-      };
-    }));
+  async getAllRecipes(): Promise<RecipeEntity[]> {
+    return this.recipesService.getAllRecipes();
   }
 
   @Patch(':id')

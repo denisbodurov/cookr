@@ -43,4 +43,12 @@ export class RecipeEntity {
 
   @OneToMany(() => StepEntity, (step) => step.recipe)
   stepsDetails: StepEntity[];
+
+  likes: number;
+
+  averageRating: number;
+
+  setAverageRating(value: number) {
+    this.averageRating = value;
+  }
 }
