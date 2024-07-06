@@ -20,16 +20,18 @@ export class RecipesService {
   async getRecipesByUserId(id: number): Promise<RecipeEntity[]> {
     return await this.recipeRepository.find({
       where: { author_id: id },
+      relations: ['author', 'ratings'],
     });
   }
 
   async getAllRecipes(): Promise<RecipeEntity[]> {
-    return await this.recipeRepository.find({relations: ['author', /*'ratings'*/]});
+    return await this.recipeRepository.find({relations: ['author', 'ratings'] });
   }
 
   async getRecipeById(id: number): Promise<RecipeEntity> {
     const recipe = await this.recipeRepository.findOne({
       where: { recipe_id: id },
+      relations: ['author', 'ratings'],
     });
     if (!recipe) {
       throw new NotFoundException('recipe-not-found');

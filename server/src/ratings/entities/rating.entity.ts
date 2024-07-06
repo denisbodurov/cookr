@@ -1,4 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, ManyToOne, Column, CreateDateColumn, UpdateDateColumn, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  Column,
+  CreateDateColumn,
+  JoinColumn,
+} from 'typeorm';
 import { UserEntity } from 'src/users/entities/user.entity';
 import { RecipeEntity } from 'src/recipes/entities/recipe.entity';
 
@@ -26,7 +33,6 @@ export class RatingEntity {
 
   @Column()
   rated_id: number;
-  
 
   @CreateDateColumn()
   created_at: Date;

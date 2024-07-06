@@ -4,9 +4,9 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { RecipesService } from 'src/recipes/recipes.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CreateRatingDto } from './dto/create-rating.dto';
-import { User } from 'src/users/user.decorator';
-import { TokenPayload } from 'src/auth/models/token.model';
 import { UpdateRatingDto } from './dto/update-rating.dto';
+import { TokenPayload } from 'src/auth/models/token.model';
+import { User } from 'src/users/user.decorator';
 
 @ApiTags('ratings')
 @Controller('recipes/:recipeId/ratings')
@@ -16,48 +16,51 @@ export class RatingsController {
     private readonly recipesService: RecipesService,
   ) {}
 
+  @Post()
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @Post()
-  async create(
+  async createRating(
     @Param('recipeId') recipeId: number,
     @Body() createRatingDto: CreateRatingDto,
     @User() user: TokenPayload,
   ) {
     const recipe = await this.recipesService.getRecipeById(recipeId);
-    return this.ratingsService.create(createRatingDto.description, createRatingDto.rating, user, recipe);
+    return this.ratingsService.createRating(createRatingDto, user, recipe);
   }
 
   @Get()
   async findAll(@Param('recipeId') recipeId: number) {
     const recipe = await this.recipesService.getRecipeById(recipeId);
-    return this.ratingsService.findAllByRecipe(recipe);
+    return this.ratingsService.getRatingsByRecipe(recipe);
   }
 
   @UseGuards(JwtAuthGuard)
+  @Delete(':ratingId')
   @ApiBearerAuth()
-  @Delete()
-  async remove(@Param('recipeId') recipeId: number, @User() user: TokenPayload,) {
-    const recipe = await this.recipesService.getRecipeById(recipeId);
-    await this.ratingsService.remove(recipe, user.sub);
+  async removeRating(
+    @Param('recipeId') recipeId: number,
+    @Param('ratingId') ratingId: number,
+    @User() user: TokenPayload,
+  ) {
+    await this.ratingsService.removeRating(ratingId, user);
     return { message: 'Rating deleted successfully' };
   }
 
   @UseGuards(JwtAuthGuard)
+  @Put(':ratingId')
   @ApiBearerAuth()
-  @Patch()
-  async update(
-    @Param('recipeId') recipeId: number,
+  async updateRating(
+    @Param('ratingId') ratingId: number,
     @Body() updateRatingDto: UpdateRatingDto,
     @User() user: TokenPayload,
   ) {
-    const recipe = await this.recipesService.getRecipeById(recipeId);
-    return this.ratingsService.update(updateRatingDto, recipe, user.sub);
+    return this.ratingsService.updateRating(ratingId, updateRatingDto, user);
   }
 
   @Get('/average')
-  async getAverageRating(@Param('recipeId') recipe_id: number) {
-    const recipe = await this.recipesService.getRecipeById(recipe_id);
-    return { averageRating: await this.ratingsService.getAverageRating(recipe) };
+  async getAverageRating(@Param('recipeId') recipeId: number) {
+    const recipe = await this.recipesService.getRecipeById(recipeId);
+    const averageRating = await this.ratingsService.getAverageRating(recipe);
+    return { averageRating };
   }
 }

@@ -19,11 +19,15 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { User } from 'src/users/user.decorator';
 import { TokenPayload } from 'src/auth/models/token.model';
+import { LikedRecipesService } from 'src/liked_recipes/liked_recipes.service';
 
 @ApiTags('recipes')
 @Controller('recipes')
 export class RecipesController {
-  constructor(private readonly recipesService: RecipesService) {}
+  constructor(
+    private readonly likedRecipesService: LikedRecipesService,
+    private readonly recipesService: RecipesService,
+  ) {}
 
   @Post()
   @UseGuards(JwtAuthGuard)
@@ -36,14 +40,24 @@ export class RecipesController {
   }
 
   @Get(':id')
-  async getRecipeById(@Param('id', ParseIntPipe) id: number): Promise<RecipeEntity> {
-    return this.recipesService.getRecipeById(id);
+  @UseInterceptors(ClassSerializerInterceptor)
+  async getRecipeById(@Param('id', ParseIntPipe) id: number) {
+    const recipe = await this.recipesService.getRecipeById(id);
+    const likes = await this.likedRecipesService.getLikesByRecipeId(id);
+    return { ...recipe, likes: likes.length };
   }
 
   @Get()
   @UseInterceptors(ClassSerializerInterceptor)
-  async getAllRecipes(){
-    return this.recipesService.getAllRecipes()
+  async getAllRecipes() {
+    const recipes = await this.recipesService.getAllRecipes();
+    return await Promise.all(recipes.map(async (recipe) => {
+      const likes = await this.likedRecipesService.getLikesByRecipeId(recipe.recipe_id);
+      return {
+        ...recipe,
+        likes: likes.length,
+      };
+    }));
   }
 
   @Patch(':id')
@@ -65,5 +79,28 @@ export class RecipesController {
     @User() user: TokenPayload,
   ): Promise<void> {
     return this.recipesService.deleteRecipe(id, user);
+  }
+
+  @Post(':id/like')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  async likeRecipe(
+    @Param('id', ParseIntPipe) id: number,
+    @User() user: TokenPayload,
+  ) {
+    await this.recipesService.getRecipeById(id);
+    return this.likedRecipesService.likeRecipe(user.sub, id);
+  }
+
+  @Post(':id/unlike')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  async unlikeRecipe(
+    @Param('id', ParseIntPipe) id: number,
+    @User() user: TokenPayload,
+  ) {
+    await this.recipesService.getRecipeById(id);
+    console.log('THE ID IS: ' + user.sub);
+    return this.likedRecipesService.unlikeRecipe(user.sub, id);
   }
 }

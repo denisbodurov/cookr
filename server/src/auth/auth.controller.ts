@@ -2,7 +2,9 @@ import { Body, ClassSerializerInterceptor, Controller, Post, UseGuards, UseInter
 import { AuthService } from './auth.service';
 import { LoginDto } from 'src/users/dto/authenticate-user.dto';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('auth')
 @Controller('auth')
 @UseInterceptors(ClassSerializerInterceptor)
 export class AuthController {
