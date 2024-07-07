@@ -1,7 +1,9 @@
 import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { RecipeType } from '../enums/recipe.enum';
 import { StepEntity } from 'src/steps/entities/step.entity';
-import { ProductEntity } from 'src/products/entities/product.entity';
+import { IngredientEntity } from 'src/ingredients/entities/ingredient.entity';
+import { Type } from 'class-transformer';
+import { CreateStepDto } from 'src/steps/dto/create-step.dto';
 
 export class CreateRecipeDto {
   @IsNotEmpty({ message: 'name-cannot-be-blank'})
@@ -16,8 +18,8 @@ export class CreateRecipeDto {
   recipe_type: RecipeType;
 
   @IsNotEmpty({ message: 'steps-details-cannot-be-blank'})
-  stepDetails: StepEntity[];
+  stepDetails: CreateStepDto[];
 
   @IsNotEmpty({ message: 'products-cannot-be-empty'})
-  products: ProductEntity[];
+  ingredients: IngredientEntity[];
 }

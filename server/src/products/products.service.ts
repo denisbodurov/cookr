@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import axios from 'axios';
-import { ProductEntity, ProductType, ProductCategory } from './entities/product.entity'; // Adjust the import path as needed
+import { ProductEntity } from './entities/product.entity'; // Adjust the import path as needed
 
 @Injectable()
 export class ProductService {

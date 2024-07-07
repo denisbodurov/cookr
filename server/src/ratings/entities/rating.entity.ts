@@ -9,7 +9,7 @@ import {
 import { UserEntity } from 'src/users/entities/user.entity';
 import { RecipeEntity } from 'src/recipes/entities/recipe.entity';
 
-@Entity('rating')
+@Entity('ratings')
 export class RatingEntity {
   @PrimaryGeneratedColumn()
   rating_id: number;

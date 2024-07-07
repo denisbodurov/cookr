@@ -1,21 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { IngredientEntity } from 'src/ingredients/entities/ingredient.entity';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { ProductCategory, ProductType } from '../enums/products.enum';
 
-export enum ProductType {
-  FRUITS = 'fruits',
-  VEGETABLES = 'vegetables',
-  MEAT = 'meat',
-  DAIRY = 'dairy',
-  GRAINS = 'grains',
-  SEAFOOD = 'seafood',
-}
-
-export enum ProductCategory {
-  PROTEIN = 'protein',
-  CARBS = 'carbs',
-  FATS = 'fats',
-}
-
-@Entity('product')
+@Entity('products')
 export class ProductEntity {
   @PrimaryGeneratedColumn()
   product_id: number;
@@ -40,4 +27,7 @@ export class ProductEntity {
     enum: ProductCategory,
   })
   product_category: ProductCategory;
+
+  @OneToMany(() => IngredientEntity, (ingredient) => ingredient.product)
+  ingredients: IngredientEntity[];
 }

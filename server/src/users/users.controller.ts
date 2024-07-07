@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { ClassSerializerInterceptor, Controller, Get, Param, UseInterceptors } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { RecipesService } from 'src/recipes/recipes.service';
 import { ApiTags } from '@nestjs/swagger';
@@ -6,6 +6,7 @@ import { LikedRecipesService } from 'src/liked_recipes/liked_recipes.service';
 
 @ApiTags('users')
 @Controller('users')
+@UseInterceptors(ClassSerializerInterceptor)
 export class UsersController {
   constructor(
     private readonly recipeService: RecipesService,

@@ -12,6 +12,7 @@ import { ThrottlerModule } from '@nestjs/throttler';
 import { typeOrmAsyncConfig } from "./config/typeorm.config"
 import { throttlerAsyncConfig } from './config/throttler.config';
 import { StepsModule } from './steps/steps.module';
+import { IngredientsModule } from './ingredients/ingredients.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { StepsModule } from './steps/steps.module';
     RatingsModule,
     LikedRecipesModule,
     StepsModule,
+    IngredientsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

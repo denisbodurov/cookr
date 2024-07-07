@@ -1,12 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn, CreateDateColumn, UpdateDateColumn, In } from 'typeorm';
 import { UserEntity } from 'src/users/entities/user.entity';
 import { RatingEntity } from 'src/ratings/entities/rating.entity';
 import { LikedRecipesEntity } from 'src/liked_recipes/entities/liked_recipe.entity';
 import { StepEntity } from 'src/steps/entities/step.entity';
 import { RecipeType } from '../enums/recipe.enum';
 import { Exclude } from 'class-transformer';
+import { IngredientEntity } from 'src/ingredients/entities/ingredient.entity';
 
-@Entity('recipe')
+@Entity('recipes')
 export class RecipeEntity {
   @PrimaryGeneratedColumn()
   recipe_id: number;
@@ -45,6 +46,9 @@ export class RecipeEntity {
 
   @OneToMany(() => StepEntity, (step) => step.recipe)
   stepsDetails: StepEntity[];
+
+  @OneToMany(() => IngredientEntity, (ingredient) => ingredient.recipe)
+  ingredients: IngredientEntity[];
 
   likes: number;
 

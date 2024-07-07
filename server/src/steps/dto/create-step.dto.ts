@@ -4,4 +4,8 @@ export class CreateStepDto {
   @IsString()
   @IsNotEmpty()
   description: string;
+
+  @IsInt()
+  @IsNotEmpty()
+  step_number: number;
 }
