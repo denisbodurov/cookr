@@ -4,6 +4,7 @@ import { RatingEntity } from 'src/ratings/entities/rating.entity';
 import { LikedRecipesEntity } from 'src/liked_recipes/entities/liked_recipe.entity';
 import { StepEntity } from 'src/steps/entities/step.entity';
 import { RecipeType } from '../enums/recipe.enum';
+import { Exclude } from 'class-transformer';
 
 @Entity('recipe')
 export class RecipeEntity {
@@ -14,6 +15,7 @@ export class RecipeEntity {
   @JoinColumn({ name: 'author_id' })
   author: UserEntity;
 
+  @Exclude()
   @Column()
   author_id: number;
 

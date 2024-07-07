@@ -46,7 +46,7 @@ export class RatingsService {
     });
 
     if (!rating) {
-      throw new NotFoundException('Rating not found');
+      throw new NotFoundException('rating-not-found');
     }
 
     await this.ratingsRepository.remove(rating);
@@ -75,15 +75,5 @@ export class RatingsService {
     Object.assign(existingRating, updateRatingDto);
 
     return await this.ratingsRepository.save(existingRating);
-  }
-
-  async getAverageRating(recipe: RecipeEntity): Promise<number> {
-    const { avg } = await this.ratingsRepository
-      .createQueryBuilder('rating')
-      .select('AVG(rating.rating)', 'avg')
-      .where('rating.rated_id = :recipeId', { recipeId: recipe.recipe_id })
-      .getRawOne();
-
-    return parseFloat(avg);
   }
 }

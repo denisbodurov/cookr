@@ -9,14 +9,14 @@ import { TokenPayload } from 'src/auth/models/token.model';
 import { User } from 'src/users/user.decorator';
 
 @ApiTags('ratings')
-@Controller('recipes/:recipeId/ratings')
+@Controller('ratings/:recipeId')
 export class RatingsController {
   constructor(
     private readonly ratingsService: RatingsService,
     private readonly recipesService: RecipesService,
   ) {}
 
-  @Post()
+  @Post('rate')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   async createRating(
@@ -35,7 +35,7 @@ export class RatingsController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Delete(':ratingId')
+  @Delete('remove-rating/:ratingId')
   @ApiBearerAuth()
   async removeRating(
     @Param('recipeId') recipeId: number,
@@ -46,8 +46,8 @@ export class RatingsController {
     return { message: 'Rating deleted successfully' };
   }
 
+  @Patch('update-rating/:ratingId')
   @UseGuards(JwtAuthGuard)
-  @Put(':ratingId')
   @ApiBearerAuth()
   async updateRating(
     @Param('ratingId') ratingId: number,
@@ -57,10 +57,4 @@ export class RatingsController {
     return this.ratingsService.updateRating(ratingId, updateRatingDto, user);
   }
 
-  @Get('/average')
-  async getAverageRating(@Param('recipeId') recipeId: number) {
-    const recipe = await this.recipesService.getRecipeById(recipeId);
-    const averageRating = await this.ratingsService.getAverageRating(recipe);
-    return { averageRating };
-  }
 }

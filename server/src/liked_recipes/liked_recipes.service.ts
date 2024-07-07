@@ -45,18 +45,10 @@ export class LikedRecipesService {
     await this.likedRecipesRepository.delete(like.like_id);
   }
 
-  async getLikesByRecipeId(recipeId: number): Promise<LikedRecipesEntity[]> {
-    const likes = await this.likedRecipesRepository.find({
-      where: { recipe_id: recipeId },
-      relations: ['user'],
-    });
-    return likes;
-  }
-
   async getLikedRecipesByUserId(userId: number): Promise<RecipeEntity[]> {
     const likedRecipes = await this.likedRecipesRepository.find({
       where: { user_id: userId },
-      relations: ['recipe'],
+      relations: ['recipe', 'recipe.author'],
     });
 
     return likedRecipes.map((likedRecipe) => likedRecipe.recipe);

@@ -4,7 +4,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { getManager, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { RecipeEntity } from './entities/recipe.entity';
 import { CreateRecipeDto } from './dto/create-recipe.dto';
 import { UpdateRecipeDto } from './dto/update-recipe.dto';
@@ -27,27 +27,28 @@ export class RecipesService {
   async getAllRecipes(): Promise<any[]> {
     const recipes = await this.recipeRepository
       .createQueryBuilder('recipe')
+      .leftJoinAndSelect('recipe.author', 'author')
       .leftJoin('recipe.ratings', 'rating')
       .leftJoin('recipe.likedRecipes', 'likedRecipe')
-      .leftJoinAndSelect('recipe.author', 'author')
       .loadRelationCountAndMap('recipe.likes', 'recipe.likedRecipes')
-      .addSelect('AVG(rating.rating)', 'averageRating')
-      .groupBy('recipe.recipe_id, author.user_id, rating.rating_id, likedRecipe.like_id')
-      .getMany();
-
-    return recipes.map(recipe => ({
+      .addSelect('COALESCE(AVG(rating.rating), 0)', 'recipe_averageRating')
+      .groupBy('recipe.recipe_id, author.user_id')
+      .getRawAndEntities();
+  
+    return recipes.entities.map((recipe, index) => ({
       ...recipe,
-      author: recipe.author ? {
+      author: {
         user_id: recipe.author.user_id,
         username: recipe.author.username,
         first_name: recipe.author.first_name,
         last_name: recipe.author.last_name,
         image: recipe.author.image,
-      } : null,
+      },
       likes: recipe.likes || 0,
-      averageRating: parseFloat(recipe.averageRating?.toString()) || 0,
+      averageRating: parseFloat(recipes.raw[index].recipe_averageRating),
     }));
   }
+  
 
   async getRecipeById(recipeId: number): Promise<any> {
     const recipe = await this.recipeRepository
@@ -57,23 +58,29 @@ export class RecipesService {
       .leftJoin('recipe.likedRecipes', 'likedRecipe')
       .leftJoinAndSelect('recipe.author', 'author')
       .loadRelationCountAndMap('recipe.likes', 'recipe.likedRecipes')
+      .addSelect('COALESCE(AVG(rating.rating), 0)', 'averageRating')
       .where('recipe.recipe_id = :recipeId', { recipeId })
-      .getOne();
-
-    if (!recipe) {
+      .groupBy('recipe.recipe_id, author.user_id, rating.rating_id, step.step_id')
+      .getRawAndEntities();
+  
+    if (!recipe.entities.length) {
       throw new NotFoundException(`recipe-not-found`);
     }
-
+  
+    const recipeEntity = recipe.entities[0];
+    const raw = recipe.raw[0];
+  
     return {
-      ...recipe,
-      author: recipe.author ? {
-        user_id: recipe.author.user_id,
-        username: recipe.author.username,
-        first_name: recipe.author.first_name,
-        last_name: recipe.author.last_name,
-        image: recipe.author.image,
+      ...recipeEntity,
+      author: recipeEntity.author ? {
+        user_id: recipeEntity.author.user_id,
+        username: recipeEntity.author.username,
+        first_name: recipeEntity.author.first_name,
+        last_name: recipeEntity.author.last_name,
+        image: recipeEntity.author.image,
       } : null,
-      likes: recipe.likes || 0,
+      likes: recipeEntity.likes || 0,
+      averageRating: parseFloat(raw.averageRating),
     };
   }
 

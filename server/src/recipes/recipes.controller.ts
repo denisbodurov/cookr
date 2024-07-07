@@ -72,26 +72,4 @@ export class RecipesController {
     return this.recipesService.deleteRecipe(id, user);
   }
 
-  @Post(':id/like')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  async likeRecipe(
-    @Param('id', ParseIntPipe) id: number,
-    @User() user: TokenPayload,
-  ) {
-    await this.recipesService.getRecipeById(id);
-    return this.likedRecipesService.likeRecipe(user.sub, id);
-  }
-
-  @Post(':id/unlike')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  async unlikeRecipe(
-    @Param('id', ParseIntPipe) id: number,
-    @User() user: TokenPayload,
-  ) {
-    await this.recipesService.getRecipeById(id);
-    console.log('THE ID IS: ' + user.sub);
-    return this.likedRecipesService.unlikeRecipe(user.sub, id);
-  }
 }

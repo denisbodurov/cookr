@@ -11,6 +11,9 @@ export class StepEntity {
   recipe: RecipeEntity;
 
   @Column()
+  recipe_id: number;
+
+  @Column()
   step_number: number;
 
   @Column('text')
