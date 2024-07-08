@@ -7,7 +7,7 @@ export class ProductEntity {
   @PrimaryGeneratedColumn()
   product_id: number;
 
-  @Column({ type: 'text', default: '' })
+  @Column({ type: 'text', default: '', nullable: false })
   product_name: string;
 
   @Column({ type: 'text', default: '' })

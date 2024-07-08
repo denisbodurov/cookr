@@ -10,6 +10,7 @@ import {
   UseGuards,
   UseInterceptors,
   ClassSerializerInterceptor,
+  Put,
 } from '@nestjs/common';
 import { RecipesService } from './recipes.service';
 import { RecipeEntity } from './entities/recipe.entity';

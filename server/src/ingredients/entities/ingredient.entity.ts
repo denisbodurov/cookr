@@ -12,9 +12,15 @@ export class IngredientEntity {
   @JoinColumn({ name: 'recipe_id' })
   recipe: RecipeEntity;
 
+  @Column()
+  recipe_id: number;
+
   @ManyToOne(() => ProductEntity, (product) => product.ingredients)
   @JoinColumn({ name: 'product_id' })
   product: ProductEntity;
+
+  @Column()
+  product_id: number;
 
   @Column()
   quantity: number;

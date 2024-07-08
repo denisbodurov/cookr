@@ -3,6 +3,7 @@ import { ProductsService } from './products.service';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { ProductEntity } from './entities/product.entity';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { CreateProductDto } from './dto/create-product.dto';
 
 @ApiTags('products')
 @Controller('products')
@@ -22,7 +23,7 @@ export class ProductController {
   @Post()
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  async createProduct(@Body() createProductDto: ProductEntity): Promise<ProductEntity> {
+  async createProduct(@Body() createProductDto: CreateProductDto): Promise<ProductEntity> {
     return this.productService.createProduct(createProductDto);
   }
 

@@ -24,13 +24,13 @@ export class RatingsController {
     @Body() createRatingDto: CreateRatingDto,
     @User() user: TokenPayload,
   ) {
-    const recipe = await this.recipesService.getRecipeById(recipeId);
+    const recipe = await this.recipesService.getSimpleRecipeById(recipeId);
     return this.ratingsService.createRating(createRatingDto, user, recipe);
   }
 
   @Get()
   async findAll(@Param('recipeId') recipeId: number) {
-    const recipe = await this.recipesService.getRecipeById(recipeId);
+    const recipe = await this.recipesService.getSimpleRecipeById(recipeId);
     return this.ratingsService.getRatingsByRecipe(recipe);
   }
 

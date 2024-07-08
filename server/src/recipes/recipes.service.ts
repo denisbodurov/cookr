@@ -39,11 +39,21 @@ export class RecipesService {
     });
   }
 
-  async getAllRecipes(): Promise<RecipeView[]> {
-    return await this.multiRecipeViewRepository.find();
+  getAllRecipes(): Promise<RecipeView[]> {
+    return this.multiRecipeViewRepository.find();
   }
 
-  async getRecipeById(recipeId: number): Promise<any> {
+  async getSimpleRecipeById(recipeId: number): Promise<RecipeEntity> {
+    const recipe = await this.recipeRepository.findOne({
+      where: { recipe_id: recipeId },
+    });
+    if (!recipe) {
+      throw new NotFoundException(`recipe-not-found`);
+    }
+    return recipe;
+  }
+
+  async getRecipeById(recipeId: number) {
     const recipe = await this.recipeRepository
       .createQueryBuilder('recipe')
       .leftJoinAndSelect('recipe.ratings', 'rating')
@@ -53,7 +63,9 @@ export class RecipesService {
       .loadRelationCountAndMap('recipe.likes', 'recipe.likedRecipes')
       .addSelect('COALESCE(AVG(rating.rating), 0)', 'averageRating')
       .where('recipe.recipe_id = :recipeId', { recipeId })
-      .groupBy('recipe.recipe_id, author.user_id, rating.rating_id, step.step_id')
+      .groupBy(
+        'recipe.recipe_id, author.user_id, rating.rating_id, step.step_id',
+      )
       .getRawAndEntities();
 
     if (!recipe.entities.length) {
@@ -85,33 +97,108 @@ export class RecipesService {
   ): Promise<RecipeEntity> {
     const { name, image, recipe_type, stepsDetails, ingredients } =
       createRecipeDto;
+    const queryRunner = this.entityManager.connection.createQueryRunner();
 
-    // Start a transaction to ensure atomicity of operations
-    return await this.entityManager.transaction(async (transactionalEntityManager) => {
-      try {
-        // Recipe
-        const recipe = new RecipeEntity();
-        recipe.name = name;
-        recipe.image = image;
-        recipe.recipe_type = recipe_type;
-        recipe.author_id = user.sub;
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
-        const savedRecipe = await transactionalEntityManager.save(recipe); //Save Recipe
+    try {
+      // Recipe
+      const recipe = new RecipeEntity();
+      recipe.name = name;
+      recipe.image = image;
+      recipe.recipe_type = recipe_type;
+      recipe.author_id = user.sub;
 
-        // Steps
-        const steps = stepsDetails.map((stepDto) => {
+      const savedRecipe = await queryRunner.manager.save(recipe); // Save Recipe
+
+      // Steps
+      for (const stepDto of stepsDetails) {
+        const step = new StepEntity();
+        step.description = stepDto.description;
+        step.step_number = stepDto.step_number;
+        step.recipe = savedRecipe;
+        await queryRunner.manager.save(step); // Save each step
+      }
+
+      // Ingredients
+      for (const ingredientDto of ingredients) {
+        const product = await this.productRepository.findOne({
+          where: { product_id: ingredientDto.product_id },
+        });
+        if (!product) {
+          throw new BadRequestException('product-not-found');
+        }
+
+        const ingredient = new IngredientEntity();
+        ingredient.product = product;
+        ingredient.quantity = ingredientDto.quantity;
+        ingredient.unit = ingredientDto.unit;
+        ingredient.recipe = savedRecipe;
+        await queryRunner.manager.save(ingredient); // Save each ingredient
+      }
+
+      await queryRunner.commitTransaction();
+      return savedRecipe;
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+  async updateRecipe(
+    id: number,
+    updateRecipeDto: UpdateRecipeDto,
+    user: TokenPayload,
+  ): Promise<RecipeEntity> {
+    const queryRunner =
+      this.recipeRepository.manager.connection.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const recipe = await queryRunner.manager.findOne(RecipeEntity, {
+        where: { recipe_id: id },
+      });
+
+      if (!recipe) {
+        throw new NotFoundException('recipe-not-found');
+      }
+
+      if (recipe.author_id !== user.sub) {
+        throw new UnauthorizedException();
+      }
+
+      recipe.name = updateRecipeDto.name ?? recipe.name;
+      recipe.image = updateRecipeDto.image ?? recipe.image;
+      recipe.recipe_type = updateRecipeDto.recipe_type ?? recipe.recipe_type;
+
+      if (updateRecipeDto.stepsDetails) {
+        await queryRunner.manager.delete(StepEntity, {
+          recipe: { recipe_id: id },
+        });
+
+        const steps = updateRecipeDto.stepsDetails.map((stepDto) => {
           const step = new StepEntity();
           step.description = stepDto.description;
           step.step_number = stepDto.step_number;
-          step.recipe = savedRecipe;
+          step.recipe = recipe;
           return step;
         });
 
-        await transactionalEntityManager.save(StepEntity, steps); // Save steps
+        await queryRunner.manager.save(steps);
+      }
 
-        // Ingredients 
-        const ingredientsEntities = await Promise.all(
-          ingredients.map(async (ingredientDto) => {
+      if (updateRecipeDto.ingredients) {
+        await queryRunner.manager.delete(IngredientEntity, {
+          recipe: { recipe_id: id },
+        });
+
+        const ingredients = updateRecipeDto.ingredients.map(
+          async (ingredientDto) => {
             const product = await this.productRepository.findOne({
               where: { product_id: ingredientDto.product_id },
             });
@@ -123,40 +210,27 @@ export class RecipesService {
             ingredient.product = product;
             ingredient.quantity = ingredientDto.quantity;
             ingredient.unit = ingredientDto.unit;
-            ingredient.recipe = savedRecipe;
+            ingredient.recipe = recipe;
             return ingredient;
-          }),
+          },
         );
 
-        await transactionalEntityManager.save(IngredientEntity, ingredientsEntities); // Save ingredients
-
-        return savedRecipe;
-      } catch (error) {
-        await transactionalEntityManager.queryRunner.rollbackTransaction();
-        throw error;
+        await queryRunner.manager.save(
+          IngredientEntity,
+          await Promise.all(ingredients),
+        );
       }
-    });
-  }
 
-  async updateRecipe(
-    id: number,
-    updateRecipeDto: UpdateRecipeDto,
-    user: TokenPayload,
-  ): Promise<RecipeEntity> {
-    const recipe = await this.getRecipeById(id);
-    if (!recipe) {
-      throw new NotFoundException('recipe-not-found');
+      await queryRunner.manager.save(RecipeEntity, recipe);
+
+      await queryRunner.commitTransaction();
+      return recipe;
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
     }
-    if (recipe.author_id !== user.sub) {
-      throw new UnauthorizedException();
-    }
-
-    await this.recipeRepository.update(id, {
-      ...updateRecipeDto,
-      updated_at: new Date(),
-    });
-
-    return await this.getRecipeById(id);
   }
 
   async deleteRecipe(id: number, user: TokenPayload): Promise<void> {

@@ -4,7 +4,7 @@ import { ProductCategory, ProductType } from "../enums/products.enum";
 export class CreateProductDto {
     @IsNotEmpty()
     @IsString()
-    name: string;
+    product_name: string;
 
     @IsString()
     image: string = '';

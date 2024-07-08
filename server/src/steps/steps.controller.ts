@@ -25,7 +25,7 @@ import { User } from 'src/users/user.decorator';
       @Body() createStepDto: CreateStepDto,
       @User() user: TokenPayload,
     ) {
-      const recipe = await this.recipeService.getRecipeById(recipeId);
+      const recipe = await this.recipeService.getSimpleRecipeById(recipeId);
       return this.stepsService.create(createStepDto, user, recipe);
     }
 
@@ -39,7 +39,7 @@ import { User } from 'src/users/user.decorator';
       @Param('recipeId') recipeId: number,
       @Param('stepNumber') stepNumber: number
     ) {
-      const recipe = await this.recipeService.getRecipeById(recipeId);
+      const recipe = await this.recipeService.getSimpleRecipeById(recipeId);
       return this.stepsService.findOneByStepNumber(stepNumber, recipe);
     }
 
@@ -52,7 +52,7 @@ import { User } from 'src/users/user.decorator';
       @Body() updateStepDto: UpdateStepDto,
       @User() user: TokenPayload,
     ) {
-      const recipe = await this.recipeService.getRecipeById(recipeId);
+      const recipe = await this.recipeService.getSimpleRecipeById(recipeId);
       return this.stepsService.update(stepNumber, updateStepDto, user, recipe);
     }
 
@@ -64,7 +64,7 @@ import { User } from 'src/users/user.decorator';
       @Param('stepNumber') stepNumber: number,
       @User() user: TokenPayload,
     ) {
-      const recipe = await this.recipeService.getRecipeById(recipeId);
+      const recipe = await this.recipeService.getSimpleRecipeById(recipeId);
       return this.stepsService.removeByStepNumber(stepNumber, user, recipe);
     }
 
@@ -72,7 +72,7 @@ import { User } from 'src/users/user.decorator';
     @ApiBearerAuth()
     @Delete()
     async removeAll(@Param('recipeId') recipeId: number, @User() user: TokenPayload,) {
-      const recipe = await this.recipeService.getRecipeById(recipeId);
+      const recipe = await this.recipeService.getSimpleRecipeById(recipeId);
       return this.stepsService.removeAllSteps(recipe, user);
     }
 
@@ -84,7 +84,7 @@ import { User } from 'src/users/user.decorator';
       @Body() updateStepsDto: UpdateAllStepDto[],
       @User() user: TokenPayload,
     ) {
-      const recipe = await this.recipeService.getRecipeById(recipeId);
+      const recipe = await this.recipeService.getSimpleRecipeById(recipeId);
       return this.stepsService.updateAllSteps(updateStepsDto, user, recipe);
     }
   }
