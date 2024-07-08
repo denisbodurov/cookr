@@ -7,6 +7,7 @@ import { RecipeView } from './entities/multi-recipe-view.entity';
 import { IngredientEntity } from 'src/ingredients/entities/ingredient.entity';
 import { ProductEntity } from 'src/products/entities/product.entity';
 import { StepEntity } from 'src/steps/entities/step.entity';
+import { OneRecipeView } from './entities/recipe-view.entity';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { StepEntity } from 'src/steps/entities/step.entity';
       StepEntity,
       IngredientEntity,
       ProductEntity,
+      OneRecipeView
     ]),
   ],
   controllers: [RecipesController],

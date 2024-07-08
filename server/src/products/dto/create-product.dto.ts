@@ -1,17 +1,34 @@
-import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
-import { ProductCategory, ProductType } from "../enums/products.enum";
+import { IsEnum, IsNotEmpty, IsOptional, IsString, IsInt, Min } from 'class-validator';
+import { Units, ProductType } from "../enums/products.enum";
 
 export class CreateProductDto {
     @IsNotEmpty()
     @IsString()
     product_name: string;
 
-    @IsString()
-    image: string = '';
+  @IsOptional()
+  @IsString()
+  image: string = '';
 
-    @IsEnum(ProductType)
-    product_type: ProductType;
+  @IsEnum(Units)
+  unit: Units;
 
-    @IsEnum(ProductCategory)
-    product_category: ProductCategory;
+  @IsInt()
+  @Min(0)
+  carbs: number;
+
+  @IsInt()
+  @Min(0)
+  fats: number;
+
+  @IsInt()
+  @Min(0)
+  protein: number;
+
+  @IsInt()
+  @Min(0)
+  calories: number;
+
+  @IsEnum(ProductType)
+  product_type: ProductType;
 }

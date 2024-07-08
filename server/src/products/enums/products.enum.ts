@@ -7,8 +7,18 @@ export enum ProductType {
     SEAFOOD = 'seafood',
   }
   
-  export enum ProductCategory {
-    PROTEIN = 'protein',
-    CARBS = 'carbs',
-    FATS = 'fats',
+  // export enum ProductCategory {
+  //   PROTEIN = 'protein',
+  //   CARBS = 'carbs',
+  //   FATS = 'fats',
+  // }
+
+  export enum Units {
+    PIECE = 'piece',
+    SLICE = 'slice',
+    FRUIT = 'fruit',
+    GRAM = 'g',
+    OUNCE = 'oz',
+    CUP = 'cup',
+    SERVING = 'serving',
   }

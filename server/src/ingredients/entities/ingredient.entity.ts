@@ -24,7 +24,4 @@ export class IngredientEntity {
 
   @Column()
   quantity: number;
-
-  @Column()
-  unit: string;
 }

@@ -1,6 +1,6 @@
 import { IngredientEntity } from 'src/ingredients/entities/ingredient.entity';
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-import { ProductCategory, ProductType } from '../enums/products.enum';
+import { Units, ProductType } from '../enums/products.enum';
 
 @Entity('products')
 export class ProductEntity {
@@ -22,11 +22,29 @@ export class ProductEntity {
   })
   product_type: ProductType;
 
+  // @Column({
+  //   type: 'enum',
+  //   enum: ProductCategory,
+  // })
+  // product_category: ProductCategory;
+
   @Column({
     type: 'enum',
-    enum: ProductCategory,
+    enum: Units,
   })
-  product_category: ProductCategory;
+  unit: Units;
+
+  @Column({ type: 'int', default: 0 })
+  percent_carbs: number;
+
+  @Column({ type: 'int', default: 0 })
+  percent_fats: number;
+
+  @Column({ type: 'int', default: 0 })
+  percent_protein: number;
+
+  @Column({ type: 'int', default: 0 })
+  calories: number;
 
   @OneToMany(() => IngredientEntity, (ingredient) => ingredient.product)
   ingredients: IngredientEntity[];
