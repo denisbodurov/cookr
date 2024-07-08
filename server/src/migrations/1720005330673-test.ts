@@ -177,6 +177,8 @@ export class Test1720005330673 implements MigrationInterface {
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
             DROP VIEW IF EXISTS recipe_view;
+            DROP VIEW IF EXISTS one_recipe_view;
+
             DROP TABLE IF EXISTS ingredients;
             DROP TABLE IF EXISTS steps;
             DROP TABLE IF EXISTS liked_recipes;

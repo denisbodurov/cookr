@@ -40,7 +40,23 @@ export class RecipesService {
   }
 
   getAllRecipes(): Promise<RecipeView[]> {
-    return this.multiRecipeViewRepository.find();
+    const recipes = this.recipeRepository
+      .createQueryBuilder('recipe')
+      .select([
+        'recipe.recipe_id AS recipe_id',
+        'recipe.name AS recipe_name',
+        'recipe.image AS recipe_image',
+        'recipe.created_at AS created_at',
+        'author.username AS author_username',
+        'CAST(COALESCE(AVG(rating.rating), 0) AS FLOAT) AS average_rating',
+      ])
+      .leftJoin('recipe.author', 'author')
+      .leftJoin('recipe.ratings', 'rating')
+      .groupBy('recipe.recipe_id, author.user_id')
+      .orderBy('recipe.created_at', 'DESC')
+      .getRawMany();
+
+    return recipes;
   }
 
   async getSimpleRecipeById(recipeId: number): Promise<RecipeEntity> {
@@ -56,40 +72,66 @@ export class RecipesService {
   async getRecipeById(recipeId: number) {
     const recipe = await this.recipeRepository
       .createQueryBuilder('recipe')
-      .leftJoinAndSelect('recipe.ratings', 'rating')
-      .leftJoinAndSelect('recipe.stepsDetails', 'step')
+      .select([
+        'recipe.recipe_id AS recipe_id',
+        'recipe.name AS recipe_name',
+        'recipe.image AS recipe_image',
+        'recipe.recipe_type AS recipe_type',
+        'recipe.created_at AS created_at',
+        'recipe.updated_at AS updated_at',
+        'author.user_id AS author_id',
+        'author.username AS author_username',
+        'author.first_name AS author_first_name',
+        'author.last_name AS author_last_name',
+        'COALESCE(COUNT(DISTINCT likedRecipe.like_id), 0) AS like_count',
+        'CAST(COALESCE(AVG(rating.rating), 0) AS FLOAT) AS average_rating',
+      ])
+      .leftJoin('recipe.author', 'author')
       .leftJoin('recipe.likedRecipes', 'likedRecipe')
-      .leftJoinAndSelect('recipe.author', 'author')
-      .loadRelationCountAndMap('recipe.likes', 'recipe.likedRecipes')
-      .addSelect('COALESCE(AVG(rating.rating), 0)', 'averageRating')
+      .leftJoin('recipe.ratings', 'rating')
       .where('recipe.recipe_id = :recipeId', { recipeId })
-      .groupBy(
-        'recipe.recipe_id, author.user_id, rating.rating_id, step.step_id',
-      )
-      .getRawAndEntities();
+      .groupBy('recipe.recipe_id, author.user_id')
+      .getRawOne();
 
-    if (!recipe.entities.length) {
-      throw new NotFoundException(`recipe-not-found`);
+    if (!recipe) {
+      throw new NotFoundException(`Recipe with ID ${recipeId} not found.`);
     }
 
-    const recipeEntity = recipe.entities[0];
-    const raw = recipe.raw[0];
+    const steps = await this.recipeRepository
+      .createQueryBuilder('recipe')
+      .select([
+        'step.step_id AS step_id',
+        'step.step_number AS step_number',
+        'step.description AS description',
+      ])
+      .leftJoin('recipe.stepsDetails', 'step')
+      .where('recipe.recipe_id = :recipeId', { recipeId })
+      .orderBy('step.step_number', 'ASC')
+      .getRawMany();
 
-    return {
-      ...recipeEntity,
-      author: recipeEntity.author
-        ? {
-            user_id: recipeEntity.author.user_id,
-            username: recipeEntity.author.username,
-            first_name: recipeEntity.author.first_name,
-            last_name: recipeEntity.author.last_name,
-            image: recipeEntity.author.image,
-          }
-        : null,
-      likes: recipeEntity.likes || 0,
-      averageRating: parseFloat(raw.averageRating),
-    };
+    const ingredients = await this.recipeRepository
+      .createQueryBuilder('recipe')
+      .select([
+        'ingredient.ingredient_id AS ingredient_id',
+        'ingredient.quantity AS quantity',
+        'product.product_id AS product_id',
+        'product.product_name AS product_name',
+        'product.image AS product_image',
+        'product.unit AS unit',
+        'product.percent_carbs AS percent_carbs',
+        'product.percent_fats AS percent_fats',
+        'product.percent_protein AS percent_protein',
+        'product.calories AS calories',
+        'product.product_type AS product_type',
+      ])
+      .leftJoin('recipe.ingredients', 'ingredient')
+      .leftJoin('ingredient.product', 'product')
+      .where('recipe.recipe_id = :recipeId', { recipeId })
+      .getRawMany();
+
+    return {recipe, steps, ingredients};
   }
+
 
   async createRecipe(
     createRecipeDto: CreateRecipeDto,
@@ -133,7 +175,7 @@ export class RecipesService {
         const ingredient = new IngredientEntity();
         ingredient.product = product;
         ingredient.quantity = ingredientDto.quantity;
-        ingredient.unit = ingredientDto.unit;
+        //ingredient.unit = ingredientDto.unit;
         ingredient.recipe = savedRecipe;
         await queryRunner.manager.save(ingredient); // Save each ingredient
       }
@@ -209,7 +251,7 @@ export class RecipesService {
             const ingredient = new IngredientEntity();
             ingredient.product = product;
             ingredient.quantity = ingredientDto.quantity;
-            ingredient.unit = ingredientDto.unit;
+            //ingredient.unit = ingredientDto.unit;
             ingredient.recipe = recipe;
             return ingredient;
           },
@@ -238,7 +280,7 @@ export class RecipesService {
     if (!recipe) {
       throw new NotFoundException('recipe-not-found');
     }
-    if (recipe.author_id !== user.sub) {
+    if (recipe.recipe.author_id !== user.sub) {
       throw new UnauthorizedException();
     }
     await this.recipeRepository.delete(id);
