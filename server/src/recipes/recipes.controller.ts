@@ -20,12 +20,12 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { User } from 'src/users/user.decorator';
 import { TokenPayload } from 'src/auth/models/token.model';
 import { LikedRecipesService } from 'src/liked_recipes/liked_recipes.service';
+import { RecipeView } from './entities/multi-recipe-view.entity';
 
 @ApiTags('recipes')
 @Controller('recipes')
 export class RecipesController {
   constructor(
-    private readonly likedRecipesService: LikedRecipesService,
     private readonly recipesService: RecipesService,
   ) {}
 
@@ -47,7 +47,7 @@ export class RecipesController {
 
   @Get()
   @UseInterceptors(ClassSerializerInterceptor)
-  async getAllRecipes(): Promise<RecipeEntity[]> {
+  async getAllRecipes(): Promise<RecipeView[]> {
     return this.recipesService.getAllRecipes();
   }
 

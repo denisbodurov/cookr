@@ -1,20 +1,35 @@
 import {
+  BadRequestException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
+import { EntityManager, Repository, getManager } from 'typeorm';
 import { RecipeEntity } from './entities/recipe.entity';
 import { CreateRecipeDto } from './dto/create-recipe.dto';
 import { UpdateRecipeDto } from './dto/update-recipe.dto';
 import { TokenPayload } from 'src/auth/models/token.model';
+import { RecipeView } from './entities/multi-recipe-view.entity';
+import { StepEntity } from 'src/steps/entities/step.entity';
+import { IngredientEntity } from 'src/ingredients/entities/ingredient.entity';
+import { ProductEntity } from 'src/products/entities/product.entity';
 
 @Injectable()
 export class RecipesService {
   constructor(
     @InjectRepository(RecipeEntity)
     private readonly recipeRepository: Repository<RecipeEntity>,
+    @InjectRepository(RecipeView)
+    private readonly multiRecipeViewRepository: Repository<RecipeView>,
+    @InjectRepository(StepEntity)
+    private readonly stepRepository: Repository<StepEntity>,
+    @InjectRepository(IngredientEntity)
+    private readonly ingredientRepository: Repository<IngredientEntity>,
+    @InjectRepository(ProductEntity)
+    private readonly productRepository: Repository<ProductEntity>,
+    @InjectEntityManager()
+    private readonly entityManager: EntityManager,
   ) {}
 
   async getRecipesByUserId(id: number): Promise<RecipeEntity[]> {
@@ -24,31 +39,9 @@ export class RecipesService {
     });
   }
 
-  async getAllRecipes(): Promise<any[]> {
-    const recipes = await this.recipeRepository
-      .createQueryBuilder('recipe')
-      .leftJoinAndSelect('recipe.author', 'author')
-      .leftJoin('recipe.ratings', 'rating')
-      .leftJoin('recipe.likedRecipes', 'likedRecipe')
-      .loadRelationCountAndMap('recipe.likes', 'recipe.likedRecipes')
-      .addSelect('COALESCE(AVG(rating.rating), 0)', 'recipe_averageRating')
-      .groupBy('recipe.recipe_id, author.user_id')
-      .getRawAndEntities();
-  
-    return recipes.entities.map((recipe, index) => ({
-      ...recipe,
-      author: {
-        user_id: recipe.author.user_id,
-        username: recipe.author.username,
-        first_name: recipe.author.first_name,
-        last_name: recipe.author.last_name,
-        image: recipe.author.image,
-      },
-      likes: recipe.likes || 0,
-      averageRating: parseFloat(recipes.raw[index].recipe_averageRating),
-    }));
+  async getAllRecipes(): Promise<RecipeView[]> {
+    return await this.multiRecipeViewRepository.find();
   }
-  
 
   async getRecipeById(recipeId: number): Promise<any> {
     const recipe = await this.recipeRepository
@@ -62,23 +55,25 @@ export class RecipesService {
       .where('recipe.recipe_id = :recipeId', { recipeId })
       .groupBy('recipe.recipe_id, author.user_id, rating.rating_id, step.step_id')
       .getRawAndEntities();
-  
+
     if (!recipe.entities.length) {
       throw new NotFoundException(`recipe-not-found`);
     }
-  
+
     const recipeEntity = recipe.entities[0];
     const raw = recipe.raw[0];
-  
+
     return {
       ...recipeEntity,
-      author: recipeEntity.author ? {
-        user_id: recipeEntity.author.user_id,
-        username: recipeEntity.author.username,
-        first_name: recipeEntity.author.first_name,
-        last_name: recipeEntity.author.last_name,
-        image: recipeEntity.author.image,
-      } : null,
+      author: recipeEntity.author
+        ? {
+            user_id: recipeEntity.author.user_id,
+            username: recipeEntity.author.username,
+            first_name: recipeEntity.author.first_name,
+            last_name: recipeEntity.author.last_name,
+            image: recipeEntity.author.image,
+          }
+        : null,
       likes: recipeEntity.likes || 0,
       averageRating: parseFloat(raw.averageRating),
     };
@@ -88,14 +83,59 @@ export class RecipesService {
     createRecipeDto: CreateRecipeDto,
     user: TokenPayload,
   ): Promise<RecipeEntity> {
-    const recipe = this.recipeRepository.create({
-      author_id: user.sub,
-      ...createRecipeDto,
-      created_at: new Date(),
-      updated_at: new Date(),
-    });
+    const { name, image, recipe_type, stepsDetails, ingredients } =
+      createRecipeDto;
 
-    return await this.recipeRepository.save(recipe);
+    // Start a transaction to ensure atomicity of operations
+    return await this.entityManager.transaction(async (transactionalEntityManager) => {
+      try {
+        // Recipe
+        const recipe = new RecipeEntity();
+        recipe.name = name;
+        recipe.image = image;
+        recipe.recipe_type = recipe_type;
+        recipe.author_id = user.sub;
+
+        const savedRecipe = await transactionalEntityManager.save(recipe); //Save Recipe
+
+        // Steps
+        const steps = stepsDetails.map((stepDto) => {
+          const step = new StepEntity();
+          step.description = stepDto.description;
+          step.step_number = stepDto.step_number;
+          step.recipe = savedRecipe;
+          return step;
+        });
+
+        await transactionalEntityManager.save(StepEntity, steps); // Save steps
+
+        // Ingredients 
+        const ingredientsEntities = await Promise.all(
+          ingredients.map(async (ingredientDto) => {
+            const product = await this.productRepository.findOne({
+              where: { product_id: ingredientDto.product_id },
+            });
+            if (!product) {
+              throw new BadRequestException('product-not-found');
+            }
+
+            const ingredient = new IngredientEntity();
+            ingredient.product = product;
+            ingredient.quantity = ingredientDto.quantity;
+            ingredient.unit = ingredientDto.unit;
+            ingredient.recipe = savedRecipe;
+            return ingredient;
+          }),
+        );
+
+        await transactionalEntityManager.save(IngredientEntity, ingredientsEntities); // Save ingredients
+
+        return savedRecipe;
+      } catch (error) {
+        await transactionalEntityManager.queryRunner.rollbackTransaction();
+        throw error;
+      }
+    });
   }
 
   async updateRecipe(

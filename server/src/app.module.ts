@@ -11,8 +11,7 @@ import { LikedRecipesModule } from './liked_recipes/liked_recipes.module';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { typeOrmAsyncConfig } from "./config/typeorm.config"
 import { throttlerAsyncConfig } from './config/throttler.config';
-import { StepsModule } from './steps/steps.module';
-import { IngredientsModule } from './ingredients/ingredients.module';
+import { ProductModule } from './products/products.module';
 
 @Module({
   imports: [
@@ -24,10 +23,9 @@ import { IngredientsModule } from './ingredients/ingredients.module';
     AuthModule,
     RecipesModule,
     UsersModule,
+    ProductModule,
     RatingsModule,
     LikedRecipesModule,
-    StepsModule,
-    IngredientsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

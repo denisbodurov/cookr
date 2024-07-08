@@ -1,10 +1,10 @@
-import { MigrationInterface, QueryRunner } from "typeorm";
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class Test1720005330673 implements MigrationInterface {
-    name = 'Test1720005330673'
+  name = 'Test1720005330673';
 
-    public async up(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`
+  public async up(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(`
             CREATE TYPE recipe_type AS ENUM('breakfast', 'lunch', 'dinner', 'dessert', 'snack');
             CREATE TYPE product_category AS ENUM('protein', 'carbs', 'fats');
 
@@ -78,11 +78,42 @@ export class Test1720005330673 implements MigrationInterface {
                 FOREIGN KEY (recipe_id) REFERENCES recipes(recipe_id),
                 FOREIGN KEY (product_id) REFERENCES products(product_id)
             );
-        `);
-    }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`
+            CREATE VIEW recipe_view AS
+            SELECT
+            r.recipe_id,
+            r.name AS recipe_name,
+            r.image AS recipe_image,
+            r.recipe_type,
+            r.created_at,
+            r.updated_at,
+            u.user_id AS author_id,
+            u.username AS author_username,
+            u.first_name AS author_first_name,
+            u.last_name AS author_last_name,
+            CAST(COUNT(DISTINCT lr.like_id) AS INTEGER) AS like_count,
+            AVG(rt.rating) AS average_rating
+            FROM recipes r
+            JOIN users u ON r.author_id = u.user_id
+            LEFT JOIN ratings rt ON r.recipe_id = rt.rated_id
+            LEFT JOIN liked_recipes lr ON r.recipe_id = lr.recipe_id
+            GROUP BY
+            r.recipe_id,
+            r.name,
+            r.image,
+            r.recipe_type,
+            r.created_at,
+            r.updated_at,
+            u.user_id,
+            u.username,
+            u.first_name,
+            u.last_name;
+        `);
+  }
+
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(`
+            DROP VIEW IF EXISTS recipe_view;
             DROP TABLE IF EXISTS ingredients;
             DROP TABLE IF EXISTS steps;
             DROP TABLE IF EXISTS liked_recipes;
@@ -95,5 +126,5 @@ export class Test1720005330673 implements MigrationInterface {
             DROP TYPE IF EXISTS product_type;
             DROP TYPE IF EXISTS product_category;
         `);
-    }
+  }
 }
