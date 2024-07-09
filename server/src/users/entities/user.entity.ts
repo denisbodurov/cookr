@@ -24,9 +24,6 @@ export class UserEntity {
   email: string;
 
   @Column({ default: '' })
-  bio: string;
-
-  @Column({ default: '' })
   image: string;
 
   @Column()

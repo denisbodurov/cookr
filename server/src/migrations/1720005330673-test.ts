@@ -16,7 +16,7 @@ export class Test1720005330673 implements MigrationInterface {
                 first_name VARCHAR(255) NOT NULL,
                 last_name VARCHAR(255) NOT NULL,
                 email VARCHAR(255) NOT NULL,
-                bio TEXT DEFAULT '',
+                -- bio TEXT DEFAULT '',
                 image TEXT DEFAULT '',
                 password VARCHAR(255) NOT NULL,
                 UNIQUE (username, email)
