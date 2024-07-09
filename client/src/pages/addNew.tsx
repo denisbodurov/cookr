@@ -109,51 +109,53 @@ const AddNew: React.FC = () => {
   }
 
   return (
-    <div className="flex flex-col items-center bg-backgroundLight">
-      <div className="w-3/4 flex flex-col items-start my-20 bg-backgroundLight">
+    <div className="flex flex-col items-center bg-backgroundLight p-10 phone:p-2">
+      <div className="w-full tablet:w-full flex flex-col items-start my-20 phone:my-2 bg-backgroundLight">
         <Typography
           variant="h4"
           className="text-textLight w-full text-center mb-20"
         >
           ADD NEW RECIPE
         </Typography>
-        <div className="flex flex-row w-full">
-          <div className="p-10 w-2/4 flex">
-            <div className="flex bg-backgroundLight flex-col justify-start ">
+        <div className="flex flex-row phone:flex-col w-full phone:items-center ">
+          <div className="p-10 phone:p-2 w-2/4 flex phone:w-full">
+            <div className="flex bg-backgroundLight flex-col justify-start  ">
               <div className="flex flex-col items-start w-full my-5 bg-backgroundLight ">
                 <Typography className="text-3xl">1. Select Category</Typography>
               </div>
-              <div className="flex flex-row items-center justify-center flex-wrap w-full py-3 bg-secondary rounded-md shadow-md mb-2">
-                <CategoryCard
-                  imageSource="../public/snack.jpg"
-                  categoryName="SNACKS"
-                  circle={true}
-                />
-                <CategoryCard
-                  imageSource="../public/snack.jpg"
-                  categoryName="SNACKS"
-                  circle={true}
-                />
-                <CategoryCard
-                  imageSource="../public/snack.jpg"
-                  categoryName="SNACKS"
-                  circle={true}
-                />
-                <CategoryCard
-                  imageSource="../public/snack.jpg"
-                  categoryName="SNACKS"
-                  circle={true}
-                />
-                <CategoryCard
-                  imageSource="../public/snack.jpg"
-                  categoryName="SNACKS"
-                  circle={true}
-                />
-                <CategoryCard
-                  imageSource="../public/snack.jpg"
-                  categoryName="SNACKS"
-                  circle={true}
-                />
+              <div className="flex justify-center items-center">
+                <div className="flex flex-row gap-5 items-center justify-start flex-wrap rounded-md">
+                  <CategoryCard
+                    imageSource="../public/snack.jpg"
+                    categoryName="SNACKS"
+                    circle={true}
+                  />
+                  <CategoryCard
+                    imageSource="../public/snack.jpg"
+                    categoryName="SNACKS"
+                    circle={true}
+                  />
+                  <CategoryCard
+                    imageSource="../public/snack.jpg"
+                    categoryName="SNACKS"
+                    circle={true}
+                  />
+                  <CategoryCard
+                    imageSource="../public/snack.jpg"
+                    categoryName="SNACKS"
+                    circle={true}
+                  />
+                  <CategoryCard
+                    imageSource="../public/snack.jpg"
+                    categoryName="SNACKS"
+                    circle={true}
+                  />
+                  <CategoryCard
+                    imageSource="../public/snack.jpg"
+                    categoryName="SNACKS"
+                    circle={true}
+                  />
+                </div>
               </div>
               <div className="flex flex-col items-start w-full my-5 bg-backgroundLight ">
                 <Typography className="text-3xl">2. Set Name</Typography>
@@ -249,22 +251,25 @@ const AddNew: React.FC = () => {
               </div>
             </div>
           </div>
-          <div className="p-10 w-2/4">
+          <div className="p-10 phone:p-2 w-2/4 phone:w-full">
             <div className="flex flex-col items-start w-full my-5 bg-backgroundLight ">
               <Typography className="text-3xl">5. Upload Photo</Typography>
             </div>
-            <div className="flex flex-row items-center justify-center flex-wrap w-5/6 p-5 bg-backgroundLight">
+            <div className="flex flex-row items-center justify-center flex-wrap w-full p-5 bg-backgroundLight">
               <ImageUploader />
             </div>
             <div className="flex flex-col items-start w-full my-5 bg-backgroundLight ">
-                <Typography className="text-3xl">Steps</Typography>
-              </div>
-            <div className="flex flex-row items-center justify-center flex-wrap  w-5/6 bg-backgroundLight">
+              <Typography className="text-3xl">Steps</Typography>
+            </div>
+            <div className="flex flex-row items-center justify-center flex-wrap  w-full bg-backgroundLight">
               <Timeline>
                 {timelineItems.map((item, index) => (
                   <TimelineItem key={index}>
                     <TimelineSeparator>
-                      <TimelineDot onClick={(e) => handleDotClick(e, index)} />
+                      <TimelineDot
+                        className="hover:bg-highLight"
+                        onClick={(e) => handleDotClick(e, index)}
+                      />
                       {index < timelineItems.length - 1 && (
                         <TimelineConnector />
                       )}
@@ -276,6 +281,7 @@ const AddNew: React.FC = () => {
                             value={editingText}
                             onChange={(e) => setEditingText(e.target.value)}
                           />
+                          <Button onClick={handleSaveEdit}>Save</Button>
                           <Button onClick={handleSaveEdit}>Save</Button>
                         </div>
                       ) : (
