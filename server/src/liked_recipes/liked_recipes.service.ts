@@ -45,7 +45,7 @@ export class LikedRecipesService {
     const recipes = await this.recipesRepository
       .createQueryBuilder('recipe')
       .leftJoin('recipe.ratings', 'rating')
-      .select(['recipe.recipe_id', 'recipe.name', 'recipe.image'])
+      .select(['recipe.recipe_id', 'recipe.name', 'recipe.image', 'recipe.recipe_type'])
       .leftJoin('recipe.author', 'author')
       .addSelect([
         'author.username',
@@ -54,14 +54,13 @@ export class LikedRecipesService {
         'author.image',
       ])
       .addSelect('COALESCE(AVG(rating.rating), 0)', 'averageRating')
-      .addSelect('TRUE', 'recipe_saved')
-      .innerJoin('recipe.likedRecipes', 'likedRecipe', 'likedRecipe.user_id = :userId')
-      .setParameter('userId', userId)
-      .groupBy('recipe.recipe_id, author.user_id')
+      .leftJoin('recipe.likedRecipes', 'liked')
+      .addSelect(['liked.user_id', 'liked.recipe_id'])
+      .groupBy('recipe.recipe_id, author.user_id, liked.user_id, liked.recipe_id, liked.like_id')
       .getRawAndEntities();
 
     if (!recipes.entities.length) {
-      throw new NotFoundException(`No liked recipes found for user with ID ${userId}`);
+      throw new NotFoundException(`user-has-no-liked-recipes`);
     }
 
     return recipes.entities.map((recipeEntity, index) => {
@@ -69,7 +68,6 @@ export class LikedRecipesService {
       return {
         ...recipeEntity,
         averageRating: parseFloat(raw.averageRating),
-        recipe_saved: true
       };
     });
 }

@@ -28,7 +28,12 @@ export class RecipesService {
     const recipes = await this.recipeRepository
       .createQueryBuilder('recipe')
       .leftJoin('recipe.ratings', 'rating')
-      .select(['recipe.recipe_id', 'recipe.name'])
+      .select([
+        'recipe.recipe_id',
+        'recipe.name',
+        'recipe.image',
+        'recipe.recipe_type',
+      ])
       .leftJoin('recipe.author', 'author')
       .where('author.user_id = :userId', { userId })
       .addSelect([
@@ -55,11 +60,29 @@ export class RecipesService {
     });
   }
 
-  async getAllRecipes(user: TokenPayload) {
+  async getAllRecipes(query) {
+    let conditions = '1=1';
+
+    // Concatenate conditions
+    if (query.recipeType) {
+      conditions += ` AND recipe.recipe_type = '${query.recipeType}'`;
+    }
+    if (query.productCategory) {
+      conditions += ` AND recipe.product_category = '${query.productCategory}'`;
+    }
+    if (query.name) {
+      conditions += ` AND recipe.name LIKE '%${query.name}%'`;
+    }
+
     const recipes = await this.recipeRepository
       .createQueryBuilder('recipe')
       .leftJoin('recipe.ratings', 'rating')
-      .select(['recipe.recipe_id', 'recipe.name', 'recipe.image'])
+      .select([
+        'recipe.recipe_id',
+        'recipe.name',
+        'recipe.image',
+        'recipe.recipe_type',
+      ])
       .leftJoin('recipe.author', 'author')
       .addSelect([
         'author.username',
@@ -70,6 +93,7 @@ export class RecipesService {
       .addSelect('COALESCE(AVG(rating.rating), 0)', 'averageRating')
       .leftJoin('recipe.likedRecipes', 'liked')
       .addSelect(['liked.user_id', 'liked.recipe_id'])
+      .where(conditions)
       .groupBy(
         'recipe.recipe_id, author.user_id, liked.recipe_id, liked.user_id, liked.like_id',
       )
@@ -102,7 +126,12 @@ export class RecipesService {
     const recipe = await this.recipeRepository
       .createQueryBuilder('recipe')
       .leftJoin('recipe.ratings', 'rating')
-      .select(['recipe.name', 'rating.rating'])
+      .select([
+        'recipe.name',
+        'rating.rating',
+        'recipe.image',
+        'recipe.recipe_type',
+      ])
       .leftJoin('rating.rater', 'ratingAuthor')
       .addSelect([
         'ratingAuthor.user_id',
