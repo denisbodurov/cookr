@@ -20,8 +20,6 @@ export class RecipesService {
   constructor(
     @InjectRepository(RecipeEntity)
     private readonly recipeRepository: Repository<RecipeEntity>,
-    @InjectRepository(RecipeView)
-    private readonly multiRecipeViewRepository: Repository<RecipeView>,
     @InjectRepository(ProductEntity)
     private readonly productRepository: Repository<ProductEntity>,
   ) {}
@@ -70,7 +68,7 @@ export class RecipesService {
     const recipes = await this.recipeRepository
       .createQueryBuilder('recipe')
       .leftJoin('recipe.ratings', 'rating')
-      .select(['recipe.recipe_id', 'recipe.name'])
+      .select(['recipe.recipe_id', 'recipe.name', 'recipe.image'])
       .leftJoin('recipe.author', 'author')
       .addSelect([
         'author.username',

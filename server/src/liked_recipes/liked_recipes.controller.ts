@@ -23,12 +23,12 @@ export class LikedRecipesController {
     private readonly recipesService: RecipesService,
   ) {}
 
-  @Get('/user/:userId')
+  @Get('/user')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @UseInterceptors(ClassSerializerInterceptor)
-  async getLikedRecipesByUserId(@Param('userId') userId: number) {
-    return this.likedRecipesService.getLikedRecipesByUserId(userId);
+  async getLikedRecipesByUserId(@User() user: TokenPayload,) {
+    return this.likedRecipesService.getLikedRecipesByUserId(user.sub);
   }
 
   @Post(':recipeId/like')

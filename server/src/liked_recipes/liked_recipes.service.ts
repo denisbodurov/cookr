@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { LikedRecipesEntity } from './entities/liked_recipe.entity';
@@ -6,9 +6,12 @@ import { RecipeEntity } from 'src/recipes/entities/recipe.entity';
 
 @Injectable()
 export class LikedRecipesService {
+  recipeRepository: any;
   constructor(
     @InjectRepository(LikedRecipesEntity)
     private readonly likedRecipesRepository: Repository<LikedRecipesEntity>,
+    @InjectRepository(RecipeEntity)
+    private readonly recipesRepository: Repository<LikedRecipesEntity>,
   ) {}
 
   async likeRecipe(userId: number, recipeId: number) {
@@ -39,11 +42,36 @@ export class LikedRecipesService {
   }
 
   async getLikedRecipesByUserId(userId: number) {
-    const likedRecipes = await this.likedRecipesRepository.find({
-      where: { user_id: userId },
-      relations: ['recipe', 'recipe.author'],
-    });
+    const recipes = await this.recipesRepository
+      .createQueryBuilder('recipe')
+      .leftJoin('recipe.ratings', 'rating')
+      .select(['recipe.recipe_id', 'recipe.name', 'recipe.image'])
+      .leftJoin('recipe.author', 'author')
+      .addSelect([
+        'author.username',
+        'author.first_name',
+        'author.last_name',
+        'author.image',
+      ])
+      .addSelect('COALESCE(AVG(rating.rating), 0)', 'averageRating')
+      .addSelect('TRUE', 'recipe_saved')
+      .innerJoin('recipe.likedRecipes', 'likedRecipe', 'likedRecipe.user_id = :userId')
+      .setParameter('userId', userId)
+      .groupBy('recipe.recipe_id, author.user_id')
+      .getRawAndEntities();
 
-    return likedRecipes.map((likedRecipe) => likedRecipe.recipe);
-  }
+    if (!recipes.entities.length) {
+      throw new NotFoundException(`No liked recipes found for user with ID ${userId}`);
+    }
+
+    return recipes.entities.map((recipeEntity, index) => {
+      const raw = recipes.raw[index];
+      return {
+        ...recipeEntity,
+        averageRating: parseFloat(raw.averageRating),
+        recipe_saved: true
+      };
+    });
+}
+
 }
