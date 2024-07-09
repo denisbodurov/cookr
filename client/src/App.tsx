@@ -10,13 +10,14 @@ import RecipePage from "./pages/recipe-page.tsx";
 import AllRecipes from "./pages/all-recipes.tsx";
 import ProfilePage from "./pages/profile-page.tsx";
 const App: React.FC = () => {
+  
   return (
     <Router>
       <div>
         <Header />
 
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/home" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/add-new" element={<AddNew />} />
