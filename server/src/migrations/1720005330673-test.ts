@@ -30,7 +30,7 @@ export class Test1720005330673 implements MigrationInterface {
                 recipe_type recipe_type,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (author_id) REFERENCES users(user_id)
+                FOREIGN KEY (author_id) REFERENCES users(user_id) ON DELETE CASCADE
             );
 
             CREATE TABLE IF NOT EXISTS ratings (
@@ -40,8 +40,8 @@ export class Test1720005330673 implements MigrationInterface {
                 rating INT,
                 description TEXT,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (rater_id) REFERENCES users(user_id),
-                FOREIGN KEY (rated_id) REFERENCES recipes(recipe_id)
+                FOREIGN KEY (rater_id) REFERENCES users(user_id) ON DELETE CASCADE,
+                FOREIGN KEY (rated_id) REFERENCES recipes(recipe_id) ON DELETE CASCADE
             );
 
             CREATE TABLE IF NOT EXISTS products (
@@ -75,8 +75,8 @@ export class Test1720005330673 implements MigrationInterface {
                 like_id SERIAL PRIMARY KEY,
                 recipe_id INT,
                 user_id INT,
-                FOREIGN KEY (user_id) REFERENCES users(user_id),
-                FOREIGN KEY (recipe_id) REFERENCES recipes(recipe_id)
+                FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+                FOREIGN KEY (recipe_id) REFERENCES recipes(recipe_id) ON DELETE CASCADE
             );
 
             CREATE TABLE IF NOT EXISTS steps (
@@ -84,7 +84,7 @@ export class Test1720005330673 implements MigrationInterface {
                 recipe_id INT NOT NULL,
                 step_number INT NOT NULL,
                 description TEXT NOT NULL,
-                FOREIGN KEY (recipe_id) REFERENCES recipes(recipe_id),
+                FOREIGN KEY (recipe_id) REFERENCES recipes(recipe_id) ON DELETE CASCADE,
                 UNIQUE (recipe_id, step_number)
             );
 
@@ -93,8 +93,8 @@ export class Test1720005330673 implements MigrationInterface {
                 recipe_id INT NOT NULL,
                 product_id INT NOT NULL,
                 quantity DECIMAL NOT NULL,
-                FOREIGN KEY (recipe_id) REFERENCES recipes(recipe_id),
-                FOREIGN KEY (product_id) REFERENCES products(product_id)
+                FOREIGN KEY (recipe_id) REFERENCES recipes(recipe_id) ON DELETE CASCADE,
+                FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE
             );
 
             CREATE VIEW recipe_view AS

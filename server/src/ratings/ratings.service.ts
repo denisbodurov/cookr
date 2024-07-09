@@ -22,7 +22,7 @@ export class RatingsService {
     createRatingDto: CreateRatingDto,
     user: TokenPayload,
     recipe: RecipeEntity,
-  ): Promise<RatingEntity> {
+  ) {
     const existingRating = await this.ratingsRepository.findOne({
       where: { rater_id: user.sub, rated_id: recipe.recipe_id },
     });
@@ -63,7 +63,7 @@ export class RatingsService {
     ratingId: number,
     updateRatingDto: UpdateRatingDto,
     user: TokenPayload,
-  ): Promise<RatingEntity> {
+  ) {
     const existingRating = await this.ratingsRepository.findOne({
       where: { rating_id: ratingId, rater_id: user.sub },
     });

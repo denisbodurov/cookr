@@ -4,8 +4,8 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
-import { EntityManager, Repository, getManager } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { RecipeEntity } from './entities/recipe.entity';
 import { CreateRecipeDto } from './dto/create-recipe.dto';
 import { UpdateRecipeDto } from './dto/update-recipe.dto';
@@ -22,41 +22,88 @@ export class RecipesService {
     private readonly recipeRepository: Repository<RecipeEntity>,
     @InjectRepository(RecipeView)
     private readonly multiRecipeViewRepository: Repository<RecipeView>,
-    @InjectRepository(StepEntity)
-    private readonly stepRepository: Repository<StepEntity>,
-    @InjectRepository(IngredientEntity)
-    private readonly ingredientRepository: Repository<IngredientEntity>,
     @InjectRepository(ProductEntity)
     private readonly productRepository: Repository<ProductEntity>,
-    @InjectEntityManager()
-    private readonly entityManager: EntityManager,
   ) {}
 
-  async getRecipesByUserId(id: number): Promise<RecipeEntity[]> {
-    return await this.recipeRepository.find({
-      where: { author_id: id },
-      relations: ['author', 'ratings', 'stepsDetails'],
+  async getRecipesByUserId(userId: number, user: TokenPayload) {
+    const senderId = user ? user.sub : null;
+
+    const recipes = await this.recipeRepository
+      .createQueryBuilder('recipe')
+      .leftJoin('recipe.ratings', 'rating')
+      .select(['recipe.recipe_id', 'recipe.name'])
+      .leftJoin('recipe.author', 'author')
+      .where('author.user_id = :userId', { userId })
+      .addSelect([
+        'author.username',
+        'author.first_name',
+        'author.last_name',
+        'author.image',
+      ])
+      .addSelect('COALESCE(AVG(rating.rating), 0)', 'averageRating')
+      .addSelect(
+        `CASE WHEN EXISTS (
+          SELECT 1 
+          FROM liked_recipes liked 
+          WHERE liked.recipe_id = recipe.recipe_id 
+            AND liked.user_id = :userId
+        ) THEN TRUE ELSE FALSE END`,
+        'recipe_saved',
+      )
+      .setParameter('userId', userId)
+      .groupBy('recipe.recipe_id, author.user_id')
+      .getRawAndEntities();
+
+    return recipes.entities.map((recipeEntity, index) => {
+      const raw = recipes.raw[index];
+      return {
+        ...recipeEntity,
+        averageRating: parseFloat(raw.averageRating),
+        recipe_saved: userId ? raw.recipe_saved : false,
+      };
     });
   }
 
-  getAllRecipes(): Promise<RecipeView[]> {
-    const recipes = this.recipeRepository
+  async getAllRecipes(user: TokenPayload) {
+    const userId = user ? user.sub : null;
+    const recipes = await this.recipeRepository
       .createQueryBuilder('recipe')
-      .select([
-        'recipe.recipe_id AS recipe_id',
-        'recipe.name AS recipe_name',
-        'recipe.image AS recipe_image',
-        'recipe.created_at AS created_at',
-        'author.username AS author_username',
-        'CAST(COALESCE(AVG(rating.rating), 0) AS FLOAT) AS average_rating',
-      ])
-      .leftJoin('recipe.author', 'author')
       .leftJoin('recipe.ratings', 'rating')
+      .select(['recipe.recipe_id', 'recipe.name'])
+      .leftJoin('recipe.author', 'author')
+      .addSelect([
+        'author.username',
+        'author.first_name',
+        'author.last_name',
+        'author.image',
+      ])
+      .addSelect('COALESCE(AVG(rating.rating), 0)', 'averageRating')
+      .addSelect(
+        `CASE WHEN EXISTS (
+          SELECT 1 
+          FROM liked_recipes liked 
+          WHERE liked.recipe_id = recipe.recipe_id 
+            AND liked.user_id = :userId
+        ) THEN TRUE ELSE FALSE END`,
+        'recipe_saved',
+      )
+      .setParameter('userId', userId)
       .groupBy('recipe.recipe_id, author.user_id')
-      .orderBy('recipe.created_at', 'DESC')
-      .getRawMany();
+      .getRawAndEntities();
 
-    return recipes;
+    if (!recipes.entities.length) {
+      throw new NotFoundException(`recipes-not-found`);
+    }
+
+    return recipes.entities.map((recipeEntity, index) => {
+      const raw = recipes.raw[index];
+      return {
+        ...recipeEntity,
+        averageRating: parseFloat(raw.averageRating),
+        recipe_saved: userId ? raw.recipe_saved : false,
+      };
+    });
   }
 
   async getSimpleRecipeById(recipeId: number): Promise<RecipeEntity> {
@@ -69,69 +116,77 @@ export class RecipesService {
     return recipe;
   }
 
-  async getRecipeById(recipeId: number) {
+  async getRecipeById(recipeId: number, user: TokenPayload) {
+    const userId = user ? user.sub : null;
+
     const recipe = await this.recipeRepository
       .createQueryBuilder('recipe')
-      .select([
-        'recipe.recipe_id AS recipe_id',
-        'recipe.name AS recipe_name',
-        'recipe.image AS recipe_image',
-        'recipe.recipe_type AS recipe_type',
-        'recipe.created_at AS created_at',
-        'recipe.updated_at AS updated_at',
-        'author.user_id AS author_id',
-        'author.username AS author_username',
-        'author.first_name AS author_first_name',
-        'author.last_name AS author_last_name',
-        'COALESCE(COUNT(DISTINCT likedRecipe.like_id), 0) AS like_count',
-        'CAST(COALESCE(AVG(rating.rating), 0) AS FLOAT) AS average_rating',
-      ])
-      .leftJoin('recipe.author', 'author')
-      .leftJoin('recipe.likedRecipes', 'likedRecipe')
       .leftJoin('recipe.ratings', 'rating')
-      .where('recipe.recipe_id = :recipeId', { recipeId })
-      .groupBy('recipe.recipe_id, author.user_id')
-      .getRawOne();
-
-    if (!recipe) {
-      throw new NotFoundException(`Recipe with ID ${recipeId} not found.`);
-    }
-
-    const steps = await this.recipeRepository
-      .createQueryBuilder('recipe')
-      .select([
-        'step.step_id AS step_id',
-        'step.step_number AS step_number',
-        'step.description AS description',
+      .select(['recipe.name', 'rating.rating'])
+      .leftJoin('rating.rater', 'ratingAuthor')
+      .addSelect([
+        'ratingAuthor.user_id',
+        'ratingAuthor.username',
+        'ratingAuthor.first_name',
+        'ratingAuthor.last_name',
+        'ratingAuthor.image',
+        'rating.description',
       ])
       .leftJoin('recipe.stepsDetails', 'step')
-      .where('recipe.recipe_id = :recipeId', { recipeId })
-      .orderBy('step.step_number', 'ASC')
-      .getRawMany();
-
-    const ingredients = await this.recipeRepository
-      .createQueryBuilder('recipe')
-      .select([
-        'ingredient.ingredient_id AS ingredient_id',
-        'ingredient.quantity AS quantity',
-        'product.product_id AS product_id',
-        'product.product_name AS product_name',
-        'product.image AS product_image',
-        'product.unit AS unit',
-        'product.percent_carbs AS percent_carbs',
-        'product.percent_fats AS percent_fats',
-        'product.percent_protein AS percent_protein',
-        'product.calories AS calories',
-        'product.product_type AS product_type',
-      ])
+      .addSelect(['step.description', 'step.step_number'])
       .leftJoin('recipe.ingredients', 'ingredient')
       .leftJoin('ingredient.product', 'product')
+      .addSelect([
+        'ingredient.quantity',
+        'product.product_name',
+        'product.product_type',
+        'product.percent_fats',
+        'product.percent_carbs',
+        'product.percent_protein',
+        'product.calories',
+      ])
+      .leftJoin('recipe.author', 'author')
+      .addSelect([
+        'author.username',
+        'author.first_name',
+        'author.last_name',
+        'author.image',
+      ])
+      .addSelect('COALESCE(AVG(rating.rating), 0)', 'averageRating')
+      .addSelect(
+        `CASE WHEN EXISTS (
+          SELECT 1 
+          FROM liked_recipes liked 
+          WHERE liked.recipe_id = recipe.recipe_id 
+            AND liked.user_id = :userId
+        ) THEN TRUE ELSE FALSE END`,
+        'recipe_saved',
+      )
+      .setParameter('userId', userId)
       .where('recipe.recipe_id = :recipeId', { recipeId })
-      .getRawMany();
+      .groupBy(
+        `recipe.recipe_id, author.user_id, rating.rating_id,
+        ratingAuthor.username, ratingAuthor.first_name,
+        ratingAuthor.last_name, ratingAuthor.image,
+        step.step_id, ingredient.quantity, ingredient.ingredient_id,
+        product.product_id, product.product_name, product.product_type,
+        ratingAuthor.user_id`,
+      )
+      .getRawAndEntities();
 
-    return {recipe, steps, ingredients};
+    const recipeEntity = recipe.entities[0];
+    const raw = recipe.raw[0];
+
+    if (!recipeEntity || !raw) {
+      throw new NotFoundException(`recipe-not-found`);
+    }
+
+    return {
+      ...recipeEntity,
+      averageRating: parseFloat(raw.averageRating),
+      recipe_saved: userId ? raw.recipe_saved : false,
+    };
   }
-
 
   async createRecipe(
     createRecipeDto: CreateRecipeDto,
@@ -139,7 +194,8 @@ export class RecipesService {
   ): Promise<RecipeEntity> {
     const { name, image, recipe_type, stepsDetails, ingredients } =
       createRecipeDto;
-    const queryRunner = this.entityManager.connection.createQueryRunner();
+    const queryRunner =
+      this.recipeRepository.manager.connection.createQueryRunner();
 
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -175,9 +231,8 @@ export class RecipesService {
         const ingredient = new IngredientEntity();
         ingredient.product = product;
         ingredient.quantity = ingredientDto.quantity;
-        //ingredient.unit = ingredientDto.unit;
         ingredient.recipe = savedRecipe;
-        await queryRunner.manager.save(ingredient); // Save each ingredient
+        await queryRunner.manager.save(ingredient);
       }
 
       await queryRunner.commitTransaction();
@@ -191,7 +246,7 @@ export class RecipesService {
   }
 
   async updateRecipe(
-    id: number,
+    recipeId: number,
     updateRecipeDto: UpdateRecipeDto,
     user: TokenPayload,
   ): Promise<RecipeEntity> {
@@ -203,7 +258,7 @@ export class RecipesService {
 
     try {
       const recipe = await queryRunner.manager.findOne(RecipeEntity, {
-        where: { recipe_id: id },
+        where: { recipe_id: recipeId },
       });
 
       if (!recipe) {
@@ -220,7 +275,7 @@ export class RecipesService {
 
       if (updateRecipeDto.stepsDetails) {
         await queryRunner.manager.delete(StepEntity, {
-          recipe: { recipe_id: id },
+          recipe: { recipe_id: recipeId },
         });
 
         const steps = updateRecipeDto.stepsDetails.map((stepDto) => {
@@ -236,7 +291,7 @@ export class RecipesService {
 
       if (updateRecipeDto.ingredients) {
         await queryRunner.manager.delete(IngredientEntity, {
-          recipe: { recipe_id: id },
+          recipe: { recipe_id: recipeId },
         });
 
         const ingredients = updateRecipeDto.ingredients.map(
@@ -251,7 +306,6 @@ export class RecipesService {
             const ingredient = new IngredientEntity();
             ingredient.product = product;
             ingredient.quantity = ingredientDto.quantity;
-            //ingredient.unit = ingredientDto.unit;
             ingredient.recipe = recipe;
             return ingredient;
           },
@@ -275,14 +329,14 @@ export class RecipesService {
     }
   }
 
-  async deleteRecipe(id: number, user: TokenPayload): Promise<void> {
-    const recipe = await this.getRecipeById(id);
+  async deleteRecipe(recipeId: number, user: TokenPayload) {
+    const recipe = await this.getSimpleRecipeById(recipeId);
     if (!recipe) {
       throw new NotFoundException('recipe-not-found');
     }
-    if (recipe.recipe.author_id !== user.sub) {
+    if (recipe.author_id !== user.sub) {
       throw new UnauthorizedException();
     }
-    await this.recipeRepository.delete(id);
+    await this.recipeRepository.delete(recipeId);
   }
 }

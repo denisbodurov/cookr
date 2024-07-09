@@ -1,4 +1,4 @@
-import { IsNumber, IsString } from "class-validator";
+import { IsNumber } from "class-validator";
 
 export class CreateIngredientDto {
     @IsNumber()
@@ -6,7 +6,4 @@ export class CreateIngredientDto {
 
     @IsNumber()
     quantity: number;
-
-    @IsString()
-    unit: string;
 }

@@ -1,14 +1,27 @@
-import { Controller, Post, Delete, Param, UseGuards, Get, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Delete,
+  Param,
+  UseGuards,
+  Get,
+  UseInterceptors,
+  ClassSerializerInterceptor,
+} from '@nestjs/common';
 import { LikedRecipesService } from './liked_recipes.service';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-import { User } from 'src/users/user.decorator';
+import { User } from 'src/users/decorators/user.decorator';
 import { TokenPayload } from 'src/auth/models/token.model'; // Assuming this is where TokenPayload is defined
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { RecipesService } from 'src/recipes/recipes.service';
 
 @ApiTags('liked-recipes')
 @Controller('liked-recipes')
 export class LikedRecipesController {
-  constructor(private readonly likedRecipesService: LikedRecipesService) {}
+  constructor(
+    private readonly likedRecipesService: LikedRecipesService,
+    private readonly recipesService: RecipesService,
+  ) {}
 
   @Get('/user/:userId')
   @UseGuards(JwtAuthGuard)
@@ -21,15 +34,22 @@ export class LikedRecipesController {
   @Post(':recipeId/like')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  async likerecipe(@Param('recipeId') recipeId: number, @User() user: TokenPayload) {
+  async likeRecipe(
+    @Param('recipeId') recipeId: number,
+    @User() user: TokenPayload,
+  ) {
+    await this.recipesService.getSimpleRecipeById(recipeId);
     return this.likedRecipesService.likeRecipe(user.sub, recipeId);
   }
 
   @Delete(':recipeId/unlike')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  async unlikeRecipe(@Param('recipeId') recipeId: number, @User() user: TokenPayload) {
+  async unlikeRecipe(
+    @Param('recipeId') recipeId: number,
+    @User() user: TokenPayload,
+  ) {
+    await this.recipesService.getSimpleRecipeById(recipeId);
     return this.likedRecipesService.unlikeRecipe(user.sub, recipeId);
   }
-  
 }

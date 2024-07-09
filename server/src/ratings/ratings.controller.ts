@@ -6,7 +6,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CreateRatingDto } from './dto/create-rating.dto';
 import { UpdateRatingDto } from './dto/update-rating.dto';
 import { TokenPayload } from 'src/auth/models/token.model';
-import { User } from 'src/users/user.decorator';
+import { User } from 'src/users/decorators/user.decorator';
 
 @ApiTags('ratings')
 @Controller('ratings/:recipeId')
@@ -43,7 +43,6 @@ export class RatingsController {
     @User() user: TokenPayload,
   ) {
     await this.ratingsService.removeRating(ratingId, user);
-    return { message: 'Rating deleted successfully' };
   }
 
   @Patch('update-rating/:ratingId')

@@ -2,9 +2,9 @@ import { IsEnum, IsNotEmpty, IsOptional, IsString, IsInt, Min } from 'class-vali
 import { Units, ProductType } from "../enums/products.enum";
 
 export class CreateProductDto {
-    @IsNotEmpty()
-    @IsString()
-    product_name: string;
+  @IsNotEmpty()
+  @IsString()
+  product_name: string;
 
   @IsOptional()
   @IsString()
@@ -15,15 +15,15 @@ export class CreateProductDto {
 
   @IsInt()
   @Min(0)
-  carbs: number;
+  percent_carbs: number;
 
   @IsInt()
   @Min(0)
-  fats: number;
+  percent_fats: number;
 
   @IsInt()
   @Min(0)
-  protein: number;
+  percent_protein: number;
 
   @IsInt()
   @Min(0)

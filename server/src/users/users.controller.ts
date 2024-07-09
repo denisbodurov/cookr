@@ -3,6 +3,8 @@ import { UsersService } from './users.service';
 import { RecipesService } from 'src/recipes/recipes.service';
 import { ApiTags } from '@nestjs/swagger';
 import { LikedRecipesService } from 'src/liked_recipes/liked_recipes.service';
+import { TokenPayload } from 'src/auth/models/token.model';
+import { User } from './decorators/user.decorator';
 
 @ApiTags('users')
 @Controller('users')
@@ -19,18 +21,18 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
-  @Get(':id')
-  getOne(@Param('id') id: number) {
-    return this.usersService.getUserById(id);
+  @Get(':userId')
+  getOne(@Param('userId') userId: number) {
+    return this.usersService.getUserById(userId);
   }
 
-  @Get(':id/recipes')
-  getUserRecipes(@Param('id') id: number) {
-    return this.recipeService.getRecipesByUserId(id);
+  @Get(':userId/recipes')
+  getUserRecipes(@Param('userId') userId: number, @User() user: TokenPayload) {
+    return this.recipeService.getRecipesByUserId(userId, user);
   }
 
-  @Get(':id/liked-recipes')
-  getUserLikedRecipes(@Param('id') id: number) {
-    return this.likedRecipesService.getLikedRecipesByUserId(id);
+  @Get(':userId/liked-recipes')
+  getUserLikedRecipes(@Param('userId') userId: number) {
+    return this.likedRecipesService.getLikedRecipesByUserId(userId);
   }
 }

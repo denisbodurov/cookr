@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ProductEntity } from './entities/product.entity';
 import { CreateProductDto } from './dto/create-product.dto';
+import { UpdateProductDto } from './dto/update-product.dto';
 
 @Injectable()
 export class ProductsService {
@@ -15,21 +16,33 @@ export class ProductsService {
     return await this.productRepository.find();
   }
 
-  async getProductById(productId: number): Promise<ProductEntity> {
-    return await this.productRepository.findOne({ where: { product_id: productId } });
+  async getProductById(productId: number) {
+    const product = await this.productRepository.findOne({
+      where: { product_id: productId },
+    });
+
+    if (!product) {
+      throw new BadRequestException('product-not-found');
+    }
+
+    return product;
   }
 
-  async createProduct(createProductDto: CreateProductDto): Promise<ProductEntity> {
+  async createProduct(createProductDto: CreateProductDto) {
     return await this.productRepository.save(createProductDto);
   }
 
-  async updateProduct(productId: number, updateProductDto: ProductEntity): Promise<ProductEntity> {
-    await this.productRepository.update({ product_id: productId }, updateProductDto);
-    return await this.productRepository.findOne({ where: { product_id: productId } });
+  async updateProduct(productId: number, updateProductDto: UpdateProductDto) {
+    await this.productRepository.update(
+      { product_id: productId },
+      updateProductDto,
+    );
+    return await this.productRepository.findOne({
+      where: { product_id: productId },
+    });
   }
 
-  async deleteProduct(productId: number): Promise<void> {
+  async deleteProduct(productId: number) {
     await this.productRepository.delete({ product_id: productId });
   }
-
 }

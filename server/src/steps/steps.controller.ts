@@ -7,7 +7,7 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { RecipesService } from 'src/recipes/recipes.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { TokenPayload } from 'src/auth/models/token.model';
-import { User } from 'src/users/user.decorator';
+import { User } from 'src/users/decorators/user.decorator';
 
   @ApiTags('steps')
   @Controller('recipes/:recipeId/steps')

@@ -18,10 +18,8 @@ import { CreateRecipeDto } from './dto/create-recipe.dto';
 import { UpdateRecipeDto } from './dto/update-recipe.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { User } from 'src/users/user.decorator';
+import { User } from 'src/users/decorators/user.decorator';
 import { TokenPayload } from 'src/auth/models/token.model';
-import { LikedRecipesService } from 'src/liked_recipes/liked_recipes.service';
-import { RecipeView } from './entities/multi-recipe-view.entity';
 
 @ApiTags('recipes')
 @Controller('recipes')
@@ -40,37 +38,40 @@ export class RecipesController {
     return this.recipesService.createRecipe(createRecipeDto, user);
   }
 
-  @Get(':id')
-  @UseInterceptors(ClassSerializerInterceptor)
-  async getRecipeById(@Param('id', ParseIntPipe) id: number) {
-    return await this.recipesService.getRecipeById(id);
+  @Get(':recipeId')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  async getRecipeById(@Param('recipeId', ParseIntPipe) recipeId: number, @User() user: TokenPayload){
+    return await this.recipesService.getRecipeById(recipeId, user);
   }
 
   @Get()
   @UseInterceptors(ClassSerializerInterceptor)
-  async getAllRecipes(): Promise<RecipeView[]> {
-    return this.recipesService.getAllRecipes();
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  async getAllRecipes(@User() user: TokenPayload) {
+    return this.recipesService.getAllRecipes(user);
   }
 
-  @Patch(':id')
+  @Patch(':recipeId')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   async updateRecipe(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('recipeId', ParseIntPipe) recipeId: number,
     @Body() updateRecipeDto: UpdateRecipeDto,
     @User() user: TokenPayload,
   ): Promise<RecipeEntity> {
-    return this.recipesService.updateRecipe(id, updateRecipeDto, user);
+    return this.recipesService.updateRecipe(recipeId, updateRecipeDto, user);
   }
 
-  @Delete(':id')
+  @Delete(':recipeId')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   async deleteRecipe(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('recipeId', ParseIntPipe) recipeId: number,
     @User() user: TokenPayload,
   ): Promise<void> {
-    return this.recipesService.deleteRecipe(id, user);
+    return this.recipesService.deleteRecipe(recipeId, user);
   }
 
 }

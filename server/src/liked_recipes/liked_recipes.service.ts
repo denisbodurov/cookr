@@ -1,7 +1,4 @@
-import {
-  Injectable,
-  BadRequestException,
-} from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { LikedRecipesEntity } from './entities/liked_recipe.entity';
@@ -14,11 +11,7 @@ export class LikedRecipesService {
     private readonly likedRecipesRepository: Repository<LikedRecipesEntity>,
   ) {}
 
-  async likeRecipe(
-    userId: number,
-    recipeId: number,
-  ): Promise<LikedRecipesEntity> {
-
+  async likeRecipe(userId: number, recipeId: number) {
     const existingLike = await this.likedRecipesRepository.findOne({
       where: { user_id: userId, recipe_id: recipeId },
     });
@@ -34,7 +27,7 @@ export class LikedRecipesService {
     return await this.likedRecipesRepository.save(newLike);
   }
 
-  async unlikeRecipe(userId: number, recipeId: number): Promise<void> {
+  async unlikeRecipe(userId: number, recipeId: number) {
     const like = await this.likedRecipesRepository.findOne({
       where: { user_id: userId, recipe_id: recipeId },
     });
@@ -45,7 +38,7 @@ export class LikedRecipesService {
     await this.likedRecipesRepository.delete(like.like_id);
   }
 
-  async getLikedRecipesByUserId(userId: number): Promise<RecipeEntity[]> {
+  async getLikedRecipesByUserId(userId: number) {
     const likedRecipes = await this.likedRecipesRepository.find({
       where: { user_id: userId },
       relations: ['recipe', 'recipe.author'],

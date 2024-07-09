@@ -12,7 +12,7 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async login(loginDto: LoginDto): Promise<{ user: UserEntity, access_token: string }> {
+  async login(loginDto: LoginDto) {
     const user = await this.usersService.signIn(loginDto);
 
     const payload = { sub: user.user_id, username: user.username };
@@ -24,7 +24,7 @@ export class AuthService {
 
   async register(
     createUserDto: CreateUserDto,
-  ): Promise<{ user: UserEntity, access_token: string }> {
+  ) {
     const user = await this.usersService.signUp(createUserDto);
 
     const payload = { sub: user.user_id, username: user.username };
