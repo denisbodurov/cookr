@@ -39,10 +39,9 @@ export class RecipesController {
   }
 
   @Get(':recipeId')
-  @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  async getRecipeById(@Param('recipeId', ParseIntPipe) recipeId: number, @User() user: TokenPayload){
-    return await this.recipesService.getRecipeById(recipeId, user);
+  async getRecipeById(@Param('recipeId', ParseIntPipe) recipeId: number){
+    return await this.recipesService.getRecipeById(recipeId);
   }
 
   @Get()

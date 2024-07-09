@@ -27,8 +27,8 @@ export class UsersController {
   }
 
   @Get(':userId/recipes')
-  getUserRecipes(@Param('userId') userId: number, @User() user: TokenPayload) {
-    return this.recipeService.getRecipesByUserId(userId, user);
+  getUserRecipes(@Param('userId') userId: number) {
+    return this.recipeService.getRecipesByUserId(userId);
   }
 
   @Get(':userId/liked-recipes')

@@ -24,9 +24,7 @@ export class RecipesService {
     private readonly productRepository: Repository<ProductEntity>,
   ) {}
 
-  async getRecipesByUserId(userId: number, user: TokenPayload) {
-    const senderId = user ? user.sub : null;
-
+  async getRecipesByUserId(userId: number) {
     const recipes = await this.recipeRepository
       .createQueryBuilder('recipe')
       .leftJoin('recipe.ratings', 'rating')
@@ -40,17 +38,11 @@ export class RecipesService {
         'author.image',
       ])
       .addSelect('COALESCE(AVG(rating.rating), 0)', 'averageRating')
-      .addSelect(
-        `CASE WHEN EXISTS (
-          SELECT 1 
-          FROM liked_recipes liked 
-          WHERE liked.recipe_id = recipe.recipe_id 
-            AND liked.user_id = :userId
-        ) THEN TRUE ELSE FALSE END`,
-        'recipe_saved',
+      .leftJoin('recipe.likedRecipes', 'liked')
+      .addSelect(['liked.user_id', 'liked.recipe_id'])
+      .groupBy(
+        'recipe.recipe_id, author.user_id, liked.recipe_id, liked.user_id, liked.like_id',
       )
-      .setParameter('userId', userId)
-      .groupBy('recipe.recipe_id, author.user_id')
       .getRawAndEntities();
 
     return recipes.entities.map((recipeEntity, index) => {
@@ -64,7 +56,6 @@ export class RecipesService {
   }
 
   async getAllRecipes(user: TokenPayload) {
-    const userId = user ? user.sub : null;
     const recipes = await this.recipeRepository
       .createQueryBuilder('recipe')
       .leftJoin('recipe.ratings', 'rating')
@@ -77,17 +68,11 @@ export class RecipesService {
         'author.image',
       ])
       .addSelect('COALESCE(AVG(rating.rating), 0)', 'averageRating')
-      .addSelect(
-        `CASE WHEN EXISTS (
-          SELECT 1 
-          FROM liked_recipes liked 
-          WHERE liked.recipe_id = recipe.recipe_id 
-            AND liked.user_id = :userId
-        ) THEN TRUE ELSE FALSE END`,
-        'recipe_saved',
+      .leftJoin('recipe.likedRecipes', 'liked')
+      .addSelect(['liked.user_id', 'liked.recipe_id'])
+      .groupBy(
+        'recipe.recipe_id, author.user_id, liked.recipe_id, liked.user_id, liked.like_id',
       )
-      .setParameter('userId', userId)
-      .groupBy('recipe.recipe_id, author.user_id')
       .getRawAndEntities();
 
     if (!recipes.entities.length) {
@@ -99,7 +84,6 @@ export class RecipesService {
       return {
         ...recipeEntity,
         averageRating: parseFloat(raw.averageRating),
-        recipe_saved: userId ? raw.recipe_saved : false,
       };
     });
   }
@@ -114,9 +98,7 @@ export class RecipesService {
     return recipe;
   }
 
-  async getRecipeById(recipeId: number, user: TokenPayload) {
-    const userId = user ? user.sub : null;
-
+  async getRecipeById(recipeId: number) {
     const recipe = await this.recipeRepository
       .createQueryBuilder('recipe')
       .leftJoin('recipe.ratings', 'rating')
@@ -151,16 +133,8 @@ export class RecipesService {
         'author.image',
       ])
       .addSelect('COALESCE(AVG(rating.rating), 0)', 'averageRating')
-      .addSelect(
-        `CASE WHEN EXISTS (
-          SELECT 1 
-          FROM liked_recipes liked 
-          WHERE liked.recipe_id = recipe.recipe_id 
-            AND liked.user_id = :userId
-        ) THEN TRUE ELSE FALSE END`,
-        'recipe_saved',
-      )
-      .setParameter('userId', userId)
+      .leftJoin('recipe.likedRecipes', 'liked')
+      .addSelect(['liked.user_id', 'liked.recipe_id'])
       .where('recipe.recipe_id = :recipeId', { recipeId })
       .groupBy(
         `recipe.recipe_id, author.user_id, rating.rating_id,
@@ -168,7 +142,7 @@ export class RecipesService {
         ratingAuthor.last_name, ratingAuthor.image,
         step.step_id, ingredient.quantity, ingredient.ingredient_id,
         product.product_id, product.product_name, product.product_type,
-        ratingAuthor.user_id`,
+        ratingAuthor.user_id, liked.recipe_id, liked.user_id, liked.like_id`,
       )
       .getRawAndEntities();
 
@@ -182,7 +156,6 @@ export class RecipesService {
     return {
       ...recipeEntity,
       averageRating: parseFloat(raw.averageRating),
-      recipe_saved: userId ? raw.recipe_saved : false,
     };
   }
 
