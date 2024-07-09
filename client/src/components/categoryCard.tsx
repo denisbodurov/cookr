@@ -13,7 +13,7 @@ export default function CategoryCard({ imageSource, categoryName, circle }: Cate
   return (
     <Card
       sx={{
-        margin: '20px',
+        
         minHeight: circle ? '80px' : '380px', // Adjust the height for rectangular card
         width: circle ? '80px' : '320px', // Adjust the width for rectangular card
         position: 'relative',

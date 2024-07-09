@@ -2,30 +2,13 @@
 import React from "react";
 
 function Breaker() {
-  const lineBraker = {
-    width: "40%",
-    border: "solid",
-    borderWidth: 2,
-    borderColor: '#E56B6F',
-  };
-  const nameBraker = {
-    padding: 10,
-    backgroundColor: '#E56B6F',
-    borderRadius: 10
-
-  };
-  const breaker = {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '100%',
-  };
+  
   return (
     <>
-      <div style={breaker}>
-        <div style={lineBraker}></div>
-        <p style={nameBraker}>CATEGORIES</p>
-        <div style={lineBraker}></div>
+      <div className="flex justify-center items-center w-full my-5">
+        <div className="w-2/5 border-solid border-2 border-highLight"></div>
+        <p className="p-3 bg-highLight rounded-xl text-backgroundLight">PRODUCTS</p>
+        <div className="w-2/5 border-solid border-2 border-highLight"></div>
       </div>
     </>
   );

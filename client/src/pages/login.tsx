@@ -10,74 +10,38 @@ import {
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
 const Login = () => {
-  const paperStyle = {
-    width: "30vw",
-    height: "70vh",
-    display: "flex",
-    alignItems: "center",
-    padding: 10,
-    borderRadius: 25,
-    flexDirection: "column",
-    gap: 30,
-    backgroundColor: "#E56B6F",
-  };
-  const avatarCircle = {
-    margin: 10,
-    width: 50,
-    height: 50,
-  };
-
-  const avatarIcon = {
-    fontSize: 40,
-  };
-
-  const inputField = {
-    borderRadius: 20,
-    width: "80%",
-    margin: 5,
-    backgroundColor: '#F9F7F3'
-  };
-
-  const submitButton = {
-    margin: 50,
-    width: 200,
-    height: 40,
-    backgroundColor: '#F9F7F3',
-    color: '#22223B',
-    fontWeight: 'bold',
-    fontSize: 20,
-  };
+  
   return (
     <>
-      <div>
+      <div className="flex w-full justify-center bg-backgroundLight">
         <Grid>
-          <Paper elevation={4} style={paperStyle}>
-            <Avatar style={avatarCircle}>
-              <AccountCircleIcon style={avatarIcon} />
+          <Paper elevation={4} className="flex items-center w-[25vw] h-[65vh] flex-col rounded-3xl gap-6 bg-highLight p-3 m-10">
+            <Avatar className="m-2 w-12 h-12 bg-backgroundLight">
+              <AccountCircleIcon className="text-4xl text-highLight" />
             </Avatar>
-            <Typography variant="h4" fontWeight={"bold"} color={"#F9F7F3"}>
-              Login
+            <Typography variant="h4" className="font-extrabold text-backgroundLight">
+              LOGIN
             </Typography>
 
             <TextField
               id="outlined-basic"
               label="Username"
               variant="outlined"
-              style={inputField}
+              className="rounded-lg w-4/5 m-1 bg-backgroundLight"
             />
             <TextField
               id="outlined-basic"
               label="Username"
               variant="outlined"
-              style={inputField}
+              className="rounded-lg w-4/5 m-1 bg-backgroundLight"
             />
 
             <Button
               variant="contained"
               endIcon={<AccountCircleIcon />}
-              style={submitButton}
+              className="m-10 w-48 h-10 rounded-lg bg-backgroundLight text-highLight font-bold text-base"
             >
-              Send
+              LOGIN NOW
             </Button>
           </Paper>
         </Grid>

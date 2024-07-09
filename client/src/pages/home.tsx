@@ -59,7 +59,7 @@ const Home: React.FC = () => {
         </Carousel>
       </div>
       <Breaker />
-      <div className="flex justify-center items-center">
+      <div className="flex gap-10 justify-center items-center">
         <CategoryCard
           imageSource="../public/snack.jpg"
           categoryName="SNACKS"
