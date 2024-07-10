@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { ProductEntity } from './entities/product.entity';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -26,6 +26,18 @@ export class ProductsService {
     }
 
     return product;
+  }
+
+  async getProductByName(product_name: string) {
+    const products = await this.productRepository.find({
+      where: { product_name: Like(`%${product_name}%`) },
+    });
+
+    if (!products) {
+      throw new BadRequestException('product-not-found');
+    }
+
+    return products;
   }
 
   async createProduct(createProductDto: CreateProductDto) {

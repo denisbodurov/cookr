@@ -21,6 +21,11 @@ export class ProductController {
     return this.productService.getProductById(productId);
   }
 
+  @Get('/name/:product_name')
+  async getProductByName(@Param('product_name') product_name: string): Promise<ProductEntity[]> {
+    return this.productService.getProductByName(product_name);
+  }
+
   @Post()
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
