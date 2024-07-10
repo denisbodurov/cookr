@@ -1,6 +1,5 @@
 import React, { createContext, useState, useEffect, ReactNode } from "react";
 import axios from "axios";
-import config from "../../config";
 
 interface AuthContextType {
   user: User | null;
@@ -65,7 +64,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   ) => {
     try {
       const response = await axios.post(
-        `${config.PUBLIC_HOST}/api/v1/auth/register`,
+        `${process.env.PUBLIC_HOST}/api/v1/auth/register`,
         {
           first_name: firstName,
           last_name: lastName,
@@ -93,7 +92,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const signIn = async (email: string, password: string) => {
     try {
       const response = await axios.post(
-        `${config.PUBLIC_HOST}/api/v1/auth/login`,
+        `${process.env.PUBLIC_HOST}/api/v1/auth/login`,
         { email: email, password: password }
       );
 
