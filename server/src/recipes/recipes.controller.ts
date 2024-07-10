@@ -9,6 +9,7 @@ import {
   ParseIntPipe,
   UseGuards,
   Query,
+  BadRequestException,
 } from '@nestjs/common';
 import { RecipesService } from './recipes.service';
 import { CreateRecipeDto } from './dto/create-recipe.dto';
@@ -73,5 +74,20 @@ export class RecipesController {
   @Get('recipe-types')
   getRecipeTypes() {
     return this.recipesService.getRecipeTypes();
+  }
+  
+  @Get('/search_by_products')
+  async getRecipesByProducts(@Query('products') products: string) {
+    if (!products) {
+      throw new BadRequestException('products-query-parameter-required');
+    }
+
+    const productNames = products.split(',').map(product => product.trim());
+
+    if (!productNames.length) {
+      throw new BadRequestException('invalid-products-query-parameter');
+    }
+
+    return this.recipesService.getRecipesContainingProducts(productNames);
   }
 }

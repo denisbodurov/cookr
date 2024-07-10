@@ -97,7 +97,7 @@ export class RecipesService {
       });
     }
     if (query.name) {
-      qb.andWhere('recipe.name LIKE :name', { name: `%${query.name}%` });
+      qb.andWhere('recipe.name ILIKE :name', { name: `%${query.name}%` });
     }
 
     const recipes = await qb.getRawAndEntities();
@@ -357,6 +357,49 @@ export class RecipesService {
 
   getRecipeTypes(): string[] {
     return Object.values(RecipeType);
+  }
+  
+  async getRecipesContainingProducts(productNames: string[]) {
+    const lowercasedProductNames = productNames.map(name => name.toLowerCase());
+
+    const recipes = await this.recipeRepository
+      .createQueryBuilder('recipe')
+      .leftJoin('recipe.ingredients', 'ingredient')
+      .leftJoin('ingredient.product', 'product')
+      .select([
+        'recipe.recipe_id',
+        'recipe.name',
+        'recipe.image',
+        'recipe.recipe_type',
+      ])
+      .addSelect('COALESCE(AVG(rating.rating), 0)', 'averageRating')
+      .leftJoin('recipe.ratings', 'rating')
+      .leftJoin('recipe.author', 'author')
+      .addSelect([
+        'author.username',
+        'author.first_name',
+        'author.last_name',
+        'author.image',
+      ])
+      .leftJoin('recipe.likedRecipes', 'liked')
+      .addSelect(['liked.user_id', 'liked.recipe_id'])
+      .where('LOWER(product.product_name) IN (:...lowercasedProductNames)', { lowercasedProductNames })
+      .groupBy(
+        'recipe.recipe_id, author.user_id, liked.recipe_id, liked.user_id, liked.like_id',
+      )
+      .getRawAndEntities();
+
+    if (!recipes.entities.length) {
+      throw new NotFoundException('recipes-not-found');
+    }
+
+    return recipes.entities.map((recipeEntity, index) => {
+      const raw = recipes.raw[index];
+      return {
+        ...recipeEntity,
+        averageRating: parseFloat(raw.averageRating),
+      };
+    });
   }
 }
 
