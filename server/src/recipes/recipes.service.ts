@@ -21,6 +21,8 @@ export class RecipesService {
     private readonly recipeRepository: Repository<RecipeEntity>,
     @InjectRepository(ProductEntity)
     private readonly productRepository: Repository<ProductEntity>,
+    @InjectRepository(IngredientEntity)
+    private readonly ingredientRepository: Repository<IngredientEntity>,
   ) {}
 
   async getRecipesByUserId(userId: number) {
@@ -324,6 +326,30 @@ export class RecipesService {
     } finally {
       await queryRunner.release();
     }
+  }
+
+  async getRecipeNutritionalInfo(recipeId: number) {
+    const recipe = await this.recipeRepository.findOne({
+      where: {recipe_id : recipeId},
+    });
+
+    if (!recipe) {
+      throw new NotFoundException('Recipe not found');
+    }
+
+    const nutritionalInfo = await this.ingredientRepository
+      .createQueryBuilder('ingredient')
+      .leftJoin('ingredient.product', 'product')
+      .select([
+        'SUM(product.calories * ingredient.quantity) AS totalCalories',
+        'SUM(product.percent_carbs * ingredient.quantity) AS totalCarbs',
+        'SUM(product.percent_fats * ingredient.quantity) AS totalFats',
+        'SUM(product.percent_protein * ingredient.quantity) AS totalProtein',
+      ])
+      .where('ingredient.recipe_id = :recipeId', { recipeId })
+      .getRawOne();
+
+    return nutritionalInfo;
   }
 }
 

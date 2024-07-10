@@ -64,4 +64,9 @@ export class RecipesController {
   ) {
     return this.recipesService.deleteRecipe(recipeId, user);
   }
+
+  @Get('/nutritions/:recipe_id')
+  async getRecipeNutritionalInfo(@Param('recipe_id', ParseIntPipe) recipeId: number){
+    return this.recipesService.getRecipeNutritionalInfo(recipeId);
+  }
 }
