@@ -40,7 +40,7 @@ const Header = () => {
   };
 
   return (
-    <Grid container alignItems="center" justifyContent="space-between" className="w-full px-5 phone:px-1 h-20 bg-backgroundLight sticky bottom-0 bg-white py-4 border-t border-gray-200">
+    <Grid container alignItems="center" justifyContent="space-between" className="w-full px-5 phone:px-1 h-20 bg-backgroundLight bg-white">
       <Grid item>
         <Link to="/" style={{ textDecoration: "none" }}>
           <Avatar src={logo} alt="Logo" className="w-14 h-14 bg-highLight p-1 rounded-md" />

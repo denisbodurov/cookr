@@ -1,7 +1,7 @@
-import { Avatar } from "@mui/material";
+import { Avatar, Button } from "@mui/material";
 import React from "react";
 import AllRecipes from "./all-recipes";
-
+import SettingsIcon from '@mui/icons-material/Settings';
 const ProfilePage: React.FC = () => {
   return (
     <>
@@ -20,6 +20,14 @@ const ProfilePage: React.FC = () => {
               <h1 className="text-3xl text-textLight">UserName</h1>
               <h1 className="text-base text-textLight">email@email.com</h1>
             </div>
+            <Button
+              variant="contained"
+              
+              endIcon={<SettingsIcon />}
+              className="mb-5 w-48 h-10 rounded-lg bg-highLight text-backgroundLight font-bold text-base"
+            >
+              LOGIN NOW
+            </Button>
           </div>
         </div>
 

@@ -10,8 +10,7 @@ const Footer = () => {
         backgroundColor: '#f1f1f1',
         padding: '20px 0',
         boxShadow: '0 -3px 5px rgba(0,0,0,0.1)',
-        position: 'absolute',
-        bottom: 0,
+        
         width: '100%',
       }}
     >
