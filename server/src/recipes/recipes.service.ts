@@ -207,10 +207,11 @@ export class RecipesService {
       const savedRecipe = await queryRunner.manager.save(recipe); // Save Recipe
   
       // Steps
+      let stepNumber = 1;
       for (const stepDto of stepsDetails) {
         const step = new StepEntity();
         step.description = stepDto.description;
-        step.step_number = stepDto.step_number;
+        step.step_number = stepNumber++;
         step.recipe = savedRecipe;
         await queryRunner.manager.save(step); // Save each step
       }
@@ -262,10 +263,11 @@ export class RecipesService {
           recipe: { recipe_id: recipeId },
         });
   
+        let stepNumber = 1;
         const steps = updateRecipeDto.stepsDetails.map((stepDto) => {
           const step = new StepEntity();
           step.description = stepDto.description;
-          step.step_number = stepDto.step_number;
+          step.step_number = stepNumber++;
           step.recipe = recipe;
           return step;
         });
