@@ -1,18 +1,18 @@
 import { useEffect } from "react";
-import { useAuth } from "../provider/AuthProvider";
 import { Outlet, useNavigate } from "react-router-dom";
+import { useAuth } from "../provider/AuthProvider";
 
-const ProtectedRoute = () => {
+const PublicRoute = () => {
   const { accessToken } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!accessToken) {
-      navigate("/login");
+    if (accessToken) {
+      navigate("/");
     }
   }, [accessToken, navigate]);
 
-  return accessToken ? <Outlet /> : null;
+  return !accessToken ? <Outlet /> : null;
 };
 
-export default ProtectedRoute
+export default PublicRoute;

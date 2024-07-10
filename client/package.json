@@ -19,6 +19,7 @@
     "@mui/material": "^5.15.21",
     "axios": "^1.7.2",
     "cal-sans": "^1.0.1",
+    "dotenv": "^16.4.5",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-dropzone": "^14.2.3",
@@ -26,6 +27,7 @@
     "react-router-dom": "^6.24.1"
   },
   "devDependencies": {
+    "@types/node": "^20.14.10",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@typescript-eslint/eslint-plugin": "^7.13.1",

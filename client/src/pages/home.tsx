@@ -21,7 +21,7 @@ const Home: React.FC = () => {
       slidesToSlide: 1,
     },
   };
-  
+
   return (
     <div className="flex justify-center bg-backgroundLight w-full flex-col">
       <div className="py-5">
@@ -33,61 +33,52 @@ const Home: React.FC = () => {
           responsive={responsive}
         >
           <CategoryCard
-            imageSource="../public/appetizer.jpg"
+            imageSource="images/appetizer.jpg"
             categoryName="APPETIZER"
           />
+          <CategoryCard imageSource="images/salad.jpg" categoryName="SALADS" />
           <CategoryCard
-            imageSource="../public/salad.jpg"
-            categoryName="SALADS"
-          />
-          <CategoryCard
-            imageSource="../public/main.jpg"
+            imageSource="images/main.jpg"
             categoryName="MAIN MEAL"
           />
+          <CategoryCard imageSource="images/cake.jpg" categoryName="DESERTS" />
           <CategoryCard
-            imageSource="../public/cake.jpg"
-            categoryName="DESERTS"
-          />
-          <CategoryCard
-            imageSource="../public/beverage.jpg"
+            imageSource="images/beverage.jpg"
             categoryName="BEVERAGES"
           />
-          <CategoryCard
-            imageSource="../public/snack.jpg"
-            categoryName="SNACKS"
-          />
+          <CategoryCard imageSource="images/snack.jpg" categoryName="SNACKS" />
         </Carousel>
       </div>
       <Breaker />
       <div className="flex gap-10 justify-center items-center">
         <CategoryCard
-          imageSource="../public/snack.jpg"
-          categoryName="SNACKS"
+          imageSource="images/vegetables.jpg"
+          categoryName="VEGETABLES"
           circle={true}
         />
         <CategoryCard
-          imageSource="../public/snack.jpg"
-          categoryName="SNACKS"
+          imageSource="images/fruits.jpg"
+          categoryName="FRUITS"
           circle={true}
         />
 
         <CategoryCard
-          imageSource="../public/snack.jpg"
-          categoryName="SNACKS"
+          imageSource="images/meat.jpg"
+          categoryName="MEAT"
           circle={true}
         />
         <CategoryCard
-          imageSource="../public/snack.jpg"
-          categoryName="SNACKS"
+          imageSource="images/dairy.jpg"
+          categoryName="DAIRY"
           circle={true}
         />
         <CategoryCard
-          imageSource="../public/snack.jpg"
-          categoryName="SNACKS"
+          imageSource="images/grains.jpg"
+          categoryName="SEAFOOD"
           circle={true}
         />
         <CategoryCard
-          imageSource="../public/snack.jpg"
+          imageSource="images/seafood.jpg"
           categoryName="SNACKS"
           circle={true}
         />

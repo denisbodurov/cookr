@@ -16,7 +16,9 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-
+import AddIcon from "@mui/icons-material/Add";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import SearchIcon from '@mui/icons-material/Search';
 const AddNew: React.FC = () => {
   const [recipeName, setRecipeName] = useState<string>("");
   const [recipeImage, setRecipeImage] = useState<string>("");
@@ -113,15 +115,17 @@ const AddNew: React.FC = () => {
       <div className="w-full tablet:w-full flex flex-col items-start my-20 phone:my-2 bg-backgroundLight">
         <Typography
           variant="h4"
-          className="text-textLight w-full text-center mb-20"
+          className="text-highLight font-black w-full text-center mb-20"
         >
           ADD NEW RECIPE
         </Typography>
         <div className="flex flex-row phone:flex-col w-full phone:items-center ">
-          <div className="p-10 phone:p-2 w-2/4 flex phone:w-full">
+          <div className="p-10 phone:p-2 w-2/4 flex phone:w-full border-r-2 phone:border-0 border-highLight">
             <div className="flex bg-backgroundLight flex-col justify-start  ">
               <div className="flex flex-col items-start w-full my-5 bg-backgroundLight ">
-                <Typography className="text-3xl">1. Select Category</Typography>
+                <Typography className="text-3xl text-highLight font-bold">
+                  1. Select Category
+                </Typography>
               </div>
               <div className="flex justify-center items-center">
                 <div className="flex flex-row gap-5 items-center justify-start flex-wrap rounded-md">
@@ -158,7 +162,9 @@ const AddNew: React.FC = () => {
                 </div>
               </div>
               <div className="flex flex-col items-start w-full my-5 bg-backgroundLight ">
-                <Typography className="text-3xl">2. Set Name</Typography>
+                <Typography className="text-3xl text-highLight font-bold">
+                  2. Set Name
+                </Typography>
               </div>
               <div className="flex items-start justify-start flex-wrap w-full bg-backgroundLight">
                 <TextField
@@ -171,7 +177,7 @@ const AddNew: React.FC = () => {
                 />
               </div>
               <div className="flex flex-col items-start w-full my-5 bg-backgroundLight ">
-                <Typography className="text-3xl">
+                <Typography className="text-3xl text-highLight font-bold">
                   3. Select Ingredients
                 </Typography>
               </div>
@@ -183,8 +189,12 @@ const AddNew: React.FC = () => {
                   <Table aria-label="simple table">
                     <TableHead>
                       <TableRow>
-                        <TableCell align="left">Ingredient</TableCell>
-                        <TableCell align="right">Quantity</TableCell>
+                        <TableCell className="text-left text-2xl font-bold text-textLight">
+                          Ingredient
+                        </TableCell>
+                        <TableCell className="text-right text-2xl font-bold text-textLight">
+                          Quantity
+                        </TableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody>
@@ -199,36 +209,38 @@ const AddNew: React.FC = () => {
                     </TableBody>
                   </Table>
                 </TableContainer>
-                <div className="flex flex-row rounded-b-xl bg-secondary">
-                  <TextField
-                    id="outlined-basic"
-                    label="New Ingredient"
-                    variant="outlined"
-                    className="w-full rounded m-3 bg-backgroundLight"
-                    value={newIngredient}
-                    onChange={(e) => setNewIngredient(e.target.value)}
-                  />
+                <div className="flex w-10/12 mb-10 flex-row rounded-b-xl items-center justify-center bg-secondary">
+                  <Button
+                    variant="contained"
+                    endIcon={<SearchIcon />}
+                    className="h-10 rounded-lg bg-highLight text-backgroundLight font-bold text-base self-center"
+                  >
+                    FIND PRODUCT
+                  </Button>
                   <TextField
                     id="outlined-basic"
                     label="Quantity"
                     variant="outlined"
-                    className="w-full rounded m-3 bg-backgroundLight"
+                    className="w-2/4 rounded m-3 bg-backgroundLight"
                     value={newQuantity}
                     onChange={(e) => setNewQuantity(e.target.value)}
                   />
                 </div>
+
                 <Button
                   variant="contained"
-                  color="primary"
                   onClick={handleAddRecord}
-                  className="w-5/6 m-3"
+                  endIcon={<ArrowForwardIcon />}
+                  className="mb-5 h-10 rounded-lg bg-highLight text-backgroundLight font-bold text-base self-center"
                 >
                   ADD NEW INGREDIENT
                 </Button>
               </div>
 
               <div className="flex flex-col items-start w-full my-5 bg-backgroundLight ">
-                <Typography className="text-3xl">4. Set Steps</Typography>
+                <Typography className="text-3xl text-highLight font-bold">
+                  4. Set Steps
+                </Typography>
               </div>
               <div className="flex flex-row items-start justify-start flex-wrap w-full bg-backgroundLight">
                 <TextField
@@ -242,10 +254,11 @@ const AddNew: React.FC = () => {
                 <div className="flex flex-row items-center justify-center flex-wrap w-full bg-backgroundLight">
                   <Button
                     variant="contained"
-                    color="primary"
                     onClick={handleAddTimelineItem}
+                    endIcon={<ArrowForwardIcon />}
+                    className="mb-5 w-48 h-10 rounded-lg bg-highLight text-backgroundLight font-bold text-base self-center"
                   >
-                    Add Step
+                    ADD STEPS
                   </Button>
                 </div>
               </div>
@@ -253,13 +266,17 @@ const AddNew: React.FC = () => {
           </div>
           <div className="p-10 phone:p-2 w-2/4 phone:w-full">
             <div className="flex flex-col items-start w-full my-5 bg-backgroundLight ">
-              <Typography className="text-3xl">5. Upload Photo</Typography>
+              <Typography className="text-3xl text-highLight font-bold">
+                5. Upload Photo
+              </Typography>
             </div>
             <div className="flex flex-row items-center justify-center flex-wrap w-full p-5 bg-backgroundLight">
               <ImageUploader />
             </div>
             <div className="flex flex-col items-start w-full my-5 bg-backgroundLight ">
-              <Typography className="text-3xl">Steps</Typography>
+              <Typography className="text-3xl text-highLight font-bold">
+                Steps
+              </Typography>
             </div>
             <div className="flex flex-row items-center justify-center flex-wrap  w-full bg-backgroundLight">
               <Timeline>
@@ -267,14 +284,14 @@ const AddNew: React.FC = () => {
                   <TimelineItem key={index}>
                     <TimelineSeparator>
                       <TimelineDot
-                        className="hover:bg-highLight"
+                        className="hover:bg-highLight shadow-none hover:shadow-md cursor-pointer"
                         onClick={(e) => handleDotClick(e, index)}
                       />
                       {index < timelineItems.length - 1 && (
-                        <TimelineConnector />
+                        <TimelineConnector className="bg-highLight" />
                       )}
                     </TimelineSeparator>
-                    <TimelineContent>
+                    <TimelineContent className="text-highLight font-bold">
                       {editingIndex === index ? (
                         <div>
                           <TextField
@@ -294,6 +311,15 @@ const AddNew: React.FC = () => {
             </div>
           </div>
         </div>
+
+        <Button
+          variant="contained"
+          onClick={handleAddRecipe}
+          endIcon={<AddIcon />}
+          className="mb-5 w-48 h-10 rounded-lg bg-highLight text-backgroundLight font-bold text-base self-center"
+        >
+          ADD RECIPE
+        </Button>
       </div>
     </div>
   );
