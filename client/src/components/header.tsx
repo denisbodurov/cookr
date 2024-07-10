@@ -46,9 +46,7 @@ const Header = () => {
   return (
     <Grid
       container
-      alignItems="center"
-      justifyContent="space-between"
-      className="w-full px-5 phone:px-1 h-20 bg-backgroundLight bg-white"
+      className="w-full px-5 phone:px-1 h-20 bg-backgroundLight flex flex-row flex-nowrap justify-between items-center"
     >
       <Grid item>
         <Link to="/" style={{ textDecoration: "none" }}>
@@ -59,25 +57,19 @@ const Header = () => {
           />
         </Link>
       </Grid>
-
-      {!hide && (
-        <Grid item>
-          <Grid container alignItems="center" spacing={2}>
-            <Grid item>
-              <Search />
-            </Grid>
-            <Grid item>
-              <Link
-                to="/add-new"
-                className="m-2 decoration-0 tablet:fixed tablet:bottom-5 tablet:right-5 tablet:z-50"
-              >
-                <ButtonCustom />
-              </Link>
-            </Grid>
-          </Grid>
-        </Grid>
-      )}
-
+      <div className="flex justify-evenly items-center flex-row">
+        {hide ? null : (
+          <>
+            <Search />
+            <Link
+              to="/add-new"
+              className="m-2 decoration-0 tablet:fixed tablet:bottom-5 tablet:right-5 tablet:z-50"
+            >
+              <ButtonCustom />
+            </Link>
+          </>
+        )}
+      </div>
       {!hide && (
         <>
           <Grid item>

@@ -10,23 +10,21 @@ const Footer = () => {
         backgroundColor: '#f1f1f1',
         padding: '20px 0',
         boxShadow: '0 -3px 5px rgba(0,0,0,0.1)',
-        
         width: '100%',
       }}
     >
       <Container maxWidth="lg">
         <Grid container spacing={3} alignItems="center">
           <Grid item xs={12} sm={4}>
-            {/* Logo and company name section */}
-            <Box display="flex" alignItems="center">
+            <Box className='flex items-center '>
               <img src={logo} alt="Company Logo" style={{ marginRight: 10, width: 50, height: 'auto' }} />
-              <Typography variant="body1" color="textPrimary">
-                Your Company Name
+              <Typography variant="body1" color="textPrimary" className='text-3xl font-bold'>
+                ZettaCookr
               </Typography>
             </Box>
           </Grid>
           <Grid item xs={12} sm={4}>
-            {/* Navigation links section */}
+            
           </Grid>
           <Grid item xs={12} sm={4}>
             <Box textAlign="right">
@@ -49,7 +47,7 @@ const Footer = () => {
           <Typography variant="body2" color="textSecondary" align="center">
             {'© '}
             {new Date().getFullYear()}
-            {' Your Company. All rights reserved.'}
+            {' ZettaCookr. All rights reserved.'}
           </Typography>
         </Box>
       </Container>

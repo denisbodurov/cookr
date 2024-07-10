@@ -29,7 +29,7 @@ export class RatingsController {
   }
 
   @Get()
-  async findAll(@Param('recipeId') recipeId: number) {
+  async getAllRatings(@Param('recipeId') recipeId: number) {
     const recipe = await this.recipesService.getSimpleRecipeById(recipeId);
     return this.ratingsService.getRatingsByRecipe(recipe);
   }
