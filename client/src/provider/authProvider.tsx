@@ -21,7 +21,7 @@ interface AuthContextType {
 
 interface User {
   id: string;
-  fistName: string;
+  firstName: string;
   lastName: string;
   username: string;
   email: string;
@@ -64,7 +64,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   ) => {
     try {
       const response = await axios.post(
-        `${process.env.PUBLIC_HOST}/api/v1/auth/register`,
+        `${import.meta.env.VITE_PUBLIC_HOST}/api/v1/auth/register`,
         {
           first_name: firstName,
           last_name: lastName,
@@ -74,10 +74,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
       );
 
-      localStorage.setItem("user", JSON.stringify(response.data.user));
+      const mappedUser = {
+        id: response.data.user.user_id,
+        firstName: response.data.user.first_name,
+        lastName: response.data.user.last_name,
+        username: response.data.user.username,
+        email: response.data.user.email,
+        image: response.data.user.image,
+      };
+
+      localStorage.setItem("user", JSON.stringify(mappedUser));
       localStorage.setItem("accessToken", response.data.access_token);
 
-      setUser(response.data.user);
+      setUser(mappedUser);
       setAccessToken(response.data.access_token);
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -92,14 +101,23 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const signIn = async (email: string, password: string) => {
     try {
       const response = await axios.post(
-        `${process.env.PUBLIC_HOST}/api/v1/auth/login`,
+        `${import.meta.env.VITE_PUBLIC_HOST}/api/v1/auth/login`,
         { email: email, password: password }
       );
 
-      localStorage.setItem("user", JSON.stringify(response.data.user));
+      const mappedUser = {
+        id: response.data.user.user_id,
+        firstName: response.data.user.first_name,
+        lastName: response.data.user.last_name,
+        username: response.data.user.username,
+        email: response.data.user.email,
+        image: response.data.user.image,
+      };
+
+      localStorage.setItem("user", JSON.stringify(mappedUser));
       localStorage.setItem("accessToken", response.data.access_token);
 
-      setUser(response.data.user);
+      setUser(mappedUser);
       setAccessToken(response.data.access_token);
     } catch (error) {
       if (axios.isAxiosError(error)) {

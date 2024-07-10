@@ -4,9 +4,9 @@ import Footer from "../components/footer";
 
 const Layout = () => {
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-backgroundLight">
       <Header />
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 py-10 overflow-y-auto">
         <Outlet />
       </div>
       <Footer />

@@ -2,7 +2,7 @@ import { Grid, Paper, Typography, Button } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import MuiTextField from "@mui/material/TextField";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import logo from "../assets/public/images/logo.png";
+import logo from "../assets/logo.png";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useAuth } from "../provider/AuthProvider";

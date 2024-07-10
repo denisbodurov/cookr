@@ -2,30 +2,25 @@ import { Grid, Paper, Typography, Button } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import MuiTextField from "@mui/material/TextField";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import logo from "../assets/public/images/logo.png";
+import logo from "../assets/logo.png";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
 import { useAuth } from "../provider/AuthProvider";
 
-
 const Register = () => {
-
   const { signUp } = useAuth();
   const navigate = useNavigate();
-  
 
   const [credentials, setCredentials] = useState({
-    firstName: '',
-    lastName: '',
-    username: '',
-    email: '',
-    password: '',
-  })
-
+    firstName: "",
+    lastName: "",
+    username: "",
+    email: "",
+    password: "",
+  });
 
   const handleSubmit = async () => {
-
     const response = signUp(
       credentials.firstName,
       credentials.lastName,
@@ -38,11 +33,10 @@ const Register = () => {
       if (data) {
         alert(data.error);
       } else {
-        navigate("/")
+        navigate("/");
       }
     });
   };
-
 
   return (
     <>
@@ -63,7 +57,9 @@ const Register = () => {
               <TextField
                 id="outlined-basic"
                 value={credentials.firstName}
-                onInput={(e) => setCredentials({...credentials, firstName: e.target.value})}
+                onInput={(e) =>
+                  setCredentials({ ...credentials, firstName: e.target.value })
+                }
                 label="First name"
                 variant="outlined"
                 borderColor="#06D6A0"
@@ -72,7 +68,9 @@ const Register = () => {
               <TextField
                 id="outlined-basic"
                 value={credentials.lastName}
-                onChange={(e) => setCredentials({...credentials, lastName: e.target.value})}
+                onChange={(e) =>
+                  setCredentials({ ...credentials, lastName: e.target.value })
+                }
                 label="Last name"
                 variant="outlined"
                 borderColor="#06D6A0"
@@ -82,7 +80,9 @@ const Register = () => {
             <TextField
               id="outlined-basic"
               value={credentials.username}
-              onInput={(e) => setCredentials({...credentials, username: e.target.value})}
+              onInput={(e) =>
+                setCredentials({ ...credentials, username: e.target.value })
+              }
               label="Username"
               variant="outlined"
               borderColor="#06D6A0"
@@ -91,7 +91,9 @@ const Register = () => {
             <TextField
               id="outlined-basic"
               value={credentials.email}
-              onInput={(e) => setCredentials({...credentials, email: e.target.value})}
+              onInput={(e) =>
+                setCredentials({ ...credentials, email: e.target.value })
+              }
               label="Email"
               borderColor="#06D6A0"
               variant="outlined"
@@ -100,7 +102,9 @@ const Register = () => {
             <TextField
               id="outlined-basic"
               value={credentials.password}
-              onInput={(e) => setCredentials({...credentials, password: e.target.value})}
+              onInput={(e) =>
+                setCredentials({ ...credentials, password: e.target.value })
+              }
               label="Password"
               variant="outlined"
               borderColor="#06D6A0"

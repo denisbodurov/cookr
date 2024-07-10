@@ -26,8 +26,16 @@ const Routes = () => {
 
     const publicRoutes: RouteObject[] = [
       { path: "/", element: <Home /> },
-      { path: '/login', element: <PublicRoute />, children: [{ path: '', element: <Login /> }] },
-      { path: '/register', element: <PublicRoute />, children: [{ path: '', element: <Register /> }] },
+      {
+        path: "/login",
+        element: <PublicRoute />,
+        children: [{ path: "", element: <Login /> }],
+      },
+      {
+        path: "/register",
+        element: <PublicRoute />,
+        children: [{ path: "", element: <Register /> }],
+      },
       { path: "/recipes", element: <AllRecipes /> },
     ];
 

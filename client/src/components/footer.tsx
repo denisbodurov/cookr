@@ -1,7 +1,7 @@
 import React from 'react';
 import { Container, Grid, Typography, Link, IconButton, Box } from '@mui/material';
 import { Facebook, Twitter, Instagram, LinkedIn } from '@mui/icons-material';
-import logo from '../assets/public/images/logo.png';
+import logo from "../assets/logo.png";
 
 const Footer = () => {
   return (
