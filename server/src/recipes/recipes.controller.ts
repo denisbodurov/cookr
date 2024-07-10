@@ -8,17 +8,13 @@ import {
   Body,
   ParseIntPipe,
   UseGuards,
-  UseInterceptors,
-  ClassSerializerInterceptor,
-  Put,
   Query,
 } from '@nestjs/common';
 import { RecipesService } from './recipes.service';
-import { RecipeEntity } from './entities/recipe.entity';
 import { CreateRecipeDto } from './dto/create-recipe.dto';
 import { UpdateRecipeDto } from './dto/update-recipe.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { User } from 'src/users/decorators/user.decorator';
 import { TokenPayload } from 'src/auth/models/token.model';
 import { QueryDto } from './dto/query.dto';
@@ -26,9 +22,7 @@ import { QueryDto } from './dto/query.dto';
 @ApiTags('recipes')
 @Controller('recipes')
 export class RecipesController {
-  constructor(
-    private readonly recipesService: RecipesService,
-  ) {}
+  constructor(private readonly recipesService: RecipesService) {}
 
   @Post()
   @UseGuards(JwtAuthGuard)
@@ -36,13 +30,13 @@ export class RecipesController {
   async createRecipe(
     @Body() createRecipeDto: CreateRecipeDto,
     @User() user: TokenPayload,
-  ): Promise<RecipeEntity> {
+  ) {
     return this.recipesService.createRecipe(createRecipeDto, user);
   }
 
   @Get(':recipeId')
-  async getRecipeById(@Param('recipeId', ParseIntPipe) recipeId: number){
-    return await this.recipesService.getRecipeById(recipeId);
+  async getRecipeById(@Param('recipeId', ParseIntPipe) recipeId: number) {
+    return this.recipesService.getRecipeById(recipeId);
   }
 
   @Get()
@@ -57,7 +51,7 @@ export class RecipesController {
     @Param('recipeId', ParseIntPipe) recipeId: number,
     @Body() updateRecipeDto: UpdateRecipeDto,
     @User() user: TokenPayload,
-  ): Promise<RecipeEntity> {
+  ) {
     return this.recipesService.updateRecipe(recipeId, updateRecipeDto, user);
   }
 
@@ -67,8 +61,7 @@ export class RecipesController {
   async deleteRecipe(
     @Param('recipeId', ParseIntPipe) recipeId: number,
     @User() user: TokenPayload,
-  ): Promise<void> {
+  ) {
     return this.recipesService.deleteRecipe(recipeId, user);
   }
-
 }
