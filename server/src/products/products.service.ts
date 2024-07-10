@@ -4,6 +4,7 @@ import { Like, Repository } from 'typeorm';
 import { ProductEntity } from './entities/product.entity';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { ProductType, Units } from './enums/products.enum';
 
 @Injectable()
 export class ProductsService {
@@ -29,6 +30,7 @@ export class ProductsService {
   }
 
   async getProductByName(product_name: string) {
+    product_name.toLowerCase();
     const products = await this.productRepository.find({
       where: { product_name: Like(`%${product_name}%`) },
     });
@@ -41,6 +43,7 @@ export class ProductsService {
   }
 
   async createProduct(createProductDto: CreateProductDto) {
+    createProductDto.product_name.toLowerCase();
     return await this.productRepository.save(createProductDto);
   }
 
@@ -56,5 +59,13 @@ export class ProductsService {
 
   async deleteProduct(productId: number) {
     await this.productRepository.delete({ product_id: productId });
+  }
+
+  getUnits(): string[] {
+    return Object.values(Units);
+  }
+
+  getProductTypes(): string[] {
+    return Object.values(ProductType);
   }
 }

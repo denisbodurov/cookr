@@ -13,6 +13,7 @@ import { TokenPayload } from 'src/auth/models/token.model';
 import { StepEntity } from 'src/steps/entities/step.entity';
 import { IngredientEntity } from 'src/ingredients/entities/ingredient.entity';
 import { ProductEntity } from 'src/products/entities/product.entity';
+import { RecipeType } from './enums/recipe.enum';
 
 @Injectable()
 export class RecipesService {
@@ -21,6 +22,8 @@ export class RecipesService {
     private readonly recipeRepository: Repository<RecipeEntity>,
     @InjectRepository(ProductEntity)
     private readonly productRepository: Repository<ProductEntity>,
+    @InjectRepository(IngredientEntity)
+    private readonly ingredientRepository: Repository<IngredientEntity>,
   ) {}
 
   async getRecipesByUserId(userId: number) {
@@ -205,10 +208,11 @@ export class RecipesService {
       const savedRecipe = await queryRunner.manager.save(recipe); // Save Recipe
   
       // Steps
+      let stepNumber = 1;
       for (const stepDto of stepsDetails) {
         const step = new StepEntity();
         step.description = stepDto.description;
-        step.step_number = stepDto.step_number;
+        step.step_number = stepNumber++;
         step.recipe = savedRecipe;
         await queryRunner.manager.save(step); // Save each step
       }
@@ -260,10 +264,11 @@ export class RecipesService {
           recipe: { recipe_id: recipeId },
         });
   
+        let stepNumber = 1;
         const steps = updateRecipeDto.stepsDetails.map((stepDto) => {
           const step = new StepEntity();
           step.description = stepDto.description;
-          step.step_number = stepDto.step_number;
+          step.step_number = stepNumber++;
           step.recipe = recipe;
           return step;
         });
@@ -324,6 +329,34 @@ export class RecipesService {
     } finally {
       await queryRunner.release();
     }
+  }
+
+  async getRecipeNutritionalInfo(recipeId: number) {
+    const recipe = await this.recipeRepository.findOne({
+      where: {recipe_id : recipeId},
+    });
+
+    if (!recipe) {
+      throw new NotFoundException('Recipe not found');
+    }
+
+    const nutritionalInfo = await this.ingredientRepository
+      .createQueryBuilder('ingredient')
+      .leftJoin('ingredient.product', 'product')
+      .select([
+        'SUM(product.calories * ingredient.quantity) AS totalCalories',
+        'SUM(product.percent_carbs * ingredient.quantity) AS totalCarbs',
+        'SUM(product.percent_fats * ingredient.quantity) AS totalFats',
+        'SUM(product.percent_protein * ingredient.quantity) AS totalProtein',
+      ])
+      .where('ingredient.recipe_id = :recipeId', { recipeId })
+      .getRawOne();
+
+    return nutritionalInfo;
+  }
+
+  getRecipeTypes(): string[] {
+    return Object.values(RecipeType);
   }
 }
 
