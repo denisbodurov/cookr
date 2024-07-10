@@ -13,6 +13,7 @@ import { TokenPayload } from 'src/auth/models/token.model';
 import { StepEntity } from 'src/steps/entities/step.entity';
 import { IngredientEntity } from 'src/ingredients/entities/ingredient.entity';
 import { ProductEntity } from 'src/products/entities/product.entity';
+import { RecipeType } from './enums/recipe.enum';
 
 @Injectable()
 export class RecipesService {
@@ -352,6 +353,10 @@ export class RecipesService {
       .getRawOne();
 
     return nutritionalInfo;
+  }
+
+  getRecipeTypes(): string[] {
+    return Object.values(RecipeType);
   }
 }
 

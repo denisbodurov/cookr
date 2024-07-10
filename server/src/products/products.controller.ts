@@ -46,4 +46,14 @@ export class ProductController {
   async deleteProduct(@Param('productId') productId: number): Promise<void> {
     return this.productService.deleteProduct(productId);
   }
+
+  @Get('units')
+  getUnits() {
+    return this.productService.getUnits();
+  }
+
+  @Get('product-types')
+  getProductTypes() {
+    return this.productService.getProductTypes();
+  }
 }

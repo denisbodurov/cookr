@@ -69,4 +69,9 @@ export class RecipesController {
   async getRecipeNutritionalInfo(@Param('recipe_id', ParseIntPipe) recipeId: number){
     return this.recipesService.getRecipeNutritionalInfo(recipeId);
   }
+
+  @Get('recipe-types')
+  getRecipeTypes() {
+    return this.recipesService.getRecipeTypes();
+  }
 }
