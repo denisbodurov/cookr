@@ -19,6 +19,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { User } from 'src/users/decorators/user.decorator';
 import { TokenPayload } from 'src/auth/models/token.model';
 import { QueryDto } from './dto/query.dto';
+import { QueryProductDto } from './dto/query-products.dto';
 
 @ApiTags('recipes')
 @Controller('recipes')
@@ -71,23 +72,13 @@ export class RecipesController {
     return this.recipesService.getRecipeNutritionalInfo(recipeId);
   }
 
-  @Get('recipe-types')
-  getRecipeTypes() {
-    return this.recipesService.getRecipeTypes();
-  }
-  
+  // @Get('/recipe-types')
+  // getRecipeTypes() {
+  //   return this.recipesService.getRecipeTypes();
+  // }
+
   @Get('/search_by_products')
-  async getRecipesByProducts(@Query('products') products: string) {
-    if (!products) {
-      throw new BadRequestException('products-query-parameter-required');
-    }
-
-    const productNames = products.split(',').map(product => product.trim());
-
-    if (!productNames.length) {
-      throw new BadRequestException('invalid-products-query-parameter');
-    }
-
-    return this.recipesService.getRecipesContainingProducts(productNames);
+  async getRecipesContainingProducts(@Query() query: QueryProductDto) {
+    return this.recipesService.getRecipesContainingProducts(query);
   }
 }

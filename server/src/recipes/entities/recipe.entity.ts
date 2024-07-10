@@ -3,7 +3,7 @@ import { UserEntity } from 'src/users/entities/user.entity';
 import { RatingEntity } from 'src/ratings/entities/rating.entity';
 import { LikedRecipesEntity } from 'src/liked_recipes/entities/liked_recipe.entity';
 import { StepEntity } from 'src/steps/entities/step.entity';
-import { RecipeType } from '../enums/recipe.enum';
+import { RecipeType } from './recipe-type.entity';
 import { Exclude } from 'class-transformer';
 import { IngredientEntity } from 'src/ingredients/entities/ingredient.entity';
 
@@ -26,10 +26,8 @@ export class RecipeEntity {
   @Column({ type: 'text', default: '' })
   image: string;
 
-  @Column({
-    type: 'enum',
-    enum: RecipeType,
-  })
+  @ManyToOne(() => RecipeType, { eager: true })
+  @JoinColumn({ name: 'recipe_type_id' })
   recipe_type: RecipeType;
 
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })

@@ -1,6 +1,7 @@
 import { IngredientEntity } from 'src/ingredients/entities/ingredient.entity';
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-import { Units, ProductType } from '../enums/products.enum';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
+import { ProductType } from './product_type.entity';
+import { Unit } from './unit.entity';
 
 @Entity('products')
 export class ProductEntity {
@@ -12,27 +13,6 @@ export class ProductEntity {
 
   @Column({ type: 'text', default: '' })
   image: string;
-
-  // @Column({ type: 'int', default: 0})
-  // product_calorie: number;
-
-  @Column({
-    type: 'enum',
-    enum: ProductType,
-  })
-  product_type: ProductType;
-
-  // @Column({
-  //   type: 'enum',
-  //   enum: ProductCategory,
-  // })
-  // product_category: ProductCategory;
-
-  @Column({
-    type: 'enum',
-    enum: Units,
-  })
-  unit: Units;
 
   @Column({ type: 'int', default: 0 })
   percent_carbs: number;
@@ -48,4 +28,12 @@ export class ProductEntity {
 
   @OneToMany(() => IngredientEntity, (ingredient) => ingredient.product)
   ingredients: IngredientEntity[];
+
+  @ManyToOne(() => Unit, { eager: true })
+  @JoinColumn({ name: 'unit_id' })
+  unit: Unit;
+
+  @ManyToOne(() => ProductType, { eager: true })
+  @JoinColumn({ name: 'product_type_id' })
+  product_type: ProductType;
 }

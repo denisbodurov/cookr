@@ -1,8 +1,17 @@
-import { ProductType } from "src/products/enums/products.enum";
-import { RecipeType } from "../enums/recipe.enum";
+import { IsOptional, IsString } from 'class-validator';
+import { RecipeType } from 'src/recipes/entities/recipe-type.entity';
+import { ProductType } from 'src/products/entities/product_type.entity';
 
 export class QueryDto {
-    name?: string;
-    recipeType?: RecipeType;
-    productType?: ProductType;
+  @IsOptional()
+  @IsString()
+  name?: string;
+
+  @IsOptional()
+  @IsString()
+  recipe_type_name?: string;
+
+  @IsOptional()
+  @IsString()
+  product_type_name?: string;
 }
