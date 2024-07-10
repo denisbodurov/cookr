@@ -20,6 +20,7 @@ import { User } from 'src/users/decorators/user.decorator';
 import { TokenPayload } from 'src/auth/models/token.model';
 import { QueryDto } from './dto/query.dto';
 import { QueryProductDto } from './dto/query-products.dto';
+import { RecipeType } from './entities/recipe-type.entity';
 
 @ApiTags('recipes')
 @Controller('recipes')
@@ -72,13 +73,13 @@ export class RecipesController {
     return this.recipesService.getRecipeNutritionalInfo(recipeId);
   }
 
-  // @Get('/recipe-types')
-  // getRecipeTypes() {
-  //   return this.recipesService.getRecipeTypes();
-  // }
+  @Get('/recipe-types')
+  getRecipeTypes() {
+    return this.recipesService.getRecipeTypes();
+  }
 
   @Get('/search_by_products')
-  async getRecipesContainingProducts(@Query() query: QueryProductDto) {
-    return this.recipesService.getRecipesContainingProducts(query);
+  async getRecipesByProducts(@Query() query: QueryProductDto) {
+    return this.recipesService.getRecipesByProducts(query);
   }
 }

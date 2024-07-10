@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { IngredientEntity } from 'src/ingredients/entities/ingredient.entity';
 import { ProductEntity } from 'src/products/entities/product.entity';
 import { StepEntity } from 'src/steps/entities/step.entity';
+import { RecipeType } from './entities/recipe-type.entity';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { StepEntity } from 'src/steps/entities/step.entity';
       StepEntity,
       IngredientEntity,
       ProductEntity,
+      RecipeType
     ]),
   ],
   controllers: [RecipesController],

@@ -26,6 +26,8 @@ export class RecipesService {
     private readonly productRepository: Repository<ProductEntity>,
     @InjectRepository(IngredientEntity)
     private readonly ingredientRepository: Repository<IngredientEntity>,
+    @InjectRepository(RecipeType)
+    private readonly recipeTypeRepository: Repository<RecipeType>,
   ) {}
 
   async getRecipesByUserId(userId: number) {
@@ -300,10 +302,10 @@ export class RecipesService {
     return nutritionalInfo;
   }
 
-  async getRecipesContainingProducts(query: QueryProductDto) {
+  async getRecipesByProducts(query: QueryProductDto) {
     const { productNames } = query;
     const lowercasedProductNames = productNames.map(name => name.toLowerCase());
-
+  
     const recipes = await this.recipeRepository
       .createQueryBuilder('recipe')
       .leftJoin('recipe.ingredients', 'ingredient')
@@ -326,18 +328,20 @@ export class RecipesService {
       .leftJoin('recipe.likedRecipes', 'liked')
       .addSelect(['liked.user_id', 'liked.recipe_id'])
       .where('LOWER(product.product_name) IN (:...lowercasedProductNames)', { lowercasedProductNames })
-      .groupBy(
-        'recipe.recipe_id, author.user_id, liked.recipe_id, liked.user_id, liked.like_id',
-      )
+      .groupBy('recipe.recipe_id, author.user_id, liked.recipe_id, liked.user_id, liked.like_id')
       .getRawAndEntities();
-
+  
     if (!recipes.entities.length) {
       throw new NotFoundException('recipes-not-found');
     }
-
+  
     return recipes.entities.map((recipeEntity) => {
       return recipeEntity;
     });
+  }
+
+  async getRecipeTypes(){
+    return this.recipeTypeRepository.find();
   }
 }
 

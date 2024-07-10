@@ -47,13 +47,13 @@ export class ProductsController {
     return this.productService.deleteProduct(productId);
   }
 
-  // @Get('units')
-  // getUnits() : string[] {
-  //   return this.productService.getUnits();
-  // }
+  @Get('units')
+  getUnits(){
+    return this.productService.getUnits();
+  }
 
-  // @Get('product-types')
-  // getProductTypes() {
-  //   return this.productService.getProductTypes();
-  // }
+  @Get('product-types')
+  getProductTypes() {
+    return this.productService.getProductTypes();
+  }
 }

@@ -4,12 +4,18 @@ import { ILike, Repository } from 'typeorm';
 import { ProductEntity } from './entities/product.entity';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { Unit } from './entities/unit.entity';
+import { ProductType } from './entities/product_type.entity';
 
 @Injectable()
 export class ProductsService {
   constructor(
     @InjectRepository(ProductEntity)
     private readonly productRepository: Repository<ProductEntity>,
+    @InjectRepository(Unit)
+    private readonly unitsRepository: Repository<Unit>,
+    @InjectRepository(ProductType)
+    private readonly productTypeRepository: Repository<ProductType>,
   ) {}
 
   async getProducts(): Promise<ProductEntity[]> {
@@ -58,5 +64,13 @@ export class ProductsService {
 
   async deleteProduct(productId: number) {
     await this.productRepository.delete({ product_id: productId });
+  }
+
+  async getUnits(){
+    return this.unitsRepository.find();
+  }
+
+  async getProductTypes(){
+    return this.productTypeRepository.find();
   }
 }
