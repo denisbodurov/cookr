@@ -2,8 +2,13 @@ import CategoryCard from "../components/categoryCard.tsx";
 import Breaker from "../components/breaker.tsx";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
+import { useAuth } from "../provider/AuthProvider.tsx";
 
 const Home: React.FC = () => {
+  const {user, accessToken} = useAuth();
+  console.log("USER: " + user, "TOKEN: " + accessToken);
+
+
   const responsive = {
     desktop: {
       breakpoint: { max: 3000, min: 1024 },

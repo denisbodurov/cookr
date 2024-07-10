@@ -14,7 +14,7 @@ body {
 
 @font-face {
   font-family: "Font";
-  src: url(/client/src/assets/public/Font.ttf);
+  src: url('../src/assets/public/Font.ttf');
 }
 ::-webkit-scrollbar {
   width: 3px;
