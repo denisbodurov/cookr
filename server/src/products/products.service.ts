@@ -29,6 +29,7 @@ export class ProductsService {
   }
 
   async getProductByName(product_name: string) {
+    product_name.toLowerCase();
     const products = await this.productRepository.find({
       where: { product_name: Like(`%${product_name}%`) },
     });
@@ -41,6 +42,7 @@ export class ProductsService {
   }
 
   async createProduct(createProductDto: CreateProductDto) {
+    createProductDto.product_name.toLowerCase();
     return await this.productRepository.save(createProductDto);
   }
 
