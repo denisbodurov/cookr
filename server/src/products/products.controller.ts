@@ -8,7 +8,7 @@ import { UpdateProductDto } from './dto/update-product.dto';
 
 @ApiTags('products')
 @Controller('products')
-export class ProductController {
+export class ProductsController {
   constructor(private readonly productService: ProductsService) {}
 
   @Get()

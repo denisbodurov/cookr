@@ -48,6 +48,7 @@ export class LikedRecipesService {
       .select(['recipe.recipe_id', 'recipe.name', 'recipe.image', 'recipe.recipe_type'])
       .leftJoin('recipe.author', 'author')
       .addSelect([
+        'author.user_id',
         'author.username',
         'author.first_name',
         'author.last_name',
@@ -55,8 +56,9 @@ export class LikedRecipesService {
       ])
       .addSelect('COALESCE(AVG(rating.rating), 0)', 'averageRating')
       .leftJoin('recipe.likedRecipes', 'liked')
-      .addSelect(['liked.user_id', 'liked.recipe_id'])
-      .groupBy('recipe.recipe_id, author.user_id, liked.user_id, liked.recipe_id, liked.like_id')
+      .addSelect('liked.user_id')
+      .where('liked.user_id = :userId', { userId })
+      .groupBy('recipe.recipe_id, author.user_id, liked.user_id, liked.like_id')
       .getRawAndEntities();
 
     if (!recipes.entities.length) {

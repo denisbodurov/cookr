@@ -40,17 +40,11 @@ export class RecipesService {
       ])
       .leftJoin('recipe.author', 'author')
       .where('author.user_id = :userId', { userId })
-      .addSelect([
-        'author.username',
-        'author.first_name',
-        'author.last_name',
-        'author.image',
-      ])
       .addSelect('COALESCE(AVG(rating.rating), 0)', 'averageRating')
       .leftJoin('recipe.likedRecipes', 'liked')
       .addSelect(['liked.user_id', 'liked.recipe_id'])
       .groupBy(
-        'recipe.recipe_id, author.user_id, liked.recipe_id, liked.user_id, liked.like_id',
+        'recipe.recipe_id, liked.recipe_id, liked.user_id, liked.like_id',
       )
       .getRawAndEntities();
 
@@ -67,19 +61,17 @@ export class RecipesService {
   async getAllRecipes(queryDto: QueryDto) {
     const query = this.recipeRepository
     .createQueryBuilder('recipe')
-    .leftJoin('recipe.ratings', 'rating')
-    .addSelect(['rating.rating', 'rating.description'])
     .leftJoin('recipe.recipe_type', 'recipe_type')
     .addSelect(['recipe_type.name'])
     .leftJoin('recipe.author', 'author')
     .addSelect(['author.username','author.first_name', 'author.last_name', 'author.image'])
-    .leftJoinAndSelect('recipe.likedRecipes', 'liked')
-    .leftJoinAndSelect('rating.rater', 'ratingAuthor')
+    .leftJoin('recipe.likedRecipes', 'liked')
+    .addSelect('liked.user_id')
+    .leftJoin('recipe.ratings', 'rating')
     .addSelect('CAST(COALESCE(AVG(rating.rating), 0) AS FLOAT)', 'averageRating')
     .groupBy(
       `recipe.recipe_id, recipe_type.name, recipe_type.id, recipe_type.image, 
-      author.user_id, rating.rating_id, ratingAuthor.user_id, ratingAuthor.username, 
-      ratingAuthor.first_name, ratingAuthor.last_name, ratingAuthor.image, liked.user_id, liked.recipe_id, liked.like_id`
+      author.user_id, liked.user_id, liked.recipe_id, liked.like_id`
     )
   
     if (queryDto.name) {
@@ -90,15 +82,14 @@ export class RecipesService {
       query.andWhere('recipe_type.name = :recipeTypeName', { recipeTypeName: queryDto.recipe_type_name });
     }
   
-    if (queryDto.product_type_name) {
-      query.andWhere('product.productType = :productType', { productType: queryDto.product_type_name });
-    }
-  
-    const recipes = await query.getMany();
-  
-    return recipes.map(recipe => ({
-      ...recipe
+    const result = await query.getRawAndEntities();
+
+    const recipes = result.entities.map((recipe, index) => ({
+      ...recipe,
+      averageRating: parseFloat(result.raw[index].averageRating)
     }));
+
+    return recipes;
   }
 
   async getSimpleRecipeById(recipeId: number) {
@@ -123,15 +114,17 @@ export class RecipesService {
       .leftJoin('recipe.stepsDetails', 'step')
       .addSelect(['step.step_number', 'step.description'])
       .leftJoin('recipe.ingredients', 'ingredient')
+      .addSelect('ingredient.quantity')
       .leftJoinAndSelect('ingredient.product', 'product')
-      .leftJoinAndSelect('recipe.likedRecipes', 'liked')
-      .leftJoinAndSelect('rating.rater', 'ratingAuthor')
+      .leftJoin('recipe.likedRecipes', 'liked')
+      .addSelect('liked.user_id')
+      .leftJoin('rating.rater', 'rater')
+      .addSelect(['rater.user_id', 'rater.username', 'rater.first_name', 'rater.last_name', 'rater.image'])
       .addSelect('CAST(COALESCE(AVG(rating.rating), 0) AS FLOAT)', 'averageRating')
       .where('recipe.recipe_id = :recipeId', { recipeId })
       .groupBy(
         `recipe.recipe_id, recipe_type.name, recipe_type.id, recipe_type.image, 
-        author.user_id, rating.rating_id, ratingAuthor.user_id, ratingAuthor.username, 
-        ratingAuthor.first_name, ratingAuthor.last_name, ratingAuthor.image, 
+        author.user_id, rating.rating_id, rater.user_id, rater.username, rater.first_name, rater.last_name, rater.image,
         step.step_id, ingredient.ingredient_id, product.product_id, liked.user_id, liked.recipe_id, liked.like_id`
       )
       .getMany();

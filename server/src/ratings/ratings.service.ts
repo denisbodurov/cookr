@@ -55,7 +55,6 @@ export class RatingsService {
   async getRatingsByRecipe(recipe: RecipeEntity): Promise<RatingEntity[]> {
     return await this.ratingsRepository.find({
       where: { rated_id: recipe.recipe_id },
-      relations: ['rater'],
     });
   }
 
