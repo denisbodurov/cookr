@@ -306,43 +306,41 @@ export class RecipesService {
     const { productNames } = query;
     const lowercasedProductNames = productNames.map(name => `%${name.toLowerCase()}%`);
   
-    const recipes = await this.recipeRepository
-      .createQueryBuilder('recipe')
-      .leftJoin('recipe.ingredients', 'ingredient')
-      .leftJoin('ingredient.product', 'product')
-      .select([
-        'recipe.recipe_id',
-        'recipe.name',
-        'recipe.image',
-        'recipe.recipe_type',
-      ])
-      .leftJoin('recipe.ratings', 'rating')
-      .addSelect('CAST(COALESCE(AVG(rating.rating), 0) AS FLOAT)', 'averageRating')
-      .leftJoin('recipe.author', 'author')
-      .addSelect([
-        'author.username',
-        'author.first_name',
-        'author.last_name',
-        'author.image',
-      ])
-      .leftJoin('recipe.liked_recipes', 'liked')
-      .addSelect(['liked.user_id', 'liked.recipe_id'])
-      .where(
-        productNames.length === 1
-          ? 'product.product_name ILIKE :lowercasedProductName'
-          : 'product.product_name ILIKE (:lowercasedProductNames)',
-        productNames.length === 1
-          ? { lowercasedProductName: lowercasedProductNames[0] }
-          : { lowercasedProductNames }
-      )
-      .groupBy('recipe.recipe_id, author.user_id, liked.recipe_id, liked.user_id, liked.like_id')
-      .getRawAndEntities();
+    const recipes = this.recipeRepository
+    .createQueryBuilder('recipe')
+    .leftJoin('recipe.recipe_type', 'recipe_type')
+    .addSelect(['recipe_type.name'])
+    .leftJoin('recipe.author', 'author')
+    .addSelect(['author.username','author.first_name', 'author.last_name', 'author.image'])
+    .leftJoin('recipe.liked_recipes', 'liked')
+    .addSelect('liked.user_id')
+    .leftJoin('recipe.ratings', 'rating')
+    .addSelect('CAST(COALESCE(AVG(rating.rating), 0) AS FLOAT)', 'average_rating')
+    .leftJoin('recipe.ingredients', 'ingredient')
+    .leftJoin('ingredient.product', 'product')
+    .where(
+      productNames.length === 1
+        ? 'product.product_name ILIKE :lowercasedProductName'
+        : 'product.product_name ILIKE (:lowercasedProductNames)',
+      productNames.length === 1
+        ? { lowercasedProductName: lowercasedProductNames[0] }
+        : { lowercasedProductNames }
+    )
+    .groupBy(
+      `recipe.recipe_id, recipe_type.name, recipe_type.id, recipe_type.image, 
+      author.user_id, liked.user_id, liked.recipe_id, liked.like_id`
+    )
+
+    const result = await recipes.getRawAndEntities();
   
-    if (!recipes.entities.length) {
+    if (!result.entities.length) {
       throw new NotFoundException('recipes-not-found');
     }
   
-    return recipes.entities.map(recipeEntity => recipeEntity);
+    return result.entities.map((recipe, index) => ({
+      ...recipe,
+      average_rating: parseFloat(result.raw[index].average_rating)
+    }));
   }
 
   async getRecipeTypes(){
