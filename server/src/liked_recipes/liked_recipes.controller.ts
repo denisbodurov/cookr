@@ -11,7 +11,7 @@ import {
 import { LikedRecipesService } from './liked_recipes.service';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { User } from 'src/users/decorators/user.decorator';
-import { TokenPayload } from 'src/auth/models/token.model'; // Assuming this is where TokenPayload is defined
+import { TokenPayload } from 'src/auth/models/token.model';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { RecipesService } from 'src/recipes/recipes.service';
 

@@ -38,7 +38,6 @@ export class RatingsController {
   @Delete('remove-rating/:ratingId')
   @ApiBearerAuth()
   async removeRating(
-    @Param('recipeId') recipeId: number,
     @Param('ratingId') ratingId: number,
     @User() user: TokenPayload,
   ) {

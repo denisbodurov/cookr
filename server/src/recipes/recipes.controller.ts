@@ -9,7 +9,6 @@ import {
   ParseIntPipe,
   UseGuards,
   Query,
-  BadRequestException,
 } from '@nestjs/common';
 import { RecipesService } from './recipes.service';
 import { CreateRecipeDto } from './dto/create-recipe.dto';
@@ -20,7 +19,6 @@ import { User } from 'src/users/decorators/user.decorator';
 import { TokenPayload } from 'src/auth/models/token.model';
 import { QueryDto } from './dto/query.dto';
 import { QueryProductDto } from './dto/query-products.dto';
-import { RecipeType } from './entities/recipe-type.entity';
 
 @ApiTags('recipes')
 @Controller('recipes')
@@ -68,10 +66,10 @@ export class RecipesController {
     return this.recipesService.deleteRecipe(recipeId, user);
   }
 
-  @Get('/nutritions/:recipe_id')
-  async getRecipeNutritionalInfo(@Param('recipe_id', ParseIntPipe) recipeId: number){
-    return this.recipesService.getRecipeNutritionalInfo(recipeId);
-  }
+  // @Get('/nutritions/:recipe_id')
+  // async getRecipeNutritionalInfo(@Param('recipe_id', ParseIntPipe) recipeId: number){
+  //   return this.recipesService.getRecipeNutritionalInfo(recipeId);
+  // }
 
   @Get('/recipe/types')
   getRecipeTypes() {
@@ -83,7 +81,7 @@ export class RecipesController {
     if (typeof query.productNames === 'string') {
       query.productNames = [query.productNames];
     }
-    
+
     return this.recipesService.getRecipesByProducts(query);
   }
 }

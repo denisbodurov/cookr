@@ -1,4 +1,4 @@
-import { ArrayMinSize, IsArray, IsOptional, IsString } from 'class-validator';
+import { IsString } from 'class-validator';
 
 export class QueryProductDto {
   @IsString({ each: true })

@@ -344,7 +344,6 @@ export class RecipesService {
   
     return recipes.entities.map(recipeEntity => recipeEntity);
   }
-  
 
   async getRecipeTypes(){
     return this.recipeTypeRepository.find();
