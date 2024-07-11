@@ -15,6 +15,7 @@ import PersonIcon from "@mui/icons-material/Person";
 
 import Search from "./search.tsx";
 import ButtonCustom from "./button.tsx";
+import Image from "./Image.tsx";
 import { Logout } from "@mui/icons-material";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
@@ -24,6 +25,7 @@ const Header = () => {
   const { signOut, user } = useAuth();
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [query, setQuery] = useState<string>("");
   const openProfile = Boolean(anchorEl);
   const location = useLocation();
   const hide =
@@ -60,7 +62,7 @@ const Header = () => {
       <div className="flex justify-evenly items-center flex-row">
         {hide ? null : (
           <>
-            <Search />
+            <Search/>
             <Link
               to="/add-new"
               className="m-2 decoration-0 tablet:fixed tablet:bottom-5 tablet:right-5 tablet:z-50"
@@ -81,11 +83,17 @@ const Header = () => {
               aria-haspopup="true"
               aria-expanded={openProfile ? "true" : undefined}
             >
-              {user && (
-                <Avatar className="bg-highLight">
-                  {user.firstName.charAt(0).toUpperCase() + user.lastName.charAt(0).toUpperCase()}
-                </Avatar>
-              )}
+              {user &&
+                (user.image ? (
+                  <Avatar className="relative">
+                    <Image image={user.image} />
+                  </Avatar>
+                ) : (
+                  <Avatar className="bg-highLight">
+                    {user.firstName.charAt(0).toUpperCase() +
+                      user.lastName.charAt(0).toUpperCase()}
+                  </Avatar>
+                ))}
             </IconButton>
             <Menu
               anchorEl={anchorEl}
@@ -118,7 +126,7 @@ const Header = () => {
                       zIndex: 0,
                     },
                   },
-                }
+                },
               }}
               transformOrigin={{ horizontal: "right", vertical: "top" }}
               anchorOrigin={{ horizontal: "right", vertical: "bottom" }}

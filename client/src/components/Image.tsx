@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 
 interface ImageDecoderProps {
   image: string;
+  className: string;
 }
 
-const ImageDecoder: React.FC<ImageDecoderProps> = ({ image }) => {
+const ImageDecoder: React.FC<ImageDecoderProps> = ({ image, className }) => {
   const [imageSrc, setImageSrc] = useState<string>('');
 
   useEffect(() => {
@@ -34,7 +35,7 @@ const ImageDecoder: React.FC<ImageDecoderProps> = ({ image }) => {
     }
   }, [image]);
 
-  return <img src={imageSrc} alt="" loading="lazy" className="mx-auto w-48 h-48 rounded-full object-cover"/>;
+  return <img src={imageSrc} alt="" loading="lazy" className={className}/>;
 };
 
 export default ImageDecoder;

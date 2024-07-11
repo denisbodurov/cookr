@@ -65,7 +65,7 @@ const ProfilePage: React.FC = () => {
               {edit ? (
                 <ImageUploader onImageUpload={handleImageUpload}/>
               ) : (
-                <Image image={user!.image}/>
+                <Image className="mx-auto w-48 h-48 rounded-full object-cover" image={user!.image}/>
               )}
             </div>
             <div className="flex flex-col items-center gap-5 w-full">

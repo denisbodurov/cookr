@@ -5,7 +5,6 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import logo from "../assets/logo.png";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import axios from "axios";
 import { useAuth } from "../provider/AuthProvider";
 
 const Register = () => {

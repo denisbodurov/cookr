@@ -14,6 +14,7 @@ import {
 import Layout from "./Layout.tsx";
 import ProtectedRoute from "./ProtectedRoute.tsx";
 import PublicRoute from "./PublicRoute.tsx";
+import RecipePage from "../pages/recipe-page.tsx";
 
 const Routes = () => {
   const { accessToken } = useAuth();
@@ -37,6 +38,7 @@ const Routes = () => {
         children: [{ path: "", element: <Register /> }],
       },
       { path: "/recipes", element: <AllRecipes /> },
+      { path: "/recipes/:id", element: <RecipePage /> }
     ];
 
     const protectedRoutes: RouteObject[] = [
