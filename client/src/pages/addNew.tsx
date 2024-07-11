@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Typography from "@mui/material/Typography";
 import CategoryCard from "../components/categoryCard";
 import { TextField, Button } from "@mui/material";
@@ -20,42 +20,90 @@ import AddIcon from "@mui/icons-material/Add";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import SearchIcon from "@mui/icons-material/Search";
 import CancelIcon from "@mui/icons-material/Cancel";
+import axios from "axios";
+import { convertKeysToCamelCase } from "../helpers/keysToCamelCase.ts";
 
 const AddNew: React.FC = () => {
+  //ЗАРЕЖДАНЕ НА ПРОДУКТИТЕ ОТ БАЗАТА - НЕ РАБОТИ !!!
+  const [products, setProducts] = useState([]);
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_PUBLIC_HOST}/api/v1/products`
+        );
+        const data = convertKeysToCamelCase(response.data);
+        console.log(data);
+        setProducts(data);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  //ЗАРЕЖДАНЕ НА КАТЕГОРИИ//
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_PUBLIC_HOST}/api/v1/recipe/types`
+        );
+        const data = convertKeysToCamelCase(response.data);
+        console.log(data);
+        setRecipeCategories(data);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+  const [recipeCategories, setRecipeCategories] = useState<string[]>([]);
+  ////////////////////////////
+
+  //ЗАПАЗВАНЕ НА НОВОТО ИМЕ///
   const [recipeName, setRecipeName] = useState<string>("");
-  const [recipeImage, setRecipeImage] = useState<string>("");
-  const [recipeProducts, setRecipeProducts] = useState<string>("");
-  const [timelineItems, setTimelineItems] = useState<string[]>([
-    "Eat",
-    "Code",
-    "Sleep",
-  ]);
-  const [newTimelineItem, setNewTimelineItem] = useState<string>("");
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [editingIndex, setEditingIndex] = useState<number | null>(null);
-  const [editingText, setEditingText] = useState<string>("");
+  ////////////////////////////
+
+  //ЗАПАЗВАНЕ НА ДАННИ ЗА НОВ ПРОДУКТ///
   const [newIngredient, setNewIngredient] = useState<string>("");
   const [newUnit, setNewUnit] = useState<string>("");
   const [newQuantity, setNewQuantity] = useState<string>("");
+
+  //ЗАПАЗВАНЕ НА ДАННИТЕ В ЗАПИС///
   const [tableRecords, setTableRecords] = useState<
     { ingredient: string; unit: string; quantity: string }[]
-  >([{ ingredient: "Frozen yoghurt", unit: "2", quantity: "159" }]);
+  >([]);
+  ////////////////////////////
+
+  //ЗАПАЗВАНЕ НА СНИМКАТА В base64 - НЕ ИЗЛИЗА///
+  const [recipeImage, setRecipeImage] = useState<string>("");
+  console.log(recipeImage);
+  ////////////////////////////
+
+  //ЗАПАЗВАНЕ НА СТЪПКИТЕ///
+  const [timelineItems, setTimelineItems] = useState<string[]>([]);
+
+  //НОВИТЕ СТЪПКИ КОИТО СЕ ДОБАВЯТ КЪМ СТАРИТЕ
+  const [newTimelineItem, setNewTimelineItem] = useState<string>("");
+
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [editingText, setEditingText] = useState<string>("");
+
   const [isSearching, setIsSearching] = useState(false);
   const [searchResults, setSearchResults] = useState<string[]>([]);
-  const products = [
-    "Apple",
-    "Banana",
-    "Carrot",
-    "Doughnut",
-    "Eggplant",
-    "Frozen yoghurt",
-  ];
 
   const handleAddRecipe = () => {
-    console.log("Adding Recipe:", { recipeName, recipeImage, recipeProducts });
-    setRecipeName("");
-    setRecipeImage("");
-    setRecipeProducts("");
+    const recipeData = {
+      recipeName,
+      ingredients: tableRecords,
+      image: recipeImage,
+      steps: timelineItems,
+    };
+
+    console.log(JSON.stringify(recipeData, null, 2));
   };
 
   const handleAddTimelineItem = () => {
@@ -85,28 +133,18 @@ const AddNew: React.FC = () => {
     event: React.MouseEvent<HTMLDivElement>,
     index: number
   ) => {
-    setAnchorEl(event.currentTarget);
     setEditingIndex(index);
+    setEditingText(timelineItems[index]);
   };
 
-  const handleCloseMenu = () => {
-    setAnchorEl(null);
-  };
-
-  const handleDelete = () => {
+  const handleDeleteStep = () => {
     if (editingIndex !== null) {
-      setTimelineItems(
-        timelineItems.filter((_, index) => index !== editingIndex)
+      const updatedItems = timelineItems.filter(
+        (_, index) => index !== editingIndex
       );
-      setAnchorEl(null);
+      setTimelineItems(updatedItems);
       setEditingIndex(null);
-    }
-  };
-
-  const handleEdit = () => {
-    if (editingIndex !== null) {
-      setEditingText(timelineItems[editingIndex]);
-      setAnchorEl(null);
+      setEditingText("");
     }
   };
 
@@ -145,7 +183,7 @@ const AddNew: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col items-center bg-backgroundLight p-10 phone:p-2">
+    <div className="flex flex-col items-center bg-backgroundLight p-10 tablet:p-2">
       <div className="w-full tablet:w-full flex flex-col items-start my-20 phone:my-2 bg-backgroundLight">
         <Typography
           variant="h4"
@@ -163,36 +201,14 @@ const AddNew: React.FC = () => {
               </div>
               <div className="flex justify-center items-center">
                 <div className="flex flex-row gap-5 items-center justify-start flex-wrap rounded-md">
-                  <CategoryCard
-                    imageSource="../public/snack.jpg"
-                    categoryName="SNACKS"
-                    circle={true}
-                  />
-                  <CategoryCard
-                    imageSource="../public/snack.jpg"
-                    categoryName="SNACKS"
-                    circle={true}
-                  />
-                  <CategoryCard
-                    imageSource="../public/snack.jpg"
-                    categoryName="SNACKS"
-                    circle={true}
-                  />
-                  <CategoryCard
-                    imageSource="../public/snack.jpg"
-                    categoryName="SNACKS"
-                    circle={true}
-                  />
-                  <CategoryCard
-                    imageSource="../public/snack.jpg"
-                    categoryName="SNACKS"
-                    circle={true}
-                  />
-                  <CategoryCard
-                    imageSource="../public/snack.jpg"
-                    categoryName="SNACKS"
-                    circle={true}
-                  />
+                  {recipeCategories.map((category, index) => (
+                    <CategoryCard
+                      key={index}
+                      imageSource={category.imageSource}
+                      categoryName={category.categoryName}
+                      circle={true}
+                    />
+                  ))}
                 </div>
               </div>
               <div className="flex flex-col items-start w-full my-5 bg-backgroundLight">
@@ -223,13 +239,13 @@ const AddNew: React.FC = () => {
                   <Table aria-label="simple table">
                     <TableHead>
                       <TableRow>
-                        <TableCell className="text-left text-2xl font-bold text-textLight">
+                        <TableCell className="text-left text-2xl tablet:text-base font-bold text-textLight">
                           Ingredient
                         </TableCell>
-                        <TableCell className="text-right text-2xl font-bold text-textLight">
+                        <TableCell className="text-right text-2xl tablet:text-base font-bold text-textLight">
                           Unit
                         </TableCell>
-                        <TableCell className="text-right text-2xl font-bold text-textLight">
+                        <TableCell className="text-right text-2xl tablet:text-base font-bold text-textLight">
                           Quantity
                         </TableCell>
                       </TableRow>
@@ -249,7 +265,7 @@ const AddNew: React.FC = () => {
                 </TableContainer>
                 <div className="flex w-10/12 mb-10 flex-row rounded-b-xl items-center justify-around bg-secondary">
                   {isSearching ? (
-                    <div className="flex flex-row items-center justify-center">
+                    <div className="flex flex-row phone:flex-col items-center justify-center">
                       <TextField
                         id="outlined-basic"
                         label="Product"
@@ -351,15 +367,15 @@ const AddNew: React.FC = () => {
               </Typography>
             </div>
             <div className="flex flex-row items-center justify-center flex-wrap w-full p-5 bg-backgroundLight">
-              <ImageUploader onImageUpload={() => console.log("Hello")} />
+              <ImageUploader onImageUpload={() => setRecipeImage} />
             </div>
             <div className="flex flex-col items-start w-full my-5 bg-backgroundLight">
               <Typography className="text-3xl text-highLight font-bold">
                 Steps
               </Typography>
             </div>
-            <div className="flex flex-row items-center justify-center flex-wrap w-full bg-backgroundLight">
-              <Timeline>
+            <div className="flex flex-row items-start justify-start flex-wrap w-full bg-backgroundLight">
+              <Timeline className="phone:flex phone:justify-start phone:items-start">
                 {timelineItems.map((item, index) => (
                   <TimelineItem key={index}>
                     <TimelineSeparator>
@@ -373,13 +389,25 @@ const AddNew: React.FC = () => {
                     </TimelineSeparator>
                     <TimelineContent className="text-highLight font-bold">
                       {editingIndex === index ? (
-                        <div>
+                        <div className="flex justify-center items-center flex-col">
                           <TextField
                             value={editingText}
                             onChange={(e) => setEditingText(e.target.value)}
                           />
-                          <Button onClick={handleSaveEdit}>Save</Button>
-                          <Button onClick={handleSaveEdit}>Save</Button>
+                          <div className="flex justify-center items-center">
+                            <Button
+                              className="bg-highLight m-2 w-20 p-2 h-10 rounded-lg text-backgroundLight hover:shadow-lg"
+                              onClick={handleSaveEdit}
+                            >
+                              Save
+                            </Button>
+                            <Button
+                              className="bg-[#DB324D] m-2 w-20 p-2 h-10 rounded-lg text-backgroundLight hover:shadow-lg"
+                              onClick={handleDeleteStep}
+                            >
+                              Delete
+                            </Button>
+                          </div>
                         </div>
                       ) : (
                         item
