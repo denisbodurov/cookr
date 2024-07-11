@@ -83,7 +83,7 @@ const Header = () => {
             >
               {user && (
                 <Avatar className="bg-highLight">
-                  {user.firstName.charAt(0) + user.lastName.charAt(0)}
+                  {user.firstName.charAt(0).toUpperCase() + user.lastName.charAt(0).toUpperCase()}
                 </Avatar>
               )}
             </IconButton>
@@ -92,52 +92,54 @@ const Header = () => {
               id="account-menu"
               open={openProfile}
               onClose={handleClose}
-              PaperProps={{
-                elevation: 0,
-                sx: {
-                  overflow: "visible",
-                  filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
-                  mt: 1.5,
-                  "& .MuiAvatar-root": {
-                    width: 32,
-                    height: 32,
-                    ml: -0.5,
-                    mr: 1,
+              slotProps={{
+                paper: {
+                  elevation: 0,
+                  sx: {
+                    overflow: "visible",
+                    filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+                    mt: 1.5,
+                    "& .MuiAvatar-root": {
+                      width: 32,
+                      height: 32,
+                      ml: -0.5,
+                      mr: 1,
+                    },
+                    "&::before": {
+                      content: '""',
+                      display: "block",
+                      position: "absolute",
+                      top: 0,
+                      right: 14,
+                      width: 10,
+                      height: 10,
+                      bgcolor: "background.paper",
+                      transform: "translateY(-50%) rotate(45deg)",
+                      zIndex: 0,
+                    },
                   },
-                  "&::before": {
-                    content: '""',
-                    display: "block",
-                    position: "absolute",
-                    top: 0,
-                    right: 14,
-                    width: 10,
-                    height: 10,
-                    bgcolor: "background.paper",
-                    transform: "translateY(-50%) rotate(45deg)",
-                    zIndex: 0,
-                  },
-                },
+                }
               }}
               transformOrigin={{ horizontal: "right", vertical: "top" }}
               anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
             >
               <MenuItem onClick={handleClose}>
-                <ListItemIcon>
+                <ListItemIcon className="flex gap2">
                   <PersonIcon />
-                  <Typography>Profile</Typography>
                 </ListItemIcon>
+                <Typography>Profile</Typography>
               </MenuItem>
               <MenuItem onClick={handleClose}>
                 <ListItemIcon className="flex gap2">
                   <ReceiptLongIcon />
-                  <Typography>My Recipes</Typography>
                 </ListItemIcon>
+                <Typography>My Recipes</Typography>
               </MenuItem>
               <MenuItem onClick={handleClose}>
                 <ListItemIcon className="flex gap2">
                   <BookmarkAddedIcon />
-                  <Typography>Saved Recipes</Typography>
                 </ListItemIcon>
+                <Typography>Saved Recipes</Typography>
               </MenuItem>
               <Divider />
               <MenuItem onClick={handleSignOut}>
