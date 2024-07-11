@@ -9,7 +9,7 @@ const ImageDecoder: React.FC<ImageDecoderProps> = ({ image }) => {
 
   useEffect(() => {
     if (image) {
-      // Check and remove the Data URL scheme if present
+      
       const base64Data = image.split(';base64,').pop();
       if (base64Data) {
         try {
