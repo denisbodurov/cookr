@@ -1,11 +1,18 @@
-import React from 'react';
-import { Container, Grid, Typography, Link, IconButton, Box } from '@mui/material';
-import { Facebook, Twitter, Instagram, LinkedIn } from '@mui/icons-material';
+import React from "react";
+import {
+  Container,
+  Grid,
+  Typography,
+  Link,
+  IconButton,
+  Box,
+} from "@mui/material";
+import { Facebook, Twitter, Instagram, LinkedIn } from "@mui/icons-material";
 import logo from "../assets/logo.png";
 
 const Footer = () => {
   return (
-    <Box 
+    <Box
       sx={{
         backgroundColor: '#f1f1f1',
         padding: '20px 0',
@@ -28,16 +35,32 @@ const Footer = () => {
           </Grid>
           <Grid item xs={12} sm={4}>
             <Box textAlign="right">
-              <IconButton href="https://facebook.com" target="_blank" color="inherit">
+              <IconButton
+                href="https://facebook.com"
+                target="_blank"
+                color="inherit"
+              >
                 <Facebook />
               </IconButton>
-              <IconButton href="https://twitter.com" target="_blank" color="inherit">
+              <IconButton
+                href="https://twitter.com"
+                target="_blank"
+                color="inherit"
+              >
                 <Twitter />
               </IconButton>
-              <IconButton href="https://instagram.com" target="_blank" color="inherit">
+              <IconButton
+                href="https://instagram.com"
+                target="_blank"
+                color="inherit"
+              >
                 <Instagram />
               </IconButton>
-              <IconButton href="https://linkedin.com" target="_blank" color="inherit">
+              <IconButton
+                href="https://linkedin.com"
+                target="_blank"
+                color="inherit"
+              >
                 <LinkedIn />
               </IconButton>
             </Box>
@@ -45,7 +68,7 @@ const Footer = () => {
         </Grid>
         <Box mt={2}>
           <Typography variant="body2" color="textSecondary" align="center">
-            {'© '}
+            {"© "}
             {new Date().getFullYear()}
             {' ZettaCookr. All rights reserved.'}
           </Typography>
@@ -53,6 +76,6 @@ const Footer = () => {
       </Container>
     </Box>
   );
-}
+};
 
 export default Footer;

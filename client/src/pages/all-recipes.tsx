@@ -36,7 +36,7 @@ const AllRecipes: React.FC = () => {
         </div>
       </div>
     </>
-  );
+  ) 
 };
 
 export default AllRecipes;

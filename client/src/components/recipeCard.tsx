@@ -4,13 +4,27 @@ import CardContent from "@mui/joy/CardContent";
 import IconButton from "@mui/joy/IconButton";
 import Typography from "@mui/joy/Typography";
 import BookmarkAdd from "@mui/icons-material/BookmarkAddOutlined";
-import { Avatar, AvatarGroup, Rating } from "@mui/material";
+import { Avatar, Rating } from "@mui/material";
 
-export default function RecipeCard({name, rating} : {name: string, rating: number}) {
+export default function RecipeCard({
+  recipeName,
+  firstName,
+  lastName,
+  userName,
+  userImg,
+  rating,
+}: {
+  recipeName: string;
+  firstName: string;
+  lastName: string;
+  userName: string;
+  userImg: string;
+  rating: number;
+}) {
   return (
     <Card sx={{ width: 320, height: 350 }}>
       <div>
-        <Typography level="title-lg">{name}</Typography>
+        <Typography level="title-lg">{recipeName}</Typography>
         <IconButton
           aria-label="bookmark Bahamas Islands"
           variant="plain"
@@ -30,14 +44,15 @@ export default function RecipeCard({name, rating} : {name: string, rating: numbe
         />
       </AspectRatio>
       <CardContent className="flex flex-row justify-between items-center">
-        <div>
-          <AvatarGroup max={4}>
-            <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-            <Avatar alt="Travis Howard" src="/static/images/avatar/2.jpg" />
-            <Avatar alt="Cindy Baker" src="/static/images/avatar/3.jpg" />
-            <Avatar alt="Agnes Walker" src="/static/images/avatar/4.jpg" />
-            <Avatar alt="Trevor Henderson" src="/static/images/avatar/5.jpg" />
-          </AvatarGroup>
+        <div className="flex flex-row items-center gap-2">
+          <Avatar alt="Remy Sharp" src={userImg} />
+          <div className="flex flex-col">
+            <div className="flex items-center gap-1">
+              <Typography className="leading-none">{firstName}</Typography>
+              <Typography className="leading-none">{lastName}</Typography>
+            </div>
+            <Typography className="leading-none font-bold">{userName}</Typography>
+          </div>
         </div>
         <Rating
           name="simple-controlled"
