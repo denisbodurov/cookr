@@ -1,4 +1,5 @@
-import { AuthProvider } from "./provider/AuthProvider";
+
+import { AuthProvider } from "./provider/AuthProvider.tsx";
 import Routes from "./routes/Routes";
 
 function App() {

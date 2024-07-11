@@ -62,7 +62,7 @@ const ProfilePage: React.FC = () => {
       <div className="w-full min-h-screen bg-backgroundLight flex phone:flex-col">
         <div className="p-20 tablet:p-5 w-1/3 phone:w-full bg-backgroundLight flex justify-center">
           <div className="flex flex-col items-center w-full rounded-xl">
-            <div className="flex w-full my-10 rounded-xl">
+            <div className="flex w-full justify-center bg-highLight py-10 my-10 rounded-xl">
               {edit ? (
                 <ImageUploader onImageUpload={handleImageUpload}/>
               ) : (

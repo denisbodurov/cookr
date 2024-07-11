@@ -219,7 +219,7 @@ const AddNew: React.FC = () => {
                     </TableBody>
                   </Table>
                 </TableContainer>
-                <div className="flex w-10/12 mb-10 flex-row rounded-b-xl items-center justify-center bg-secondary">
+                <div className="flex w-10/12 mb-10 flex-row rounded-b-xl items-center justify-around bg-secondary">
                   {isSearching ? (
                     <div className="flex flex-row items-center justify-center">
                       <TextField
@@ -232,13 +232,13 @@ const AddNew: React.FC = () => {
                       />
                       <input
                         type="number"
-                        className="w-10 h-12 rounded-lg p-1"
+                        className="w-2/12 h-12 rounded-lg p-1 border"
                         name=""
                         id=""
                       />
                       <CancelIcon
                         onClick={handleSearchClick}
-                        className="cursor-pointer"
+                        className="cursor-pointer m-2 text-highLight"
                       />
                     </div>
                   ) : (
