@@ -50,7 +50,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ onImageUpload }) => {
   const handleCloseImage = () => {
     setOpenImage(false);
   };
-
+  
   return (
     <Box>
       <Paper

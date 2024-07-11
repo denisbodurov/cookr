@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Typography from "@mui/material/Typography";
 import CategoryCard from "../components/categoryCard";
 import { TextField, Button } from "@mui/material";
-import ImageUploader from "../components/imageUploader";
+import ImageUploader from "../components/imageUploader.tsx";
 import Timeline from "@mui/lab/Timeline";
 import TimelineItem from "@mui/lab/TimelineItem";
 import TimelineSeparator from "@mui/lab/TimelineSeparator";
@@ -18,7 +18,9 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import AddIcon from "@mui/icons-material/Add";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import SearchIcon from '@mui/icons-material/Search';
+import SearchIcon from "@mui/icons-material/Search";
+import CancelIcon from "@mui/icons-material/Cancel";
+
 const AddNew: React.FC = () => {
   const [recipeName, setRecipeName] = useState<string>("");
   const [recipeImage, setRecipeImage] = useState<string>("");
@@ -35,8 +37,8 @@ const AddNew: React.FC = () => {
   const [newIngredient, setNewIngredient] = useState<string>("");
   const [newQuantity, setNewQuantity] = useState<string>("");
   const [tableRecords, setTableRecords] = useState<
-    { ingredient: string; quantity: string }[]
-  >([{ ingredient: "Frozen yoghurt", quantity: "159" }]);
+    { ingredient: string; unit: string; quantity: string }[]
+  >([{ ingredient: "Frozen yoghurt", unit: "2", quantity: "159" }]);
 
   const handleAddRecipe = () => {
     console.log("Adding Recipe:", { recipeName, recipeImage, recipeProducts });
@@ -58,7 +60,7 @@ const AddNew: React.FC = () => {
     if (newIngredient.trim() !== "" && newQuantity.trim() !== "") {
       setTableRecords([
         ...tableRecords,
-        { ingredient: newIngredient, quantity: newQuantity },
+        { ingredient: newIngredient, unit: newUnit, quantity: newQuantity },
       ]);
       setNewIngredient("");
       setNewQuantity("");
@@ -109,6 +111,10 @@ const AddNew: React.FC = () => {
   function createData(name: string, calories: number) {
     return { name, calories };
   }
+  const [isSearching, setIsSearching] = useState(false);
+  const handleSearchClick = () => {
+    setIsSearching(!isSearching);
+  };
 
   return (
     <div className="flex flex-col items-center bg-backgroundLight p-10 phone:p-2">
@@ -193,6 +199,9 @@ const AddNew: React.FC = () => {
                           Ingredient
                         </TableCell>
                         <TableCell className="text-right text-2xl font-bold text-textLight">
+                          Unit
+                        </TableCell>
+                        <TableCell className="text-right text-2xl font-bold text-textLight">
                           Quantity
                         </TableCell>
                       </TableRow>
@@ -203,6 +212,7 @@ const AddNew: React.FC = () => {
                           <TableCell component="th" scope="row">
                             {record.ingredient}
                           </TableCell>
+                          <TableCell align="right">{record.unit}</TableCell>
                           <TableCell align="right">{record.quantity}</TableCell>
                         </TableRow>
                       ))}
@@ -210,26 +220,41 @@ const AddNew: React.FC = () => {
                   </Table>
                 </TableContainer>
                 <div className="flex w-10/12 mb-10 flex-row rounded-b-xl items-center justify-center bg-secondary">
-                  <Button
-                    variant="contained"
-                    endIcon={<SearchIcon />}
-                    className="h-10 rounded-lg bg-highLight text-backgroundLight font-bold text-base self-center"
-                  >
-                    FIND PRODUCT
-                  </Button>
-                  <TextField
-                    id="outlined-basic"
-                    label="Quantity"
-                    variant="outlined"
-                    className="w-2/4 rounded m-3 bg-backgroundLight"
-                    value={newQuantity}
-                    onChange={(e) => setNewQuantity(e.target.value)}
-                  />
+                  {isSearching ? (
+                    <div className="flex flex-row items-center justify-center">
+                      <TextField
+                        id="outlined-basic"
+                        label="Product"
+                        variant="outlined"
+                        className=" rounded m-3 bg-backgroundLight"
+                        value={newIngredient}
+                        onChange={(e) => setNewQuantity(e.target.value)}
+                      />
+                      <input
+                        type="number"
+                        className="w-10 h-12 rounded-lg p-1"
+                        name=""
+                        id=""
+                      />
+                      <CancelIcon
+                        onClick={handleSearchClick}
+                        className="cursor-pointer"
+                      />
+                    </div>
+                  ) : (
+                    <Button
+                      variant="contained"
+                      endIcon={<SearchIcon />}
+                      onClick={handleSearchClick}
+                      className="h-10 rounded-lg bg-highLight text-backgroundLight font-bold text-base self-center"
+                    >
+                      FIND PRODUCT
+                    </Button>
+                  )}
                 </div>
 
                 <Button
                   variant="contained"
-                  onClick={handleAddRecord}
                   endIcon={<ArrowForwardIcon />}
                   className="mb-5 h-10 rounded-lg bg-highLight text-backgroundLight font-bold text-base self-center"
                 >
@@ -271,7 +296,7 @@ const AddNew: React.FC = () => {
               </Typography>
             </div>
             <div className="flex flex-row items-center justify-center flex-wrap w-full p-5 bg-backgroundLight">
-              <ImageUploader onImageUpload={() => console.log("Hello")}/>
+              <ImageUploader onImageUpload={() => console.log("Hello")} />
             </div>
             <div className="flex flex-col items-start w-full my-5 bg-backgroundLight ">
               <Typography className="text-3xl text-highLight font-bold">

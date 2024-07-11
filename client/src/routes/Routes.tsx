@@ -22,7 +22,7 @@ const Routes = () => {
   > | null>(null);
 
   useEffect(() => {
-    if (accessToken === undefined) return;
+    if (accessToken === undefined) return; 
 
     const publicRoutes: RouteObject[] = [
       { path: "/", element: <Home /> },
