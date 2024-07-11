@@ -330,7 +330,7 @@ export class RecipesService {
       .where(
         productNames.length === 1
           ? 'product.product_name ILIKE :lowercasedProductName'
-          : 'product.product_name ILIKE ANY(:lowercasedProductNames)',
+          : 'product.product_name ILIKE (:lowercasedProductNames)',
         productNames.length === 1
           ? { lowercasedProductName: lowercasedProductNames[0] }
           : { lowercasedProductNames }
