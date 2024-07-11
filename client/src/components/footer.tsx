@@ -1,9 +1,7 @@
-import React from "react";
 import {
   Container,
   Grid,
   Typography,
-  Link,
   IconButton,
   Box,
 } from "@mui/material";

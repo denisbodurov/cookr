@@ -5,22 +5,55 @@ import IconButton from "@mui/joy/IconButton";
 import Typography from "@mui/joy/Typography";
 import BookmarkAdd from "@mui/icons-material/BookmarkAddOutlined";
 import { Avatar, Rating } from "@mui/material";
+import { useEffect, useState } from "react";
 
 export default function RecipeCard({
+  recipeId,
   recipeName,
   firstName,
   lastName,
-  userName,
-  userImg,
+  username,
+  userImage,
+  recipeImage,
   rating,
 }: {
+  recipeId: number;
   recipeName: string;
   firstName: string;
   lastName: string;
-  userName: string;
-  userImg: string;
+  username: string;
+  userImage: string;
+  recipeImage: string;
   rating: number;
 }) {
+  const [recipeImageSrc, setRecipeImageSrc] = useState("");
+  const [userImageSrc, setUserImageSrc] = useState("");
+  useEffect(() => {
+    if (recipeImage) {
+      const byteCharacters = atob(recipeImage);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: "image/png" });
+      const recipeURL = URL.createObjectURL(blob);
+      setRecipeImageSrc(recipeURL);
+    }
+  }, [recipeImage]);
+  useEffect(() => {
+    if (userImage) {
+      const byteCharacters = atob(userImage);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: "image/png" });
+      const userURL = URL.createObjectURL(blob);
+      setUserImageSrc(userURL);
+    }
+  }, [userImage]);
   return (
     <Card sx={{ width: 320, height: 350 }}>
       <div>
@@ -36,22 +69,17 @@ export default function RecipeCard({
         </IconButton>
       </div>
       <AspectRatio minHeight="220px" maxHeight="220px">
-        <img
-          src="https://images.unsplash.com/photo-1527549993586-dff825b37782?auto=format&fit=crop&w=286"
-          srcSet="https://images.unsplash.com/photo-1527549993586-dff825b37782?auto=format&fit=crop&w=286&dpr=2 2x"
-          loading="lazy"
-          alt=""
-        />
+        <img src={recipeImageSrc} loading="lazy" alt="" />
       </AspectRatio>
       <CardContent className="flex flex-row justify-between items-center">
         <div className="flex flex-row items-center gap-2">
-          <Avatar alt="Remy Sharp" src={userImg} />
+          <Avatar alt={username} src={userImageSrc} />
           <div className="flex flex-col">
             <div className="flex items-center gap-1">
               <Typography className="leading-none">{firstName}</Typography>
               <Typography className="leading-none">{lastName}</Typography>
             </div>
-            <Typography className="leading-none font-bold">{userName}</Typography>
+            <Typography className="leading-none font">{username}</Typography>
           </div>
         </div>
         <Rating
