@@ -80,6 +80,10 @@ export class RecipesController {
 
   @Get('/search/by/products')
   async getRecipesByProducts(@Query() query: QueryProductDto) {
+    if (typeof query.productNames === 'string') {
+      query.productNames = [query.productNames];
+    }
+    
     return this.recipesService.getRecipesByProducts(query);
   }
 }
