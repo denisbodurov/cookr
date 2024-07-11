@@ -7,11 +7,14 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true});
 
   // Validation setup
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(new ValidationPipe({
+    transform: true,
+  }));
 
   // Swagger setup
   const config = new DocumentBuilder()
     .addBearerAuth()
+    .setBasePath('api/v1')
     .setTitle('Cookr API')
     .setDescription('Cookr API description')
     .setVersion('1.0')
@@ -20,7 +23,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-  app.setGlobalPrefix('/api/v1')
+  app.setGlobalPrefix('api/v1');
 
   await app.listen(3000);
 }
