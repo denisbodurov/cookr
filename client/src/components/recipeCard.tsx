@@ -1,6 +1,4 @@
-import * as React from "react";
 import AspectRatio from "@mui/joy/AspectRatio";
-import Button from "@mui/joy/Button";
 import Card from "@mui/joy/Card";
 import CardContent from "@mui/joy/CardContent";
 import IconButton from "@mui/joy/IconButton";
@@ -8,11 +6,11 @@ import Typography from "@mui/joy/Typography";
 import BookmarkAdd from "@mui/icons-material/BookmarkAddOutlined";
 import { Avatar, AvatarGroup, Rating } from "@mui/material";
 
-export default function RecipeCard() {
+export default function RecipeCard({name, rating} : {name: string, rating: number}) {
   return (
     <Card sx={{ width: 320, height: 350 }}>
       <div>
-        <Typography level="title-lg">Yosemite National Park</Typography>
+        <Typography level="title-lg">{name}</Typography>
         <IconButton
           aria-label="bookmark Bahamas Islands"
           variant="plain"
@@ -44,7 +42,7 @@ export default function RecipeCard() {
         <Rating
           name="simple-controlled"
           size="small"
-          value={2}
+          value={rating}
           precision={0.5}
           readOnly
         />
