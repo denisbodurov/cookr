@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import Typography from "@mui/material/Typography";
 import CategoryCard from "../components/categoryCard";
-import { TextField, Button, Menu, MenuItem } from "@mui/material";
-import ImageUploader from "../components/imageUpload.tsx";
+import { TextField, Button } from "@mui/material";
+import ImageUploader from "../components/imageUploader";
 import Timeline from "@mui/lab/Timeline";
 import TimelineItem from "@mui/lab/TimelineItem";
 import TimelineSeparator from "@mui/lab/TimelineSeparator";
@@ -271,7 +271,7 @@ const AddNew: React.FC = () => {
               </Typography>
             </div>
             <div className="flex flex-row items-center justify-center flex-wrap w-full p-5 bg-backgroundLight">
-              <ImageUploader />
+              <ImageUploader onImageUpload={() => console.log("Hello")}/>
             </div>
             <div className="flex flex-col items-start w-full my-5 bg-backgroundLight ">
               <Typography className="text-3xl text-highLight font-bold">

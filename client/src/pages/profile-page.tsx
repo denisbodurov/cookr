@@ -1,41 +1,43 @@
-import { Avatar, Button, TextField } from "@mui/material";
+import { Button, TextField } from "@mui/material";
 import React, { useState } from "react";
 import AllRecipes from "./all-recipes";
 import EditIcon from "@mui/icons-material/Edit";
-
-interface UserData {
-  firstName: string;
-  lastName: string;
-  username: string;
-  email: string;
-}
+import { useAuth } from "../provider/AuthProvider";
+import { UpdateUser } from "../types/state/User";
+import ImageUploader from "../components/imageUploader";
 
 const ProfilePage: React.FC = () => {
-  const initialUserData: UserData = {
-    firstName: "First",
-    lastName: "Second",
-    username: "UserName",
-    email: "email@email.com"
+  const { user, updateProfile } = useAuth();
+
+  const initialUserData: UpdateUser = {
+    firstName: user!.firstName,
+    lastName: user!.lastName,
+    image: user!.image,
   };
 
-  const [userData, setUserData] = useState<UserData>(initialUserData);
+  const [userData, setUserData] = useState<UpdateUser>(initialUserData);
   const [edit, setEdit] = useState(false);
-  const [tempUserData, setTempUserData] = useState<UserData>(initialUserData); // To store temporary changes during editing
+  const [tempUserData, setTempUserData] = useState<UpdateUser>(initialUserData);
 
   const handleUpdateProfile = () => {
-    setEdit(false); 
+    setEdit(false);
+    updateProfile(tempUserData);
+    setUserData(tempUserData);
   };
 
   const handleCancelEdit = () => {
-
-    setUserData(tempUserData); 
-    setEdit(false); 
+    setTempUserData(userData);
+    setEdit(false);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
-    setTempUserData({ ...tempUserData, [id]: value }); 
+    setTempUserData({ ...tempUserData, [id]: value });
   };
+
+  const handleImageUpload = (image: string) => {
+    setTempUserData({ ...tempUserData, image: image });
+  }
 
   return (
     <>
@@ -43,11 +45,15 @@ const ProfilePage: React.FC = () => {
         <div className="p-20 tablet:p-5 w-1/3 phone:w-full bg-backgroundLight flex justify-center">
           <div className="flex flex-col items-center w-full rounded-xl">
             <div className="flex w-full my-10 rounded-xl">
-              <img
-                src="https://placehold.co/600x400/png"
-                className="w-full h-full rounded-xl"
-                alt="Profile Picture"
-              />
+              {edit ? (
+                <ImageUploader onImageUpload={handleImageUpload}/>
+              ) : (
+                <img
+                  src="https://placehold.co/600x400/png"
+                  className="w-full h-full rounded-xl"
+                  alt="Profile Picture"
+                />
+              )}
             </div>
             <div className="flex flex-col items-center gap-5 w-full">
               {edit ? (
@@ -70,31 +76,16 @@ const ProfilePage: React.FC = () => {
                   />
                 </div>
               ) : (
-                <h1 className="text-3xl text-textLight">{userData.firstName} {userData.lastName}</h1>
+                <h1 className="text-3xl text-textLight">
+                  {userData.firstName} {userData.lastName}
+                </h1>
               )}
-              {edit ? (
-                <TextField
-                  id="username"
-                  label="Username"
-                  variant="outlined"
-                  className="rounded-lg w-full m-1 shadow-md bg-backgroundLight"
-                  value={tempUserData.username}
-                  onChange={handleChange}
-                />
-              ) : (
-                <h1 className="text-3xl text-textLight">{userData.username}</h1>
-              )}
-              {edit ? (
-                <TextField
-                  id="email"
-                  label="Email"
-                  variant="outlined"
-                  className="rounded-lg w-full m-1 shadow-md bg-backgroundLight"
-                  value={tempUserData.email}
-                  onChange={handleChange}
-                />
-              ) : (
-                <h1 className="text-base text-textLight">{userData.email}</h1>
+
+              {!edit && (
+                <>
+                  <h1 className="text-3xl text-textLight">{user!.username}</h1>
+                  <h1 className="text-base text-textLight">{user!.email}</h1>
+                </>
               )}
             </div>
             {edit ? (

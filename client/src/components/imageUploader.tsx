@@ -10,7 +10,11 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-const ImageUploader: React.FC = () => {
+interface ImageUploaderProps {
+  onImageUpload: (base64Image: string) => void; // Function to call with the base64 image
+}
+
+const ImageUploader: React.FC<ImageUploaderProps> = ({ onImageUpload }) => {
   const [image, setImage] = useState<string | null>(null);
   const [openImage, setOpenImage] = useState<boolean>(false);
 
@@ -21,8 +25,8 @@ const ImageUploader: React.FC = () => {
     reader.onload = () => {
       const base64Image = reader.result?.toString();
       if (base64Image) {
-        console.log("Base64 Image:", base64Image);
         setImage(base64Image);
+        onImageUpload(base64Image);
       }
     };
     reader.readAsDataURL(file);

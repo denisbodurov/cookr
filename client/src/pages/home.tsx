@@ -25,7 +25,6 @@ const Home: React.FC = () => {
 
   return (
     <div className="flex justify-center bg-backgroundLight w-full flex-col">
-      <RecipeCard firstName="Peter" lastName="Petrov" recipeName="Pry6ki" userImg="/static/images/avatar/1.jpg" rating={4} userName={"Patraz"}/>
       <div className="py-5">
         <Carousel
           additionalTransfrom={1}
