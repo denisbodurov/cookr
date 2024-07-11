@@ -64,7 +64,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ onImageUpload }) => {
         {image ? (
           <>
             <img
-              src={image} 
+              src={image}
               alt="preview"
               style={{
                 maxWidth: "100%",
@@ -99,8 +99,10 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ onImageUpload }) => {
       </Paper>
 
       <Dialog open={openImage} onClose={handleCloseImage}>
-        <DialogContent>
-          <img src={image!} alt="large view" style={{ width: "100%" }} />
+        <DialogContent className="flex justify-center">
+          <div className="flex justify-center w-full">
+            <img src={image!} alt="large view" className="max-w-full h-auto" />
+          </div>
         </DialogContent>
       </Dialog>
     </Box>

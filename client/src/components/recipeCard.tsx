@@ -14,10 +14,7 @@ export default function RecipeCard({
   lastName,
   username,
   userImage,
-<<<<<<< Updated upstream
   recipeImage,
-=======
->>>>>>> Stashed changes
   rating,
 }: {
   recipeId: number;
@@ -26,10 +23,7 @@ export default function RecipeCard({
   lastName: string;
   username: string;
   userImage: string;
-<<<<<<< Updated upstream
   recipeImage: string;
-=======
->>>>>>> Stashed changes
   rating: number;
 }) {
   const [recipeImageSrc, setRecipeImageSrc] = useState("");
@@ -79,21 +73,13 @@ export default function RecipeCard({
       </AspectRatio>
       <CardContent className="flex flex-row justify-between items-center">
         <div className="flex flex-row items-center gap-2">
-<<<<<<< Updated upstream
           <Avatar alt={username} src={userImageSrc} />
-=======
-          <Avatar alt="Remy Sharp" src={userImage} />
->>>>>>> Stashed changes
           <div className="flex flex-col">
             <div className="flex items-center gap-1">
               <Typography className="leading-none">{firstName}</Typography>
               <Typography className="leading-none">{lastName}</Typography>
             </div>
-<<<<<<< Updated upstream
             <Typography className="leading-none font">{username}</Typography>
-=======
-            <Typography className="leading-none font-bold">{username}</Typography>
->>>>>>> Stashed changes
           </div>
         </div>
         <Rating

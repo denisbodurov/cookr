@@ -28,6 +28,7 @@ const AllRecipes: React.FC = () => {
               <RecipeCard
                 recipeId={recipe.recipeId}
                 recipeName={recipe.name}
+                recipeImage={recipe.image}
                 rating={recipe.averageRating}
                 firstName={recipe.author.firstName}
                 lastName={recipe.author.lastName}

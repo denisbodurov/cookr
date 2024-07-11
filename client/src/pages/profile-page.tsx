@@ -1,10 +1,15 @@
 import { Button, TextField } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AllRecipes from "./all-recipes";
 import EditIcon from "@mui/icons-material/Edit";
 import { useAuth } from "../provider/AuthProvider";
 import { UpdateUser } from "../types/state/User";
 import ImageUploader from "../components/imageUploader";
+import Image from "../components/Image";
+import axios from "axios";
+import { Recipe } from "../types/Recipe";
+import { convertKeysToCamelCase } from "../helpers/keysToCamelCase";
+import RecipeCard from "../components/recipeCard";
 
 const ProfilePage: React.FC = () => {
   const { user, updateProfile } = useAuth();
@@ -18,6 +23,19 @@ const ProfilePage: React.FC = () => {
   const [userData, setUserData] = useState<UpdateUser>(initialUserData);
   const [edit, setEdit] = useState(false);
   const [tempUserData, setTempUserData] = useState<UpdateUser>(initialUserData);
+  const [recipes, setRecipe] = useState<Recipe[]>([]);
+
+  useEffect(() => {
+    const response = axios.get(
+      `${import.meta.env.VITE_PUBLIC_HOST}/api/v1/users/${user!.id}/recipes`
+    );
+
+    response.then((response) => {
+      const data = convertKeysToCamelCase(response.data);
+      console.log(data);
+      setRecipe(data);
+    });
+  }, []);
 
   const handleUpdateProfile = () => {
     setEdit(false);
@@ -48,11 +66,7 @@ const ProfilePage: React.FC = () => {
               {edit ? (
                 <ImageUploader onImageUpload={handleImageUpload}/>
               ) : (
-                <img
-                  src="https://placehold.co/600x400/png"
-                  className="w-full h-full rounded-xl"
-                  alt="Profile Picture"
-                />
+                <Image image={user!.image}/>
               )}
             </div>
             <div className="flex flex-col items-center gap-5 w-full">
@@ -109,8 +123,8 @@ const ProfilePage: React.FC = () => {
               <Button
                 variant="contained"
                 onClick={() => {
-                  setTempUserData(userData); // Reset temporary data to current user data
-                  setEdit(true); // Switch to edit mode
+                  setTempUserData(userData);
+                  setEdit(true);
                 }}
                 endIcon={<EditIcon />}
                 className="my-10 w-48 h-10 rounded-lg bg-highLight text-backgroundLight font-bold text-base"
@@ -122,7 +136,22 @@ const ProfilePage: React.FC = () => {
         </div>
 
         <div className="w-2/3 phone:w-full bg-backgroundLight flex justify-center ">
-          <AllRecipes />
+            {recipes ? (
+              recipes.map((recipe) => (
+                <RecipeCard
+                  recipeId={recipe.recipeId}
+                  recipeName={recipe.name}
+                  recipeImage={recipe.image}
+                  rating={recipe.averageRating}
+                  firstName={recipe.author.firstName}
+                  lastName={recipe.author.lastName}
+                  username={recipe.author.username}
+                  userImage={recipe.author.image}
+                />
+              ))
+            ) : (
+              <div>Loading...</div>
+            )}
         </div>
       </div>
     </>
