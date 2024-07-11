@@ -35,47 +35,47 @@ const Home: React.FC = () => {
         >
           <CategoryCard
             imageSource="images/appetizer.jpg"
-            categoryName="APPETIZER"
+            categoryName="appetizer"
           />
-          <CategoryCard imageSource="images/salad.jpg" categoryName="SALADS" />
+          <CategoryCard imageSource="images/salad.jpg" categoryName="salads" />
           <CategoryCard
             imageSource="images/main.jpg"
-            categoryName="MAIN MEAL"
+            categoryName="main meal"
           />
-          <CategoryCard imageSource="images/cake.jpg" categoryName="DESERTS" />
+          <CategoryCard imageSource="images/cake.jpg" categoryName="desert" />
           <CategoryCard
             imageSource="images/beverage.jpg"
-            categoryName="BEVERAGES"
+            categoryName="beverages"
           />
-          <CategoryCard imageSource="images/snack.jpg" categoryName="SNACKS" />
+          <CategoryCard imageSource="images/snack.jpg" categoryName="snacks" />
         </Carousel>
       </div>
       <Breaker />
       <div className="flex gap-10 justify-center items-center">
         <CategoryCard
           imageSource="images/vegetables.jpg"
-          categoryName="VEGETABLES"
+          categoryName="vegetables"
           circle={true}
         />
         <CategoryCard
           imageSource="images/fruits.jpg"
-          categoryName="FRUITS"
+          categoryName="fruits"
           circle={true}
         />
 
         <CategoryCard
           imageSource="images/meat.jpg"
-          categoryName="MEAT"
+          categoryName="meat"
           circle={true}
         />
         <CategoryCard
           imageSource="images/dairy.jpg"
-          categoryName="DAIRY"
+          categoryName="dairy"
           circle={true}
         />
         <CategoryCard
           imageSource="images/grains.jpg"
-          categoryName="SEAFOOD"
+          categoryName="grains"
           circle={true}
         />
         <CategoryCard

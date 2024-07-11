@@ -62,7 +62,7 @@ const Header = () => {
       <div className="flex justify-evenly items-center flex-row">
         {hide ? null : (
           <>
-            <Search/>
+            <Search />
             <Link
               to="/add-new"
               className="m-2 decoration-0 tablet:fixed tablet:bottom-5 tablet:right-5 tablet:z-50"
@@ -131,12 +131,15 @@ const Header = () => {
               transformOrigin={{ horizontal: "right", vertical: "top" }}
               anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
             >
-              <MenuItem onClick={handleClose}>
-                <ListItemIcon className="flex gap2">
-                  <PersonIcon />
-                </ListItemIcon>
-                <Typography>Profile</Typography>
-              </MenuItem>
+              <Link to="/profile">
+                <MenuItem onClick={handleClose}>
+                  <ListItemIcon className="flex gap2">
+                    <PersonIcon />
+                  </ListItemIcon>
+                  <Typography>Profile</Typography>
+                </MenuItem>
+              </Link>
+              
               <MenuItem onClick={handleClose}>
                 <ListItemIcon className="flex gap2">
                   <ReceiptLongIcon />

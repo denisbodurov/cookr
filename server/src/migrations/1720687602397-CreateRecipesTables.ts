@@ -15,7 +15,7 @@ export class CreateRecipesTables1720687602397 implements MigrationInterface {
             ('appetizer', 'breakfast.jpg'),
             ('salads', 'lunch.jpg'),
             ('main meal', 'dinner.jpg'),
-            ('dessert', 'dessert.jpg'),
+            ('desert', 'desert.jpg'),
             ('beverages', 'dessert.jpg'),
             ('snacks', 'snack.jpg');
 

@@ -6,6 +6,7 @@ import Typography from "@mui/joy/Typography";
 import BookmarkAdd from "@mui/icons-material/BookmarkAddOutlined";
 import { Avatar, Rating } from "@mui/material";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function RecipeCard({
   recipeId,
@@ -28,6 +29,8 @@ export default function RecipeCard({
 }) {
   const [recipeImageSrc, setRecipeImageSrc] = useState("");
   const [userImageSrc, setUserImageSrc] = useState("");
+  const navigate = useNavigate();
+
   useEffect(() => {
     if (recipeImage) {
       const byteCharacters = atob(recipeImage);
@@ -41,6 +44,7 @@ export default function RecipeCard({
       setRecipeImageSrc(recipeURL);
     }
   }, [recipeImage]);
+
   useEffect(() => {
     if (userImage) {
       const byteCharacters = atob(userImage);
@@ -54,8 +58,13 @@ export default function RecipeCard({
       setUserImageSrc(userURL);
     }
   }, [userImage]);
+
+  const handleCardClick = () => {
+    navigate(`/recipes/${recipeId}`);
+  };
+
   return (
-    <Card sx={{ width: 320, height: 350 }}>
+    <Card sx={{ width: 320, height: 350 }} onClick={handleCardClick} style={{ cursor: 'pointer' }}>
       <div>
         <Typography level="title-lg">{recipeName}</Typography>
         <IconButton
