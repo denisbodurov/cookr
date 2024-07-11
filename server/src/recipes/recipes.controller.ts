@@ -73,12 +73,12 @@ export class RecipesController {
     return this.recipesService.getRecipeNutritionalInfo(recipeId);
   }
 
-  @Get('/recipe-types')
+  @Get('/recipe/types')
   getRecipeTypes() {
     return this.recipesService.getRecipeTypes();
   }
 
-  @Get('/search_by_products')
+  @Get('/search/by/products')
   async getRecipesByProducts(@Query() query: QueryProductDto) {
     return this.recipesService.getRecipesByProducts(query);
   }

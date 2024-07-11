@@ -16,7 +16,7 @@ export class ProductsController {
     return this.productService.getProducts();
   }
 
-  @Get(':productId')
+  @Get('/id/:productId')
   async getProductById(@Param('productId') productId: number): Promise<ProductEntity> {
     return this.productService.getProductById(productId);
   }

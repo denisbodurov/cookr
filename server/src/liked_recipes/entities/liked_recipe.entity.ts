@@ -7,7 +7,7 @@ export class LikedRecipesEntity {
   @PrimaryGeneratedColumn()
   like_id: number;
 
-  @ManyToOne(() => RecipeEntity, (recipe) => recipe.likedRecipes)
+  @ManyToOne(() => RecipeEntity, (recipe) => recipe.liked_recipes)
   @JoinColumn({name: 'recipe_id'})
   recipe: RecipeEntity;
 

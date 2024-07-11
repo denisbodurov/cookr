@@ -40,19 +40,19 @@ export class RecipeEntity {
   ratings: RatingEntity[];
 
   @OneToMany(() => LikedRecipesEntity, (likedRecipe) => likedRecipe.recipe)
-  likedRecipes: LikedRecipesEntity[];
+  liked_recipes: LikedRecipesEntity[];
 
   @OneToMany(() => StepEntity, (step) => step.recipe)
-  stepsDetails: StepEntity[];
+  steps_details: StepEntity[];
 
   @OneToMany(() => IngredientEntity, (ingredient) => ingredient.recipe)
   ingredients: IngredientEntity[];
 
   likes: number;
 
-  averageRating: number;
+  average_rating: number;
 
   setAverageRating(value: number) {
-    this.averageRating = value;
+    this.average_rating = value;
   }
 }
