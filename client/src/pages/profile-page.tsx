@@ -1,6 +1,5 @@
 import { Button, TextField } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import AllRecipes from "./all-recipes";
 import EditIcon from "@mui/icons-material/Edit";
 import { useAuth } from "../provider/AuthProvider";
 import { UpdateUser } from "../types/state/User";
