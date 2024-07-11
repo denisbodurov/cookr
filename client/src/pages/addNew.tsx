@@ -35,10 +35,21 @@ const AddNew: React.FC = () => {
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [editingText, setEditingText] = useState<string>("");
   const [newIngredient, setNewIngredient] = useState<string>("");
+  const [newUnit, setNewUnit] = useState<string>("");
   const [newQuantity, setNewQuantity] = useState<string>("");
   const [tableRecords, setTableRecords] = useState<
     { ingredient: string; unit: string; quantity: string }[]
   >([{ ingredient: "Frozen yoghurt", unit: "2", quantity: "159" }]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchResults, setSearchResults] = useState<string[]>([]);
+  const products = [
+    "Apple",
+    "Banana",
+    "Carrot",
+    "Doughnut",
+    "Eggplant",
+    "Frozen yoghurt",
+  ];
 
   const handleAddRecipe = () => {
     console.log("Adding Recipe:", { recipeName, recipeImage, recipeProducts });
@@ -63,9 +74,10 @@ const AddNew: React.FC = () => {
         { ingredient: newIngredient, unit: newUnit, quantity: newQuantity },
       ]);
       setNewIngredient("");
+      setNewUnit("");
       setNewQuantity("");
     } else {
-      alert("Please enter a step description");
+      alert("Please enter ingredient and quantity");
     }
   };
 
@@ -108,12 +120,28 @@ const AddNew: React.FC = () => {
     }
   };
 
-  function createData(name: string, calories: number) {
-    return { name, calories };
-  }
-  const [isSearching, setIsSearching] = useState(false);
+  const handleSearch = (searchTerm: string) => {
+    if (searchTerm.trim() !== "") {
+      const results = products.filter((product) =>
+        product.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setSearchResults(results);
+    } else {
+      setSearchResults([]);
+    }
+  };
+
+  const handleProductSelect = (product: string) => {
+    setNewIngredient(product);
+    setSearchResults([]);
+  };
+
   const handleSearchClick = () => {
     setIsSearching(!isSearching);
+    setSearchResults([]);
+    setNewIngredient("");
+    setNewQuantity("");
+    setNewUnit("");
   };
 
   return (
@@ -125,10 +153,10 @@ const AddNew: React.FC = () => {
         >
           ADD NEW RECIPE
         </Typography>
-        <div className="flex flex-row phone:flex-col w-full phone:items-center ">
+        <div className="flex flex-row phone:flex-col w-full phone:items-center">
           <div className="p-10 phone:p-2 w-2/4 flex phone:w-full border-r-2 phone:border-0 border-highLight">
-            <div className="flex bg-backgroundLight flex-col justify-start  ">
-              <div className="flex flex-col items-start w-full my-5 bg-backgroundLight ">
+            <div className="flex bg-backgroundLight flex-col justify-start">
+              <div className="flex flex-col items-start w-full my-5 bg-backgroundLight">
                 <Typography className="text-3xl text-highLight font-bold">
                   1. Select Category
                 </Typography>
@@ -167,7 +195,7 @@ const AddNew: React.FC = () => {
                   />
                 </div>
               </div>
-              <div className="flex flex-col items-start w-full my-5 bg-backgroundLight ">
+              <div className="flex flex-col items-start w-full my-5 bg-backgroundLight">
                 <Typography className="text-3xl text-highLight font-bold">
                   2. Set Name
                 </Typography>
@@ -182,7 +210,7 @@ const AddNew: React.FC = () => {
                   onChange={(e) => setRecipeName(e.target.value)}
                 />
               </div>
-              <div className="flex flex-col items-start w-full my-5 bg-backgroundLight ">
+              <div className="flex flex-col items-start w-full my-5 bg-backgroundLight">
                 <Typography className="text-3xl text-highLight font-bold">
                   3. Select Ingredients
                 </Typography>
@@ -226,15 +254,41 @@ const AddNew: React.FC = () => {
                         id="outlined-basic"
                         label="Product"
                         variant="outlined"
-                        className=" rounded m-3 bg-backgroundLight"
+                        className="rounded m-3 bg-backgroundLight relative"
                         value={newIngredient}
-                        onChange={(e) => setNewQuantity(e.target.value)}
+                        onChange={(e) => {
+                          setNewIngredient(e.target.value);
+                          handleSearch(e.target.value);
+                        }}
                       />
-                      <input
-                        type="number"
-                        className="w-2/12 h-12 rounded-lg p-1 border"
-                        name=""
-                        id=""
+                      {searchResults.length > 0 && (
+                        <div className="absolute bg-backgroundLight shadow-lg rounded-lg w-40 p-2 z-10">
+                          {searchResults.map((result, index) => (
+                            <div
+                              key={index}
+                              className="cursor-pointer p-2 hover:bg-secondary rounded-lg"
+                              onClick={() => handleProductSelect(result)}
+                            >
+                              {result}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                      <TextField
+                        id="outlined-basic"
+                        label="Unit"
+                        variant="outlined"
+                        className="rounded m-3 bg-backgroundLight"
+                        value={newUnit}
+                        onChange={(e) => setNewUnit(e.target.value)}
+                      />
+                      <TextField
+                        id="outlined-basic"
+                        label="Quantity"
+                        variant="outlined"
+                        className="rounded m-3 bg-backgroundLight"
+                        value={newQuantity}
+                        onChange={(e) => setNewQuantity(e.target.value)}
                       />
                       <CancelIcon
                         onClick={handleSearchClick}
@@ -252,17 +306,17 @@ const AddNew: React.FC = () => {
                     </Button>
                   )}
                 </div>
-
                 <Button
                   variant="contained"
                   endIcon={<ArrowForwardIcon />}
+                  onClick={handleAddRecord}
                   className="mb-5 h-10 rounded-lg bg-highLight text-backgroundLight font-bold text-base self-center"
                 >
                   ADD NEW INGREDIENT
                 </Button>
               </div>
 
-              <div className="flex flex-col items-start w-full my-5 bg-backgroundLight ">
+              <div className="flex flex-col items-start w-full my-5 bg-backgroundLight">
                 <Typography className="text-3xl text-highLight font-bold">
                   4. Set Steps
                 </Typography>
@@ -289,8 +343,9 @@ const AddNew: React.FC = () => {
               </div>
             </div>
           </div>
+
           <div className="p-10 phone:p-2 w-2/4 phone:w-full">
-            <div className="flex flex-col items-start w-full my-5 bg-backgroundLight ">
+            <div className="flex flex-col items-start w-full my-5 bg-backgroundLight">
               <Typography className="text-3xl text-highLight font-bold">
                 5. Upload Photo
               </Typography>
@@ -298,12 +353,12 @@ const AddNew: React.FC = () => {
             <div className="flex flex-row items-center justify-center flex-wrap w-full p-5 bg-backgroundLight">
               <ImageUploader onImageUpload={() => console.log("Hello")} />
             </div>
-            <div className="flex flex-col items-start w-full my-5 bg-backgroundLight ">
+            <div className="flex flex-col items-start w-full my-5 bg-backgroundLight">
               <Typography className="text-3xl text-highLight font-bold">
                 Steps
               </Typography>
             </div>
-            <div className="flex flex-row items-center justify-center flex-wrap  w-full bg-backgroundLight">
+            <div className="flex flex-row items-center justify-center flex-wrap w-full bg-backgroundLight">
               <Timeline>
                 {timelineItems.map((item, index) => (
                   <TimelineItem key={index}>
