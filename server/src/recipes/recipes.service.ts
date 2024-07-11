@@ -43,7 +43,7 @@ export class RecipesService {
       .leftJoin('recipe.author', 'author')
       .where('author.user_id = :userId', { userId })
       .addSelect('COALESCE(AVG(rating.rating), 0)', 'average_rating')
-      .leftJoin('recipe.likedRecipes', 'liked')
+      .leftJoin('recipe.liked_recipes', 'liked')
       .addSelect(['liked.user_id', 'liked.recipe_id'])
       .groupBy(
         'recipe.recipe_id, liked.recipe_id, liked.user_id, liked.like_id',
