@@ -8,6 +8,7 @@ async function bootstrap() {
 
   // Validation setup
   app.useGlobalPipes(new ValidationPipe());
+  app.setGlobalPrefix('api/v1');
 
   // Swagger setup
   const config = new DocumentBuilder()
@@ -19,8 +20,6 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
-
-  app.setGlobalPrefix('/api/v1')
 
   await app.listen(3000);
 }

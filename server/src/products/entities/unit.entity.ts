@@ -8,10 +8,7 @@ export class Unit {
 
   @Column({ unique: true })
   name: string;
-
-  @Column({ default: '' })
-  image: string;
-
+  
   @OneToMany(() => ProductEntity, product => product.unit)
   products: ProductEntity[];
 }
