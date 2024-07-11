@@ -42,7 +42,7 @@ export class RecipesService {
       ])
       .leftJoin('recipe.author', 'author')
       .where('author.user_id = :userId', { userId })
-      .addSelect('COALESCE(AVG(rating.rating), 0)', 'averageRating')
+      .addSelect('COALESCE(AVG(rating.rating), 0)', 'average_rating')
       .leftJoin('recipe.likedRecipes', 'liked')
       .addSelect(['liked.user_id', 'liked.recipe_id'])
       .groupBy(
@@ -54,7 +54,7 @@ export class RecipesService {
       const raw = recipes.raw[index];
       return {
         ...recipeEntity,
-        averageRating: parseFloat(raw.averageRating),
+        averageRating: parseFloat(raw.average_rating),
         recipe_saved: userId ? raw.recipe_saved : false,
       };
     });
@@ -67,10 +67,10 @@ export class RecipesService {
     .addSelect(['recipe_type.name'])
     .leftJoin('recipe.author', 'author')
     .addSelect(['author.username','author.first_name', 'author.last_name', 'author.image'])
-    .leftJoin('recipe.likedRecipes', 'liked')
+    .leftJoin('recipe.liked_recipes', 'liked')
     .addSelect('liked.user_id')
     .leftJoin('recipe.ratings', 'rating')
-    .addSelect('CAST(COALESCE(AVG(rating.rating), 0) AS FLOAT)', 'averageRating')
+    .addSelect('CAST(COALESCE(AVG(rating.rating), 0) AS FLOAT)', 'average_rating')
     .groupBy(
       `recipe.recipe_id, recipe_type.name, recipe_type.id, recipe_type.image, 
       author.user_id, liked.user_id, liked.recipe_id, liked.like_id`
@@ -88,7 +88,7 @@ export class RecipesService {
 
     const recipes = result.entities.map((recipe, index) => ({
       ...recipe,
-      averageRating: parseFloat(result.raw[index].averageRating)
+      average_rating: parseFloat(result.raw[index].average_rating)
     }));
 
     return recipes;
@@ -113,12 +113,12 @@ export class RecipesService {
       .addSelect(['recipe_type.name'])
       .leftJoin('recipe.author', 'author')
       .addSelect(['author.username','author.first_name', 'author.last_name', 'author.image'])
-      .leftJoin('recipe.stepsDetails', 'step')
+      .leftJoin('recipe.steps_details', 'step')
       .addSelect(['step.step_number', 'step.description'])
       .leftJoin('recipe.ingredients', 'ingredient')
       .addSelect('ingredient.quantity')
       .leftJoinAndSelect('ingredient.product', 'product')
-      .leftJoin('recipe.likedRecipes', 'liked')
+      .leftJoin('recipe.liked_recipes', 'liked')
       .addSelect('liked.user_id')
       .leftJoin('rating.rater', 'rater')
       .addSelect(['rater.user_id', 'rater.username', 'rater.first_name', 'rater.last_name', 'rater.image'])
@@ -304,7 +304,7 @@ export class RecipesService {
 
   async getRecipesByProducts(query: QueryProductDto) {
     const { productNames } = query;
-    const lowercasedProductNames = productNames.map(name => name.toLowerCase());
+    const lowercasedProductNames = productNames.map(name => `%${name.toLowerCase()}%`);
   
     const recipes = await this.recipeRepository
       .createQueryBuilder('recipe')
@@ -325,9 +325,16 @@ export class RecipesService {
         'author.last_name',
         'author.image',
       ])
-      .leftJoin('recipe.likedRecipes', 'liked')
+      .leftJoin('recipe.liked_recipes', 'liked')
       .addSelect(['liked.user_id', 'liked.recipe_id'])
-      .where('LOWER(product.product_name) IN (:...lowercasedProductNames)', { lowercasedProductNames })
+      .where(
+        productNames.length === 1
+          ? 'product.product_name ILIKE :lowercasedProductName'
+          : 'product.product_name ILIKE ANY(:lowercasedProductNames)',
+        productNames.length === 1
+          ? { lowercasedProductName: lowercasedProductNames[0] }
+          : { lowercasedProductNames }
+      )
       .groupBy('recipe.recipe_id, author.user_id, liked.recipe_id, liked.user_id, liked.like_id')
       .getRawAndEntities();
   
@@ -335,10 +342,9 @@ export class RecipesService {
       throw new NotFoundException('recipes-not-found');
     }
   
-    return recipes.entities.map((recipeEntity) => {
-      return recipeEntity;
-    });
+    return recipes.entities.map(recipeEntity => recipeEntity);
   }
+  
 
   async getRecipeTypes(){
     return this.recipeTypeRepository.find();

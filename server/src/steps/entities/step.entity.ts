@@ -6,7 +6,7 @@ export class StepEntity {
   @PrimaryGeneratedColumn()
   step_id: number;
 
-  @ManyToOne(() => RecipeEntity, (recipe) => recipe.stepsDetails)
+  @ManyToOne(() => RecipeEntity, (recipe) => recipe.steps_details)
   @JoinColumn({name: 'recipe_id'})
   recipe: RecipeEntity;
 

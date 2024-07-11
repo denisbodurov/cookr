@@ -54,7 +54,7 @@ export class LikedRecipesService {
         'author.last_name',
         'author.image',
       ])
-      .addSelect('COALESCE(AVG(rating.rating), 0)', 'averageRating')
+      .addSelect('COALESCE(AVG(rating.rating), 0)', 'average_rating')
       .leftJoin('recipe.likedRecipes', 'liked')
       .addSelect('liked.user_id')
       .where('liked.user_id = :userId', { userId })
@@ -69,7 +69,7 @@ export class LikedRecipesService {
       const raw = recipes.raw[index];
       return {
         ...recipeEntity,
-        averageRating: parseFloat(raw.averageRating),
+        average_rating: parseFloat(raw.average_rating),
       };
     });
 }
