@@ -28,6 +28,13 @@ export class UsersController {
     return this.recipeService.getRecipesByUserId(userId);
   }
 
+  @Get('/recipe/logged/user')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  getMyUserRecipes(@User() user: TokenPayload,) {
+    return this.recipeService.getRecipesByUserId(user.sub);
+  }
+
   @Get(':userId/liked-recipes')
   getUserLikedRecipes(@Param('userId') userId: number) {
     return this.likedRecipesService.getLikedRecipesByUserId(userId);
