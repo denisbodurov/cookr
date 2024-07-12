@@ -26,7 +26,9 @@ const ProfilePage: React.FC = () => {
 
   useEffect(() => {
     const response = axios.get(
-      `${import.meta.env.VITE_PUBLIC_HOST}/api/v1/users/${user!.id}/recipes`
+      `${import.meta.env.VITE_PUBLIC_HOST}/api/v1/users/${
+        user!.id
+      }/liked-recipes`
     );
 
     response.then((response) => {
@@ -54,7 +56,7 @@ const ProfilePage: React.FC = () => {
 
   const handleImageUpload = (image: string) => {
     setTempUserData({ ...tempUserData, image: image });
-  }
+  };
 
   return (
     <>
@@ -63,9 +65,12 @@ const ProfilePage: React.FC = () => {
           <div className="flex flex-col items-center w-full rounded-xl">
             <div className="flex w-full justify-center bg-highLight py-10 my-10 rounded-xl">
               {edit ? (
-                <ImageUploader onImageUpload={handleImageUpload}/>
+                <ImageUploader onImageUpload={handleImageUpload} />
               ) : (
-                <Image className="mx-auto w-48 h-48 rounded-full object-cover" image={user!.image}/>
+                <Image
+                  className="mx-auto w-48 h-48 rounded-full object-cover"
+                  image={user!.image}
+                />
               )}
             </div>
             <div className="flex flex-col items-center gap-5 w-full">
@@ -135,22 +140,22 @@ const ProfilePage: React.FC = () => {
         </div>
 
         <div className="w-2/3 phone:w-full bg-backgroundLight flex justify-center ">
-            {recipes ? (
-              recipes.map((recipe) => (
-                <RecipeCard
-                  recipeId={recipe.recipeId}
-                  recipeName={recipe.name}
-                  recipeImage={recipe.image}
-                  rating={recipe.averageRating}
-                  firstName={recipe.author.firstName}
-                  lastName={recipe.author.lastName}
-                  username={recipe.author.username}
-                  userImage={recipe.author.image}
-                />
-              ))
-            ) : (
-              <div>Loading...</div>
-            )}
+          {recipes ? (
+            recipes.map((recipe) => (
+              <RecipeCard
+                recipeId={recipe.recipeId}
+                recipeName={recipe.name}
+                recipeImage={recipe.image}
+                rating={recipe.averageRating}
+                firstName={recipe.author.firstName}
+                lastName={recipe.author.lastName}
+                username={recipe.author.username}
+                userImage={recipe.author.image}
+              />
+            ))
+          ) : (
+            <div>Loading...</div>
+          )}
         </div>
       </div>
     </>
