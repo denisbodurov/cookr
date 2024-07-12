@@ -28,12 +28,7 @@ const ProfilePage: React.FC = () => {
     const fetchLikedRecipes = async () => {
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_PUBLIC_HOST}/api/v1/liked-recipes/user`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-            },
-          }
+          `${import.meta.env.VITE_PUBLIC_HOST}/api/v1/liked-recipes/user`
         );
         const data = convertKeysToCamelCase(response.data);
         setRecipes(data);
@@ -66,60 +61,14 @@ const ProfilePage: React.FC = () => {
   };
 
   return (
-    <>
-      <div className="w-full min-h-screen bg-backgroundLight flex phone:flex-col">
-        <div className="p-20 tablet:p-5 w-1/3 phone:w-full bg-backgroundLight flex justify-center">
-          <div className="flex flex-col items-center w-full rounded-xl">
-            <div className="flex w-full justify-center bg-highLight py-10 my-10 rounded-xl">
-              {edit ? (
-                <ImageUploader onImageUpload={handleImageUpload} />
-              ) : (
-                <Image
-                  className="mx-auto w-48 h-48 rounded-full object-cover"
-                  image={user!.image}
-                />
-              )}
-            </div>
-            <div className="flex flex-col items-center gap-5 w-full">
-              {edit ? (
-                <div className="flex flex-row w-full">
-                  <TextField
-                    id="firstName"
-                    label="First Name"
-                    variant="outlined"
-                    className="rounded-lg w-full m-1 shadow-md bg-backgroundLight"
-                    value={tempUserData.firstName}
-                    onChange={handleChange}
-                  />
-                  <TextField
-                    id="lastName"
-                    label="Last Name"
-                    variant="outlined"
-                    className="rounded-lg w-full m-1 shadow-md bg-backgroundLight"
-                    value={tempUserData.lastName}
-                    onChange={handleChange}
-                  />
-                </div>
-              ) : (
-                <h1 className="text-3xl text-textLight">
-                  {userData.firstName} {userData.lastName}
-                </h1>
-              )}
-
-              {!edit && (
-                <>
-                  <h1 className="text-3xl text-textLight">{user!.username}</h1>
-                  <h1 className="text-base text-textLight">{user!.email}</h1>
-                </>
-              )}
-            </div>
+    <div className="w-full min-h-screen bg-backgroundLight flex phone:flex-col">
+      <div className="p-20 tablet:p-5 w-1/3 phone:w-full bg-backgroundLight flex justify-center">
+        <div className="flex flex-col items-center w-full rounded-xl">
+          <div className="flex w-full justify-center bg-highLight py-10 my-10 rounded-xl">
             {edit ? (
               <ImageUploader onImageUpload={handleImageUpload} />
             ) : (
-              <Image
-                className="mx-auto w-48 h-48 rounded-full object-cover"
-                image={user!.image}
-              />
+              <Image className="mx-auto w-48 h-48 rounded-full object-cover" image={user!.image} />
             )}
           </div>
           <div className="flex flex-col items-center gap-5 w-full">
