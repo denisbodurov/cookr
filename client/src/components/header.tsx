@@ -62,6 +62,7 @@ const Header = () => {
       <div className="flex justify-evenly items-center flex-row">
         {hide ? null : (
           <>
+            
             <Search />
             <Link
               to="/add-new"
@@ -83,17 +84,16 @@ const Header = () => {
               aria-haspopup="true"
               aria-expanded={openProfile ? "true" : undefined}
             >
-              {user &&
-                (user.image ? (
-                  <Avatar className="relative">
-                    <Image image={user.image} />
-                  </Avatar>
-                ) : (
-                  <Avatar className="bg-highLight">
-                    {user.firstName.charAt(0).toUpperCase() +
-                      user.lastName.charAt(0).toUpperCase()}
-                  </Avatar>
-                ))}
+              <Avatar className={user ? "relative" : "bg-highLight"}>
+                {user ? (
+                  user.image ? (
+                    <Image className="" image={user.image} />
+                  ) : (
+                    user.firstName.charAt(0).toUpperCase() +
+                    user.lastName.charAt(0).toUpperCase()
+                  )
+                ) : null}
+              </Avatar>
             </IconButton>
             <Menu
               anchorEl={anchorEl}
@@ -157,7 +157,7 @@ const Header = () => {
                 <ListItemIcon className="flex gap2">
                   <Logout fontSize="small" />
                 </ListItemIcon>
-                Logout
+                {user ? "Logout" : "Login"}
               </MenuItem>
             </Menu>
           </Grid>

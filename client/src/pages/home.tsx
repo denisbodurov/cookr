@@ -1,10 +1,14 @@
-import CategoryCard from "../components/categoryCard.tsx";
-import Breaker from "../components/breaker.tsx";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import CategoryCard from "../components/categoryCard";
+import Breaker from "../components/breaker";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
-import RecipeCard from "../components/recipeCard.tsx";
+import { convertKeysToCamelCase } from "../helpers/keysToCamelCase";
 
 const Home: React.FC = () => {
+  const [categories, setCategories] = useState([]);
+
   const responsive = {
     desktop: {
       breakpoint: { max: 3000, min: 1024 },
@@ -23,6 +27,22 @@ const Home: React.FC = () => {
     },
   };
 
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_PUBLIC_HOST}/api/v1/recipes/recipe/types`
+        );
+        const data = convertKeysToCamelCase(response.data);
+        setCategories(data);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
   return (
     <div className="flex justify-center bg-backgroundLight w-full flex-col">
       <div className="py-5">
@@ -33,56 +53,25 @@ const Home: React.FC = () => {
           infinite
           responsive={responsive}
         >
-          <CategoryCard
-            imageSource="images/appetizer.jpg"
-            categoryName="appetizer"
-          />
-          <CategoryCard imageSource="images/salad.jpg" categoryName="salads" />
-          <CategoryCard
-            imageSource="images/main.jpg"
-            categoryName="main meal"
-          />
-          <CategoryCard imageSource="images/cake.jpg" categoryName="desert" />
-          <CategoryCard
-            imageSource="images/beverage.jpg"
-            categoryName="beverages"
-          />
-          <CategoryCard imageSource="images/snack.jpg" categoryName="snacks" />
+          {categories.map((category) => (
+            <CategoryCard
+              key={category.id}
+              imageSource={category.image}
+              categoryName={category.name}
+            />
+          ))}
         </Carousel>
       </div>
       <Breaker />
       <div className="flex gap-10 justify-center items-center">
-        <CategoryCard
-          imageSource="images/vegetables.jpg"
-          categoryName="vegetables"
-          circle={true}
-        />
-        <CategoryCard
-          imageSource="images/fruits.jpg"
-          categoryName="fruits"
-          circle={true}
-        />
-
-        <CategoryCard
-          imageSource="images/meat.jpg"
-          categoryName="meat"
-          circle={true}
-        />
-        <CategoryCard
-          imageSource="images/dairy.jpg"
-          categoryName="dairy"
-          circle={true}
-        />
-        <CategoryCard
-          imageSource="images/grains.jpg"
-          categoryName="grains"
-          circle={true}
-        />
-        <CategoryCard
-          imageSource="images/seafood.jpg"
-          categoryName="SNACKS"
-          circle={true}
-        />
+        {categories.map((category) => (
+          <CategoryCard
+            key={category.id}
+            imageSource={category.image}
+            categoryName={category.name}
+            circle={true}
+          />
+        ))}
       </div>
     </div>
   );

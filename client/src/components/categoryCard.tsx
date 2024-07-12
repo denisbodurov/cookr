@@ -1,6 +1,6 @@
 // CategoryCard.tsx
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React from "react";
+import { useNavigate } from "react-router-dom";
 import Card from "@mui/joy/Card";
 import CardCover from "@mui/joy/CardCover";
 import CardContent from "@mui/joy/CardContent";
@@ -20,7 +20,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate(`/recipes/product_type_name=${categoryName}`);
+    navigate(`/recipes?product_type_name=${categoryName}`);
   };
 
   return (
@@ -56,7 +56,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
     >
       <CardCover>
         <img
-          src={imageSource}
+          src={`../../public/images/${imageSource}`}
           alt={categoryName}
           style={{
             borderRadius: circle ? "50%" : "10px",

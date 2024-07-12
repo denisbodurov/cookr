@@ -8,6 +8,8 @@ import { Avatar, Rating } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import Image from "./Image";
+
 export default function RecipeCard({
   recipeId,
   recipeName,
@@ -82,7 +84,14 @@ export default function RecipeCard({
       </AspectRatio>
       <CardContent className="flex flex-row justify-between items-center">
         <div className="flex flex-row items-center gap-2">
-          <Avatar alt={username} src={userImageSrc} />
+          <Avatar>
+            {userImage ? (
+              <Image className="" image={userImage} />
+            ) : (
+              firstName.charAt(0).toUpperCase() +
+              lastName.charAt(0).toUpperCase()
+            )}
+          </Avatar>
           <div className="flex flex-col">
             <div className="flex items-center gap-1">
               <Typography className="leading-none">{firstName}</Typography>

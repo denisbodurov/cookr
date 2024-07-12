@@ -12,11 +12,11 @@ export class CreateRecipesTables1720687602397 implements MigrationInterface {
 
             -- add images base64
             INSERT INTO recipe_types (name, image) VALUES
-            ('appetizer', 'breakfast.jpg'),
-            ('salads', 'lunch.jpg'),
-            ('main meal', 'dinner.jpg'),
-            ('desert', 'desert.jpg'),
-            ('beverages', 'dessert.jpg'),
+            ('appetizer', 'appetizer.jpg'),
+            ('salads', 'salads.jpg'),
+            ('main meal', 'main.jpg'),
+            ('dessert', 'cake.jpg'),
+            ('beverages', 'beverage.jpg'),
             ('snacks', 'snack.jpg');
 
             CREATE TABLE IF NOT EXISTS recipes (
