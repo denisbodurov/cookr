@@ -62,7 +62,7 @@ const Header = () => {
       <div className="flex justify-evenly items-center flex-row">
         {hide ? null : (
           <>
-            <Search/>
+            <Search />
             <Link
               to="/add-new"
               className="m-2 decoration-0 tablet:fixed tablet:bottom-5 tablet:right-5 tablet:z-50"
@@ -83,17 +83,16 @@ const Header = () => {
               aria-haspopup="true"
               aria-expanded={openProfile ? "true" : undefined}
             >
-              {user &&
-                (user.image ? (
-                  <Avatar className="relative">
-                    <Image image={user.image} />
-                  </Avatar>
-                ) : (
-                  <Avatar className="bg-highLight">
-                    {user.firstName.charAt(0).toUpperCase() +
-                      user.lastName.charAt(0).toUpperCase()}
-                  </Avatar>
-                ))}
+              <Avatar className={user ? "relative" : "bg-highLight"}>
+                {user ? (
+                  user.image ? (
+                    <Image className="" image={user.image} />
+                  ) : (
+                    user.firstName.charAt(0).toUpperCase() +
+                    user.lastName.charAt(0).toUpperCase()
+                  )
+                ) : null}
+              </Avatar>
             </IconButton>
             <Menu
               anchorEl={anchorEl}
@@ -131,30 +130,35 @@ const Header = () => {
               transformOrigin={{ horizontal: "right", vertical: "top" }}
               anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
             >
-              <MenuItem onClick={handleClose}>
-                <ListItemIcon className="flex gap2">
-                  <PersonIcon />
-                </ListItemIcon>
-                <Typography>Profile</Typography>
-              </MenuItem>
-              <MenuItem onClick={handleClose}>
-                <ListItemIcon className="flex gap2">
-                  <ReceiptLongIcon />
-                </ListItemIcon>
-                <Typography>My Recipes</Typography>
-              </MenuItem>
-              <MenuItem onClick={handleClose}>
-                <ListItemIcon className="flex gap2">
-                  <BookmarkAddedIcon />
-                </ListItemIcon>
-                <Typography>Saved Recipes</Typography>
-              </MenuItem>
-              <Divider />
+              {user && (
+                <>
+                  <MenuItem onClick={handleClose}>
+                    <ListItemIcon className="flex gap2">
+                      <PersonIcon />
+                    </ListItemIcon>
+                    <Typography>Profile</Typography>
+                  </MenuItem>
+                  <MenuItem onClick={handleClose}>
+                    <ListItemIcon className="flex gap2">
+                      <ReceiptLongIcon />
+                    </ListItemIcon>
+                    <Typography>My Recipes</Typography>
+                  </MenuItem>
+                  <MenuItem onClick={handleClose}>
+                    <ListItemIcon className="flex gap2">
+                      <BookmarkAddedIcon />
+                    </ListItemIcon>
+                    <Typography>Saved Recipes</Typography>
+                  </MenuItem>
+                  <Divider />
+                </>
+              )}
+
               <MenuItem onClick={handleSignOut}>
                 <ListItemIcon className="flex gap2">
                   <Logout fontSize="small" />
                 </ListItemIcon>
-                Logout
+                {user ? "Logout" : "Login"}
               </MenuItem>
             </Menu>
           </Grid>

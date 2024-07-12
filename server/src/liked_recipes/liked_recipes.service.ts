@@ -55,8 +55,7 @@ export class LikedRecipesService {
         'author.image',
       ])
       .addSelect('COALESCE(AVG(rating.rating), 0)', 'average_rating')
-      .leftJoin('recipe.likedRecipes', 'liked')
-      .addSelect('liked.user_id')
+      .leftJoin('recipe.liked_recipes', 'liked')
       .where('liked.user_id = :userId', { userId })
       .groupBy('recipe.recipe_id, author.user_id, liked.user_id, liked.like_id')
       .getRawAndEntities();
